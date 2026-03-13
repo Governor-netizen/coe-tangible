@@ -1,4 +1,4 @@
-export type MachineType = 'dc-motor' | 'dc-generator' | 'transformer' | 'induction-motor';
+export type MachineType = 'dc-motor' | 'dc-generator' | 'transformer' | 'induction-motor' | 'custom';
 
 export interface MachinePart {
   id: string;
@@ -45,7 +45,31 @@ export interface MachineData {
   operationDescription: string;
 }
 
-export const machineDatabase: Record<MachineType, MachineData> = {
+// Quiz helper
+export interface QuizQuestion {
+  targetPartId: string;
+  targetPartName: string;
+  hint: string;
+}
+
+export function generateQuizQuestions(machine: MachineData): QuizQuestion[] {
+  return machine.parts.map((p) => ({
+    targetPartId: p.id,
+    targetPartName: p.name,
+    hint: p.function.slice(0, 80) + '...',
+  }));
+}
+
+export function shuffleArray<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+export const machineDatabase: Record<string, MachineData> = {
   'dc-motor': {
     id: 'dc-motor',
     name: 'DC Motor',
@@ -54,7 +78,7 @@ export const machineDatabase: Record<MachineType, MachineData> = {
       {
         id: 'stator',
         name: 'Stator (Field Winding)',
-        color: '#4A90A4',
+        color: '#2D5F6E',
         description: 'The stationary outer frame that houses the field windings. Creates the main magnetic field.',
         function: 'Produces a stationary magnetic field that interacts with the armature current to produce torque.',
         concepts: ['Magnetic Field', 'Electromagnet', 'Field Excitation'],
@@ -64,7 +88,7 @@ export const machineDatabase: Record<MachineType, MachineData> = {
       {
         id: 'rotor',
         name: 'Rotor (Armature)',
-        color: '#E8734A',
+        color: '#E05A2A',
         description: 'The rotating inner cylinder that carries the armature windings. Experiences torque due to current-carrying conductors in a magnetic field.',
         function: 'Carries current through conductors that interact with the stator field to produce rotational torque (Lorentz Force).',
         concepts: ['Lorentz Force', 'Torque', 'Back EMF'],
@@ -74,7 +98,7 @@ export const machineDatabase: Record<MachineType, MachineData> = {
       {
         id: 'commutator',
         name: 'Commutator',
-        color: '#D4A843',
+        color: '#B8860B',
         description: 'A segmented copper cylinder that reverses current direction in the armature coils as they rotate.',
         function: 'Acts as a mechanical rectifier, switching current direction every half-turn to maintain continuous rotation.',
         concepts: ['Current Reversal', 'Mechanical Rectification', 'Commutation'],
@@ -84,7 +108,7 @@ export const machineDatabase: Record<MachineType, MachineData> = {
       {
         id: 'brushes',
         name: 'Carbon Brushes',
-        color: '#666666',
+        color: '#444444',
         description: 'Carbon blocks that press against the commutator to transfer electrical current to the rotating armature.',
         function: 'Provide sliding electrical contact between the stationary circuit and the rotating commutator.',
         concepts: ['Sliding Contact', 'Current Transfer', 'Brush Friction'],
@@ -94,7 +118,7 @@ export const machineDatabase: Record<MachineType, MachineData> = {
       {
         id: 'shaft',
         name: 'Shaft',
-        color: '#999999',
+        color: '#C0C0C0',
         description: 'The central rotating axis that transfers mechanical power from the rotor to the external load.',
         function: 'Transmits rotational mechanical energy to the connected load or machinery.',
         concepts: ['Mechanical Power', 'Torque Transmission', 'RPM'],
@@ -104,7 +128,7 @@ export const machineDatabase: Record<MachineType, MachineData> = {
       {
         id: 'windings',
         name: 'Armature Windings',
-        color: '#C94040',
+        color: '#D4442A',
         description: 'Coils of insulated copper wire wound around the armature core. Current through these produces the driving force.',
         function: 'Carry armature current that interacts with the magnetic field to generate torque via the Lorentz force (F = BIL).',
         concepts: ['Electromagnetic Induction', 'F = BIL', 'Coil Turns'],
@@ -185,7 +209,7 @@ export const machineDatabase: Record<MachineType, MachineData> = {
       {
         id: 'stator',
         name: 'Stator (Field Poles)',
-        color: '#4A90A4',
+        color: '#2D5F6E',
         description: 'Stationary poles with field windings that create a strong magnetic field in the air gap.',
         function: 'Provides the magnetic field in which the armature rotates, enabling electromagnetic induction.',
         concepts: ['Magnetic Field', 'Permanent Magnets vs Electromagnets'],
@@ -195,7 +219,7 @@ export const machineDatabase: Record<MachineType, MachineData> = {
       {
         id: 'rotor',
         name: 'Armature Core',
-        color: '#E87D4A',
+        color: '#E05A2A',
         description: 'Laminated iron core that carries the armature windings and rotates within the magnetic field.',
         function: 'Provides a low-reluctance path for magnetic flux and supports the armature windings.',
         concepts: ['Magnetic Reluctance', 'Eddy Currents', 'Lamination'],
@@ -205,7 +229,7 @@ export const machineDatabase: Record<MachineType, MachineData> = {
       {
         id: 'commutator',
         name: 'Commutator',
-        color: '#D4A843',
+        color: '#B8860B',
         description: 'Converts the alternating EMF generated in the armature coils into unidirectional DC output.',
         function: 'Acts as a mechanical rectifier to produce DC output from the AC generated in rotating coils.',
         concepts: ['Rectification', 'EMF Generation', 'AC to DC'],
@@ -215,7 +239,7 @@ export const machineDatabase: Record<MachineType, MachineData> = {
       {
         id: 'brushes',
         name: 'Carbon Brushes',
-        color: '#666666',
+        color: '#444444',
         description: 'Collect the generated current from the rotating commutator and deliver it to the external circuit.',
         function: 'Provide electrical connection between the rotating armature and the stationary external load circuit.',
         concepts: ['Current Collection', 'Contact Resistance'],
@@ -225,7 +249,7 @@ export const machineDatabase: Record<MachineType, MachineData> = {
       {
         id: 'shaft',
         name: 'Shaft',
-        color: '#999999',
+        color: '#C0C0C0',
         description: 'Connected to the prime mover (turbine, engine) that provides the mechanical input energy.',
         function: 'Receives rotational mechanical energy from the prime mover and transfers it to the armature.',
         concepts: ['Prime Mover', 'Mechanical Input', 'RPM'],

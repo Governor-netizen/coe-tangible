@@ -1,12 +1,12 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { MachineData, MachinePart } from '@/data/machineData';
-import { Play, Square, RotateCcw, Layers, BookOpen, Gauge, Zap } from 'lucide-react';
+import { MachineData, generateQuizQuestions, shuffleArray, QuizQuestion } from '@/data/machineData';
+import { Play, Square, Layers, BookOpen, Gauge, Zap, Brain, CheckCircle2, XCircle, Tag } from 'lucide-react';
 
 interface ControlPanelProps {
   machine: MachineData;
@@ -17,6 +17,12 @@ interface ControlPanelProps {
   setAnimationSpeed: (v: number) => void;
   isExploded: boolean;
   setIsExploded: (v: boolean) => void;
+  showLabels: boolean;
+  setShowLabels: (v: boolean) => void;
+  quizMode: boolean;
+  setQuizMode: (v: boolean) => void;
+  quizTargetPart: string | null;
+  setQuizTargetPart: (v: string | null) => void;
 }
 
 export function ControlPanel({
@@ -28,12 +34,26 @@ export function ControlPanel({
   setAnimationSpeed,
   isExploded,
   setIsExploded,
+  showLabels,
+  setShowLabels,
+  quizMode,
+  setQuizMode,
+  quizTargetPart,
+  setQuizTargetPart,
 }: ControlPanelProps) {
   const [labParams, setLabParams] = useState<Record<string, number>>(() => {
     const defaults: Record<string, number> = {};
     machine.labParameters.forEach((p) => (defaults[p.id] = p.defaultValue));
     return defaults;
   });
+
+  // Quiz state
+  const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
+  const [quizIndex, setQuizIndex] = useState(0);
+  const [quizScore, setQuizScore] = useState(0);
+  const [quizTotal, setQuizTotal] = useState(0);
+  const [quizFeedback, setQuizFeedback] = useState<'correct' | 'wrong' | null>(null);
+  const [quizWrongPart, setQuizWrongPart] = useState<string | null>(null);
 
   const labOutputs = useMemo(() => {
     return machine.labOutputs.map((out) => ({
@@ -57,16 +77,76 @@ export function ControlPanel({
     setLabParams(defaults);
   }, [machine.id]);
 
+  // Start quiz
+  const startQuiz = useCallback(() => {
+    const questions = shuffleArray(generateQuizQuestions(machine));
+    setQuizQuestions(questions);
+    setQuizIndex(0);
+    setQuizScore(0);
+    setQuizTotal(0);
+    setQuizFeedback(null);
+    setQuizWrongPart(null);
+    setQuizMode(true);
+    if (questions.length > 0) {
+      setQuizTargetPart(questions[0].targetPartId);
+    }
+  }, [machine, setQuizMode, setQuizTargetPart]);
+
+  const stopQuiz = useCallback(() => {
+    setQuizMode(false);
+    setQuizTargetPart(null);
+    setQuizFeedback(null);
+    setQuizWrongPart(null);
+  }, [setQuizMode, setQuizTargetPart]);
+
+  // Handle quiz answer (called when a part is clicked in quiz mode)
+  useEffect(() => {
+    if (!quizMode || !selectedPart || !quizTargetPart || quizFeedback) return;
+
+    if (selectedPart === quizTargetPart) {
+      setQuizFeedback('correct');
+      setQuizScore((s) => s + 1);
+    } else {
+      setQuizFeedback('wrong');
+      setQuizWrongPart(selectedPart);
+    }
+    setQuizTotal((t) => t + 1);
+  }, [selectedPart, quizMode, quizTargetPart]);
+
+  const nextQuestion = useCallback(() => {
+    const nextIdx = quizIndex + 1;
+    if (nextIdx >= quizQuestions.length) {
+      // Reshuffle
+      const questions = shuffleArray(generateQuizQuestions(machine));
+      setQuizQuestions(questions);
+      setQuizIndex(0);
+      setQuizTargetPart(questions[0]?.targetPartId || null);
+    } else {
+      setQuizIndex(nextIdx);
+      setQuizTargetPart(quizQuestions[nextIdx].targetPartId);
+    }
+    setQuizFeedback(null);
+    setQuizWrongPart(null);
+  }, [quizIndex, quizQuestions, machine, setQuizTargetPart]);
+
+  const currentQuestion = quizQuestions[quizIndex];
+
   return (
     <div className="h-full flex flex-col overflow-hidden">
       {/* Machine title */}
       <div className="p-4 border-b border-border">
         <h2 className="text-lg font-serif font-bold text-foreground">{machine.name}</h2>
         <p className="text-sm text-muted-foreground mt-1">{machine.description}</p>
+        {/* Labels toggle */}
+        <div className="flex items-center gap-2 mt-2">
+          <Tag className="w-3.5 h-3.5 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground">Labels</span>
+          <Switch checked={showLabels} onCheckedChange={setShowLabels} className="scale-75" />
+        </div>
       </div>
 
       <Tabs defaultValue="parts" className="flex-1 flex flex-col overflow-hidden">
-        <TabsList className="mx-4 mt-3 grid grid-cols-4">
+        <TabsList className="mx-4 mt-3 grid grid-cols-5">
           <TabsTrigger value="parts" className="text-xs gap-1">
             <BookOpen className="w-3 h-3" />
             Parts
@@ -83,12 +163,16 @@ export function ControlPanel({
             <Layers className="w-3 h-3" />
             Explode
           </TabsTrigger>
+          <TabsTrigger value="quiz" className="text-xs gap-1">
+            <Brain className="w-3 h-3" />
+            Quiz
+          </TabsTrigger>
         </TabsList>
 
         <div className="flex-1 overflow-y-auto p-4">
           {/* Parts Info Tab */}
           <TabsContent value="parts" className="mt-0">
-            {currentPart ? (
+            {currentPart && !quizMode ? (
               <div className="animate-fade-in space-y-4">
                 <Card>
                   <CardHeader className="pb-3">
@@ -161,13 +245,9 @@ export function ControlPanel({
                     variant={isAnimating ? 'destructive' : 'default'}
                   >
                     {isAnimating ? (
-                      <>
-                        <Square className="w-4 h-4" /> Stop
-                      </>
+                      <><Square className="w-4 h-4" /> Stop</>
                     ) : (
-                      <>
-                        <Play className="w-4 h-4" /> Start
-                      </>
+                      <><Play className="w-4 h-4" /> Start</>
                     )}
                   </Button>
                 </div>
@@ -281,10 +361,7 @@ export function ControlPanel({
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-foreground">Explode Model</span>
-                  <Switch
-                    checked={isExploded}
-                    onCheckedChange={setIsExploded}
-                  />
+                  <Switch checked={isExploded} onCheckedChange={setIsExploded} />
                 </div>
               </CardContent>
             </Card>
@@ -315,6 +392,93 @@ export function ControlPanel({
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Quiz Tab */}
+          <TabsContent value="quiz" className="mt-0 space-y-4">
+            {!quizMode ? (
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Brain className="w-4 h-4" /> Assessment Mode
+                  </CardTitle>
+                  <CardDescription>
+                    Test your knowledge! Identify machine parts by clicking on them in the 3D view.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button onClick={startQuiz} className="w-full">
+                    <Brain className="w-4 h-4" /> Start Quiz
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <>
+                {/* Score */}
+                <Card>
+                  <CardContent className="pt-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-foreground">Score</span>
+                      <span className="text-lg font-mono font-bold text-primary">
+                        {quizScore} / {quizTotal}
+                      </span>
+                    </div>
+                    {quizTotal > 0 && (
+                      <div className="w-full bg-muted rounded-full h-2 mt-2">
+                        <div
+                          className="bg-primary h-2 rounded-full transition-all"
+                          style={{ width: `${(quizScore / quizTotal) * 100}%` }}
+                        />
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Current question */}
+                {currentQuestion && (
+                  <Card>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-base">Find this part:</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
+                        <p className="text-base font-bold text-primary">{currentQuestion.targetPartName}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{currentQuestion.hint}</p>
+                      </div>
+
+                      {quizFeedback === 'correct' && (
+                        <div className="flex items-center gap-2 p-3 rounded-lg bg-green-50 border border-green-200">
+                          <CheckCircle2 className="w-5 h-5 text-green-600" />
+                          <span className="text-sm font-medium text-green-700">Correct! 🎉</span>
+                        </div>
+                      )}
+
+                      {quizFeedback === 'wrong' && (
+                        <div className="p-3 rounded-lg bg-red-50 border border-red-200 space-y-1">
+                          <div className="flex items-center gap-2">
+                            <XCircle className="w-5 h-5 text-red-600" />
+                            <span className="text-sm font-medium text-red-700">
+                              Wrong! You clicked: {machine.parts.find((p) => p.id === quizWrongPart)?.name}
+                            </span>
+                          </div>
+                          <p className="text-xs text-red-600">Try to find the correct part next time.</p>
+                        </div>
+                      )}
+
+                      {quizFeedback && (
+                        <Button onClick={nextQuestion} className="w-full" variant="outline">
+                          Next Question →
+                        </Button>
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
+
+                <Button onClick={stopQuiz} variant="ghost" className="w-full text-muted-foreground">
+                  End Quiz
+                </Button>
+              </>
+            )}
           </TabsContent>
         </div>
       </Tabs>

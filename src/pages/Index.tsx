@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { MachineViewer } from '@/components/MachineViewer';
 import { ControlPanel } from '@/components/ControlPanel';
 import { MachineType, machineDatabase, machineList } from '@/data/machineData';
 import { cn } from '@/lib/utils';
+import { Upload } from 'lucide-react';
 
 const Index = () => {
   const [machineType, setMachineType] = useState<MachineType>('dc-motor');
@@ -10,8 +11,13 @@ const Index = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [animationSpeed, setAnimationSpeed] = useState(1);
   const [isExploded, setIsExploded] = useState(false);
+  const [showLabels, setShowLabels] = useState(true);
+  const [quizMode, setQuizMode] = useState(false);
+  const [quizTargetPart, setQuizTargetPart] = useState<string | null>(null);
+  const [customModelUrl, setCustomModelUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const machine = machineDatabase[machineType];
+  const machine = machineDatabase[machineType] || machineDatabase['dc-motor'];
 
   const handleMachineChange = (id: MachineType) => {
     setMachineType(id);
@@ -19,11 +25,28 @@ const Index = () => {
     setIsAnimating(false);
     setIsExploded(false);
     setAnimationSpeed(1);
+    setQuizMode(false);
+    setQuizTargetPart(null);
   };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    setCustomModelUrl(url);
+    setMachineType('custom');
+    setSelectedPart(null);
+    setIsAnimating(false);
+    setIsExploded(false);
+  };
+
+  const allTabs = [
+    ...machineList,
+    ...(customModelUrl ? [{ id: 'custom' as MachineType, name: 'Custom Model', icon: '📦' }] : []),
+  ];
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      {/* Top Navigation */}
       <header className="border-b border-border bg-card px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -34,10 +57,25 @@ const Index = () => {
               Interactive 3D Learning Platform
             </span>
           </div>
+          <div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".glb,.gltf"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            >
+              <Upload className="w-3.5 h-3.5" />
+              Upload 3D Model
+            </button>
+          </div>
         </div>
-        {/* Machine tabs */}
         <nav className="flex gap-1 mt-3 overflow-x-auto">
-          {machineList.map((m) => (
+          {allTabs.map((m) => (
             <button
               key={m.id}
               onClick={() => handleMachineChange(m.id)}
@@ -55,9 +93,7 @@ const Index = () => {
         </nav>
       </header>
 
-      {/* Split View */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-        {/* 3D Viewer */}
         <div className="flex-1 md:w-[65%] p-3">
           <MachineViewer
             machineType={machineType}
@@ -66,22 +102,31 @@ const Index = () => {
             isAnimating={isAnimating}
             animationSpeed={animationSpeed}
             isExploded={isExploded}
+            showLabels={showLabels}
+            customModelUrl={customModelUrl}
           />
         </div>
 
-        {/* Control Panel */}
-        <div className="md:w-[35%] border-t md:border-t-0 md:border-l border-border bg-card overflow-hidden">
-          <ControlPanel
-            machine={machine}
-            selectedPart={selectedPart}
-            isAnimating={isAnimating}
-            setIsAnimating={setIsAnimating}
-            animationSpeed={animationSpeed}
-            setAnimationSpeed={setAnimationSpeed}
-            isExploded={isExploded}
-            setIsExploded={setIsExploded}
-          />
-        </div>
+        {machineType !== 'custom' && (
+          <div className="md:w-[35%] border-t md:border-t-0 md:border-l border-border bg-card overflow-hidden">
+            <ControlPanel
+              machine={machine}
+              selectedPart={selectedPart}
+              isAnimating={isAnimating}
+              setIsAnimating={setIsAnimating}
+              animationSpeed={animationSpeed}
+              setAnimationSpeed={setAnimationSpeed}
+              isExploded={isExploded}
+              setIsExploded={setIsExploded}
+              showLabels={showLabels}
+              setShowLabels={setShowLabels}
+              quizMode={quizMode}
+              setQuizMode={setQuizMode}
+              quizTargetPart={quizTargetPart}
+              setQuizTargetPart={setQuizTargetPart}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
