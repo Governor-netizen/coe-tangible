@@ -128,8 +128,9 @@ const Index = () => {
                 <span className="hidden sm:inline">Home</span>
               </button>
               <div className="w-px h-5 bg-border" />
+              <img src={logo} alt="Tangible logo" className="w-7 h-7 rounded" />
               <h1 className="text-lg font-serif font-bold text-foreground tracking-tight">
-                ⚡ Machine Explorer
+                Tangible
               </h1>
             </div>
             <div>
