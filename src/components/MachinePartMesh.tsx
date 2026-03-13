@@ -12,6 +12,8 @@ interface MachinePartMeshProps {
   explodeOffset: [number, number, number];
   assemblyOrder: number;
   onClick: (id: string) => void;
+  showLabel?: boolean;
+  labelOffset?: [number, number, number];
   children: React.ReactNode;
 }
 
@@ -24,11 +26,12 @@ export function MachinePartMesh({
   explodeOffset,
   assemblyOrder,
   onClick,
+  showLabel = false,
+  labelOffset = [0, 1.2, 0],
   children,
 }: MachinePartMeshProps) {
   const groupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
-  const targetPos = useRef(new THREE.Vector3(0, 0, 0));
 
   useFrame(() => {
     if (!groupRef.current) return;
@@ -58,7 +61,6 @@ export function MachinePartMesh({
           document.body.style.cursor = 'default';
         }}
       >
-        {/* Clone children and inject material props */}
         <meshStandardMaterial
           color={color}
           emissive={emissiveColor}
@@ -70,6 +72,17 @@ export function MachinePartMesh({
         />
         {children}
       </group>
+
+      {/* Always-on label */}
+      {showLabel && !isExploded && (
+        <Html distanceFactor={10} position={labelOffset} center>
+          <div className="bg-card/80 backdrop-blur border border-border rounded px-1.5 py-0.5 text-[10px] font-medium text-foreground whitespace-nowrap shadow-sm pointer-events-none select-none">
+            {name}
+          </div>
+        </Html>
+      )}
+
+      {/* Exploded view label with assembly order */}
       {isExploded && (
         <Html distanceFactor={8} position={[0, 0.8, 0]} center>
           <div className="bg-card/90 backdrop-blur border border-border rounded px-2 py-1 text-xs font-medium text-foreground whitespace-nowrap shadow-md pointer-events-none">

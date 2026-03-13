@@ -1,10 +1,11 @@
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Environment } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { MachineType } from '@/data/machineData';
 import { DCMotorModel } from './machines/DCMotorModel';
 import { DCGeneratorModel } from './machines/DCGeneratorModel';
 import { TransformerModel } from './machines/TransformerModel';
 import { InductionMotorModel } from './machines/InductionMotorModel';
+import { CustomModel } from './machines/CustomModel';
 import { Suspense } from 'react';
 
 interface MachineViewerProps {
@@ -14,6 +15,8 @@ interface MachineViewerProps {
   isAnimating: boolean;
   animationSpeed: number;
   isExploded: boolean;
+  showLabels?: boolean;
+  customModelUrl?: string | null;
 }
 
 function MachineScene({
@@ -23,8 +26,14 @@ function MachineScene({
   isAnimating,
   animationSpeed,
   isExploded,
+  showLabels = false,
+  customModelUrl,
 }: MachineViewerProps) {
-  const props = { selectedPart, onPartClick, isAnimating, animationSpeed, isExploded };
+  const props = { selectedPart, onPartClick, isAnimating, animationSpeed, isExploded, showLabels };
+
+  if (machineType === 'custom' && customModelUrl) {
+    return <CustomModel url={customModelUrl} isAnimating={isAnimating} animationSpeed={animationSpeed} />;
+  }
 
   switch (machineType) {
     case 'dc-motor':
@@ -35,6 +44,8 @@ function MachineScene({
       return <TransformerModel {...props} />;
     case 'induction-motor':
       return <InductionMotorModel {...props} />;
+    default:
+      return null;
   }
 }
 
@@ -61,7 +72,6 @@ export function MachineViewer(props: MachineViewerProps) {
           <gridHelper args={[10, 10, '#cbd5e1', '#e2e8f0']} position={[0, -2.5, 0]} />
         </Suspense>
       </Canvas>
-      {/* Instructions overlay */}
       <div className="absolute bottom-3 left-3 bg-card/80 backdrop-blur-sm border border-border rounded-md px-3 py-1.5 text-xs text-muted-foreground">
         🖱️ Click parts to learn • Drag to rotate • Scroll to zoom
       </div>
