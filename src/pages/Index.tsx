@@ -47,50 +47,61 @@ const Index = () => {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <header className="border-b border-border bg-card px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h1 className="text-lg font-serif font-bold text-foreground tracking-tight">
-              ⚡ Machine Explorer
-            </h1>
-            <span className="text-xs text-muted-foreground hidden sm:inline">
-              Interactive 3D Learning Platform
-            </span>
+      <header className="relative border-b border-border overflow-hidden">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          src="/videos/hero-bg.mp4"
+        />
+        <div className="absolute inset-0 bg-background/70 backdrop-blur-sm" />
+        <div className="relative z-10 px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <h1 className="text-lg font-serif font-bold text-foreground tracking-tight">
+                ⚡ Machine Explorer
+              </h1>
+              <span className="text-xs text-muted-foreground hidden sm:inline">
+                Interactive 3D Learning Platform
+              </span>
+            </div>
+            <div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".glb,.gltf"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+              >
+                <Upload className="w-3.5 h-3.5" />
+                Upload 3D Model
+              </button>
+            </div>
           </div>
-          <div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".glb,.gltf"
-              onChange={handleFileUpload}
-              className="hidden"
-            />
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-            >
-              <Upload className="w-3.5 h-3.5" />
-              Upload 3D Model
-            </button>
-          </div>
+          <nav className="flex gap-1 mt-3 overflow-x-auto">
+            {allTabs.map((m) => (
+              <button
+                key={m.id}
+                onClick={() => handleMachineChange(m.id)}
+                className={cn(
+                  'px-3 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap',
+                  machineType === m.id
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground hover:bg-muted/80 hover:text-foreground'
+                )}
+              >
+                <span className="mr-1.5">{m.icon}</span>
+                {m.name}
+              </button>
+            ))}
+          </nav>
         </div>
-        <nav className="flex gap-1 mt-3 overflow-x-auto">
-          {allTabs.map((m) => (
-            <button
-              key={m.id}
-              onClick={() => handleMachineChange(m.id)}
-              className={cn(
-                'px-3 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap',
-                machineType === m.id
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-              )}
-            >
-              <span className="mr-1.5">{m.icon}</span>
-              {m.name}
-            </button>
-          ))}
-        </nav>
       </header>
 
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
