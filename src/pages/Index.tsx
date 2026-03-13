@@ -64,11 +64,12 @@ const Index = () => {
         <div className="absolute inset-0 bg-black/30" />
 
         <div className="relative z-10 flex flex-col items-center text-center px-4 max-w-4xl mx-auto">
+          <img src={logo} alt="Tangible logo" className="w-16 h-16 rounded-xl mb-2" />
           <h1
             className="text-5xl sm:text-6xl md:text-7xl font-serif font-bold text-white mb-4"
             style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}
           >
-            ⚡ Machine Explorer
+            Tangible
           </h1>
           <p
             className="text-lg sm:text-xl text-white/85 mb-12 max-w-2xl"
