@@ -14,6 +14,7 @@ interface MachinePartMeshProps {
   onClick: (id: string) => void;
   showLabel?: boolean;
   labelOffset?: [number, number, number];
+  explodeSpread?: number;
   children: React.ReactNode;
 }
 
