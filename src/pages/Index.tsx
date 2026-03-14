@@ -122,6 +122,10 @@ const Index = () => {
               Upload Your Own 3D Model
             </button>
           </div>
+
+          <div className="mt-12 text-white/60 text-sm">
+            <p>Made by: <span className="text-white/80 font-medium">Chris Adabla</span>, <span className="text-white/80 font-medium">Eliana Adzo Amaglo</span>, <span className="text-white/80 font-medium">Chris Ameyaw Kwaku Junior</span></p>
+          </div>
         </div>
       </div>
     );
