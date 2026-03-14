@@ -224,28 +224,26 @@ const Index = () => {
           />
         </div>
 
-        {currentView !== 'custom' && (
-          <div className="md:w-[35%] border-t md:border-t-0 md:border-l overflow-hidden" style={{ background: '#fff', borderColor: '#e2e8f0' }}>
-            <ControlPanel
-              machine={machine}
-              selectedPart={selectedPart}
-              isAnimating={isAnimating}
-              setIsAnimating={setIsAnimating}
-              animationSpeed={animationSpeed}
-              setAnimationSpeed={setAnimationSpeed}
-              isExploded={isExploded}
-              setIsExploded={setIsExploded}
-              showLabels={showLabels}
-              setShowLabels={setShowLabels}
-              quizMode={quizMode}
-              setQuizMode={setQuizMode}
-              quizTargetPart={quizTargetPart}
-              setQuizTargetPart={setQuizTargetPart}
-              explodeSpread={explodeSpread}
-              setExplodeSpread={setExplodeSpread}
-            />
-          </div>
-        )}
+        <div className="md:w-[35%] border-t md:border-t-0 md:border-l overflow-hidden" style={{ background: '#fff', borderColor: '#e2e8f0' }}>
+          <ControlPanel
+            machine={machine}
+            selectedPart={selectedPart}
+            isAnimating={isAnimating}
+            setIsAnimating={setIsAnimating}
+            animationSpeed={animationSpeed}
+            setAnimationSpeed={setAnimationSpeed}
+            isExploded={isExploded}
+            setIsExploded={setIsExploded}
+            showLabels={showLabels}
+            setShowLabels={setShowLabels}
+            quizMode={quizMode}
+            setQuizMode={setQuizMode}
+            quizTargetPart={quizTargetPart}
+            setQuizTargetPart={setQuizTargetPart}
+            explodeSpread={explodeSpread}
+            setExplodeSpread={setExplodeSpread}
+          />
+        </div>
       </div>
     </div>
   );

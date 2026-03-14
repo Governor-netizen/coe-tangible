@@ -79,7 +79,18 @@ function MachineScene({
   const props = { selectedPart, onPartClick, isAnimating, animationSpeed, isExploded, showLabels, explodeSpread };
 
   if (machineType === 'custom' && customModelUrl) {
-    return <CustomModel url={customModelUrl} isAnimating={isAnimating} animationSpeed={animationSpeed} />;
+    return (
+      <CustomModel
+        url={customModelUrl}
+        isAnimating={isAnimating}
+        animationSpeed={animationSpeed}
+        selectedPart={selectedPart}
+        onPartClick={onPartClick}
+        isExploded={isExploded}
+        showLabels={showLabels}
+        explodeSpread={explodeSpread}
+      />
+    );
   }
 
   switch (machineType) {
