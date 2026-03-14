@@ -209,7 +209,7 @@ const Index = () => {
                   if (currentView !== m.id) e.currentTarget.style.background = 'transparent';
                 }}
               >
-                <span className="mr-1.5">{m.icon}</span>
+                {machineIcons[m.id] ? <img src={machineIcons[m.id]} alt={m.name} className="w-5 h-5 object-contain mr-1.5 rounded-sm" /> : <span className="mr-1.5">{m.icon}</span>}
                 {m.name}
               </button>
             ))}
