@@ -165,23 +165,24 @@ export function DCMotorModel({
         labelOffset={[1.2, -1.6, 0]}
       >
         {/* Right brush + holder */}
-        <mesh position={[0.7, -1.6, 0]}>
+        <mesh position={[0.7, -1.6, 0]} castShadow receiveShadow>
           <boxGeometry args={[0.15, 0.4, 0.3]} />
+          <meshStandardMaterial color="#2a2a3e" metalness={0.1} roughness={0.9} />
         </mesh>
-        <mesh position={[0.9, -1.6, 0]}>
+        <mesh position={[0.9, -1.6, 0]} castShadow>
           <boxGeometry args={[0.1, 0.5, 0.35]} />
           <meshStandardMaterial color="#666666" roughness={0.5} metalness={0.3} />
         </mesh>
-        {/* Spring */}
         <mesh position={[0.95, -1.35, 0]}>
           <cylinderGeometry args={[0.03, 0.03, 0.2, 8]} />
           <meshStandardMaterial color="#AAAAAA" roughness={0.3} metalness={0.6} />
         </mesh>
         {/* Left brush + holder */}
-        <mesh position={[-0.7, -1.6, 0]}>
+        <mesh position={[-0.7, -1.6, 0]} castShadow receiveShadow>
           <boxGeometry args={[0.15, 0.4, 0.3]} />
+          <meshStandardMaterial color="#2a2a3e" metalness={0.1} roughness={0.9} />
         </mesh>
-        <mesh position={[-0.9, -1.6, 0]}>
+        <mesh position={[-0.9, -1.6, 0]} castShadow>
           <boxGeometry args={[0.1, 0.5, 0.35]} />
           <meshStandardMaterial color="#666666" roughness={0.5} metalness={0.3} />
         </mesh>
