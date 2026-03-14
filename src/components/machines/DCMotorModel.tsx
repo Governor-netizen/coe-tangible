@@ -100,8 +100,9 @@ export function DCMotorModel({
         labelOffset={[1.2, 0, 0]}
       >
         <group ref={rotorRef}>
-          <mesh>
+          <mesh castShadow receiveShadow>
             <cylinderGeometry args={[0.9, 0.9, 2, 32]} />
+            <meshStandardMaterial color="#4a5568" metalness={0.8} roughness={0.4} />
           </mesh>
           {/* Lamination lines */}
           {[-0.8, -0.4, 0, 0.4, 0.8].map((y, i) => (
@@ -113,9 +114,9 @@ export function DCMotorModel({
           {/* Armature slots */}
           {[0, 1, 2, 3, 4, 5].map((i) => (
             <mesh key={`slot-${i}`} rotation={[0, (i * Math.PI) / 3, 0]}>
-              <mesh position={[0.7, 0, 0]}>
+              <mesh position={[0.7, 0, 0]} castShadow>
                 <boxGeometry args={[0.06, 1.8, 0.12]} />
-                <meshStandardMaterial color="#D4442A" roughness={0.4} metalness={0.3} />
+                <meshStandardMaterial color="#c8400a" metalness={0.6} roughness={0.3} />
               </mesh>
             </mesh>
           ))}
