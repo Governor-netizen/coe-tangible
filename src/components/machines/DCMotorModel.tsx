@@ -40,7 +40,7 @@ export function DCMotorModel({
 
   return (
     <group>
-      {/* Stator - darker housing with pole shoes */}
+      {/* Stator - Yoke/Frame */}
       <MachinePartMesh
         partId="stator"
         name={getPart('stator').name}
@@ -54,30 +54,31 @@ export function DCMotorModel({
         labelOffset={[0, 2, 0]}
       >
         {/* Outer housing */}
-        <mesh>
+        <mesh castShadow receiveShadow>
           <cylinderGeometry args={[1.9, 1.9, 2.6, 32, 1, true]} />
+          <meshStandardMaterial color="#3d4450" metalness={0.7} roughness={0.6} />
         </mesh>
         {/* End caps */}
-        <mesh position={[0, 1.3, 0]}>
+        <mesh position={[0, 1.3, 0]} castShadow receiveShadow>
           <ringGeometry args={[0.6, 1.9, 32]} />
-          <meshStandardMaterial color={getPart('stator').color} roughness={0.35} metalness={0.4} />
+          <meshStandardMaterial color="#3d4450" metalness={0.7} roughness={0.6} />
         </mesh>
-        <mesh position={[0, -1.3, 0]} rotation={[Math.PI, 0, 0]}>
+        <mesh position={[0, -1.3, 0]} rotation={[Math.PI, 0, 0]} castShadow receiveShadow>
           <ringGeometry args={[0.6, 1.9, 32]} />
-          <meshStandardMaterial color={getPart('stator').color} roughness={0.35} metalness={0.4} />
+          <meshStandardMaterial color="#3d4450" metalness={0.7} roughness={0.6} />
         </mesh>
-        {/* Pole shoes - protruding inward */}
+        {/* Pole shoes */}
         {[0, Math.PI].map((angle, i) => (
-          <mesh key={i} position={[Math.cos(angle) * 1.35, 0, Math.sin(angle) * 1.35]} rotation={[0, -angle + Math.PI / 2, 0]}>
+          <mesh key={i} position={[Math.cos(angle) * 1.35, 0, Math.sin(angle) * 1.35]} rotation={[0, -angle + Math.PI / 2, 0]} castShadow receiveShadow>
             <boxGeometry args={[0.6, 2, 0.25]} />
-            <meshStandardMaterial color="#1E4A56" roughness={0.35} metalness={0.4} />
+            <meshStandardMaterial color="#4a5568" metalness={0.8} roughness={0.4} />
           </mesh>
         ))}
         {/* Mounting bolts on end caps */}
         {[0, 1, 2, 3].map((i) => {
           const a = (i * Math.PI) / 2;
           return (
-            <mesh key={`bolt-${i}`} position={[Math.cos(a) * 1.5, 1.35, Math.sin(a) * 1.5]}>
+            <mesh key={`bolt-${i}`} position={[Math.cos(a) * 1.5, 1.35, Math.sin(a) * 1.5]} castShadow>
               <cylinderGeometry args={[0.06, 0.06, 0.15, 8]} />
               <meshStandardMaterial color="#888888" roughness={0.3} metalness={0.7} />
             </mesh>
