@@ -3,7 +3,7 @@ import { MachineViewer } from '@/components/MachineViewer';
 import { ControlPanel } from '@/components/ControlPanel';
 import { MachineType, machineDatabase, machineList } from '@/data/machineData';
 import { cn } from '@/lib/utils';
-import { Upload, Home, ArrowRight, Camera } from 'lucide-react';
+import { Upload, Home, ArrowRight } from 'lucide-react';
 import logo from '@/assets/logo.jpeg';
 import dcMotorIcon from '@/assets/icons/dc-motor.jpeg';
 import dcGeneratorIcon from '@/assets/icons/dc-generator.jpeg';
