@@ -29,6 +29,7 @@ export function MachinePartMesh({
   onClick,
   showLabel = false,
   labelOffset = [0, 1.2, 0],
+  explodeSpread = 1,
   children,
 }: MachinePartMeshProps) {
   const groupRef = useRef<THREE.Group>(null);
