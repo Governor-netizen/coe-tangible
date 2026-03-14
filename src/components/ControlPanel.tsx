@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
@@ -103,9 +103,20 @@ export function ControlPanel({
     setQuizWrongPart(null);
   }, [setQuizMode, setQuizTargetPart]);
 
-  // Handle quiz answer
+  // Track the selectedPart value we've already processed to avoid auto-answering
+  const lastProcessedPart = useRef<string | null>(null);
+
+  // Reset processed part when quiz starts or question changes
+  useEffect(() => {
+    lastProcessedPart.current = selectedPart ?? null;
+  }, [quizTargetPart]);
+
+  // Handle quiz answer — only react to genuinely new clicks
   useEffect(() => {
     if (!quizMode || !selectedPart || !quizTargetPart || quizFeedback) return;
+    if (selectedPart === lastProcessedPart.current) return;
+
+    lastProcessedPart.current = selectedPart;
 
     if (selectedPart === quizTargetPart) {
       setQuizFeedback('correct');
