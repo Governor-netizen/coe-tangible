@@ -1,9 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { MachineViewer } from '@/components/MachineViewer';
 import { ControlPanel } from '@/components/ControlPanel';
 import { MachineType, machineDatabase, machineList } from '@/data/machineData';
 import { cn } from '@/lib/utils';
-import { Upload, Home, ArrowRight } from 'lucide-react';
+import { Upload, Home, ArrowRight, Camera } from 'lucide-react';
 import logo from '@/assets/logo.jpeg';
 
 type View = 'home' | MachineType;
@@ -18,7 +18,9 @@ const Index = () => {
   const [quizMode, setQuizMode] = useState(false);
   const [quizTargetPart, setQuizTargetPart] = useState<string | null>(null);
   const [customModelUrl, setCustomModelUrl] = useState<string | null>(null);
+  const [explodeSpread, setExplodeSpread] = useState(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const machineType = currentView === 'home' ? 'dc-motor' : currentView;
   const machine = machineDatabase[machineType] || machineDatabase['dc-motor'];
@@ -43,6 +45,14 @@ const Index = () => {
     setIsAnimating(false);
     setIsExploded(false);
   };
+
+  const handleScreenshot = useCallback(() => {
+    if (!canvasRef.current) return;
+    const link = document.createElement('a');
+    link.download = `${machine.name.replace(/\s+/g, '-').toLowerCase()}-screenshot.png`;
+    link.href = canvasRef.current.toDataURL('image/png');
+    link.click();
+  }, [machine.name]);
 
   const allTabs = [
     ...machineList,
@@ -115,25 +125,41 @@ const Index = () => {
 
   // EXPLORER VIEW
   return (
-    <div className="flex flex-col h-screen bg-background">
-      <header className="border-b border-border bg-card">
+    <div className="flex flex-col h-screen" style={{ background: '#1e293b' }}>
+      {/* Header - dark slate style */}
+      <header className="border-b" style={{ background: '#1e293b', borderColor: '#334155' }}>
         <div className="px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setCurrentView('home')}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm font-medium text-muted-foreground hover:bg-muted/80 hover:text-foreground transition-colors"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm font-medium transition-colors"
+                style={{ color: '#94a3b8' }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = '#334155'; e.currentTarget.style.color = '#e2e8f0'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#94a3b8'; }}
               >
                 <Home className="w-4 h-4" />
                 <span className="hidden sm:inline">Home</span>
               </button>
-              <div className="w-px h-5 bg-border" />
+              <div className="w-px h-5" style={{ background: '#334155' }} />
               <img src={logo} alt="Tangible logo" className="w-7 h-7 rounded" />
-              <h1 className="text-lg font-serif font-bold text-foreground tracking-tight">
+              <h1 className="text-lg font-serif font-bold tracking-tight" style={{ color: '#e2e8f0' }}>
                 Tangible
               </h1>
             </div>
-            <div>
+            <div className="flex items-center gap-2">
+              {/* Screenshot button */}
+              {currentView !== 'dc-motor' && (
+                <button
+                  onClick={handleScreenshot}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium border transition-colors"
+                  style={{ background: '#fff', borderColor: '#e2e8f0', color: '#475569' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#60a5fa'; e.currentTarget.style.color = '#2563eb'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.color = '#475569'; }}
+                >
+                  📷 Screenshot
+                </button>
+              )}
               <input
                 ref={fileInputRef}
                 type="file"
@@ -143,30 +169,46 @@ const Index = () => {
               />
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
+                style={{ background: '#2563eb', color: '#fff' }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = '#1d4ed8'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = '#2563eb'; }}
               >
                 <Upload className="w-3.5 h-3.5" />
                 Upload 3D Model
               </button>
             </div>
           </div>
+          {/* Tabs */}
           <nav className="flex gap-1 mt-3 overflow-x-auto">
             {allTabs.map((m) => (
               <button
                 key={m.id}
                 onClick={() => handleMachineChange(m.id)}
-                className={cn(
-                  'px-3 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap',
+                className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap"
+                style={
                   currentView === m.id
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:bg-muted/80 hover:text-foreground'
-                )}
+                    ? { background: '#2563eb', color: '#fff' }
+                    : { color: '#cbd5e1' }
+                }
+                onMouseEnter={(e) => {
+                  if (currentView !== m.id) e.currentTarget.style.background = '#334155';
+                }}
+                onMouseLeave={(e) => {
+                  if (currentView !== m.id) e.currentTarget.style.background = 'transparent';
+                }}
               >
                 <span className="mr-1.5">{m.icon}</span>
                 {m.name}
               </button>
             ))}
           </nav>
+          {/* Camera hints */}
+          <div className="flex justify-center gap-4 mt-2 pb-1" style={{ color: '#64748b', fontSize: '11px' }}>
+            <span>🖱️ Drag to rotate</span>
+            <span>🖱️ Scroll to zoom</span>
+            <span>🖱️ Right-click to pan</span>
+          </div>
         </div>
       </header>
 
@@ -181,11 +223,12 @@ const Index = () => {
             isExploded={isExploded}
             showLabels={showLabels}
             customModelUrl={customModelUrl}
+            canvasRef={canvasRef}
           />
         </div>
 
         {currentView !== 'custom' && (
-          <div className="md:w-[35%] border-t md:border-t-0 md:border-l border-border bg-card overflow-hidden">
+          <div className="md:w-[35%] border-t md:border-t-0 md:border-l overflow-hidden" style={{ background: '#fff', borderColor: '#e2e8f0' }}>
             <ControlPanel
               machine={machine}
               selectedPart={selectedPart}
@@ -201,6 +244,8 @@ const Index = () => {
               setQuizMode={setQuizMode}
               quizTargetPart={quizTargetPart}
               setQuizTargetPart={setQuizTargetPart}
+              explodeSpread={explodeSpread}
+              setExplodeSpread={setExplodeSpread}
             />
           </div>
         )}

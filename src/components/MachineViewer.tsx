@@ -6,8 +6,9 @@ import { DCGeneratorModel } from './machines/DCGeneratorModel';
 import { TransformerModel } from './machines/TransformerModel';
 import { InductionMotorModel } from './machines/InductionMotorModel';
 import { CustomModel } from './machines/CustomModel';
-import { Suspense } from 'react';
+import { Suspense, useCallback, useRef } from 'react';
 import { cn } from '@/lib/utils';
+import * as THREE from 'three';
 
 interface MachineViewerProps {
   machineType: MachineType;
@@ -18,6 +19,7 @@ interface MachineViewerProps {
   isExploded: boolean;
   showLabels?: boolean;
   customModelUrl?: string | null;
+  canvasRef?: React.MutableRefObject<HTMLCanvasElement | null>;
 }
 
 const DC_MOTOR_LABELS: { id: string; name: string; top: string; left: string }[] = [
@@ -39,7 +41,6 @@ function SketchfabDCMotor({ selectedPart, onPartClick }: Pick<MachineViewerProps
         allow="autoplay; fullscreen; xr-spatial-tracking"
         allowFullScreen
       />
-      {/* Overlay labels */}
       {DC_MOTOR_LABELS.map((label) => (
         <button
           key={label.id}
@@ -60,6 +61,48 @@ function SketchfabDCMotor({ selectedPart, onPartClick }: Pick<MachineViewerProps
         🖱️ Click labels to learn • Drag to rotate • Scroll to zoom
       </div>
     </div>
+  );
+}
+
+function SceneSetup() {
+  return (
+    <>
+      <color attach="background" args={['#dde3ea']} />
+      <fog attach="fog" args={['#dde3ea', 25, 60]} />
+
+      {/* Ambient */}
+      <ambientLight intensity={0.5} />
+
+      {/* Key light */}
+      <directionalLight
+        position={[5, 10, 7]}
+        intensity={1.5}
+        castShadow
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
+      />
+
+      {/* Fill light */}
+      <directionalLight position={[-5, 3, -3]} intensity={0.5} />
+
+      {/* Rim light */}
+      <directionalLight position={[0, 5, -10]} intensity={0.4} color="#88aaff" />
+
+      {/* Hemisphere */}
+      <hemisphereLight args={['#ddeeff', '#8899aa', 0.4]} />
+
+      {/* Floor */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -3, 0]} receiveShadow>
+        <planeGeometry args={[40, 40]} />
+        <meshStandardMaterial color="#dde3ea" metalness={0.05} roughness={0.9} />
+      </mesh>
+
+      {/* Grid on floor */}
+      <gridHelper
+        args={[30, 50, '#b8c4ce', '#c8d0da']}
+        position={[0, -2.99, 0]}
+      />
+    </>
   );
 }
 
@@ -98,8 +141,24 @@ export function MachineViewer(props: MachineViewerProps) {
   }
 
   return (
-    <div className="w-full h-full min-h-[400px] bg-muted/30 rounded-lg overflow-hidden relative">
-      <Canvas shadows>
+    <div className="w-full h-full min-h-[400px] rounded-lg overflow-hidden relative" style={{ background: '#dde3ea' }}>
+      <Canvas
+        shadows
+        gl={{
+          antialias: true,
+          toneMapping: THREE.ACESFilmicToneMapping,
+          toneMappingExposure: 1.2,
+          pixelRatio: Math.min(window.devicePixelRatio, 2),
+        }}
+        onCreated={({ gl }) => {
+          gl.shadowMap.enabled = true;
+          gl.shadowMap.type = THREE.PCFSoftShadowMap;
+          gl.outputColorSpace = THREE.SRGBColorSpace;
+          if (props.canvasRef) {
+            props.canvasRef.current = gl.domElement;
+          }
+        }}
+      >
         <Suspense fallback={null}>
           <PerspectiveCamera makeDefault position={[4, 3, 4]} fov={45} />
           <OrbitControls
@@ -111,12 +170,8 @@ export function MachineViewer(props: MachineViewerProps) {
             autoRotate={!props.isAnimating && !props.isExploded}
             autoRotateSpeed={0.5}
           />
-          <ambientLight intensity={0.5} />
-          <directionalLight position={[5, 5, 5]} intensity={0.8} castShadow />
-          <directionalLight position={[-3, 3, -3]} intensity={0.3} />
-          <pointLight position={[0, 5, 0]} intensity={0.3} />
+          <SceneSetup />
           <MachineScene {...props} />
-          <gridHelper args={[10, 10, '#cbd5e1', '#e2e8f0']} position={[0, -2.5, 0]} />
         </Suspense>
       </Canvas>
       <div className="absolute bottom-3 left-3 bg-card/80 backdrop-blur-sm border border-border rounded-md px-3 py-1.5 text-xs text-muted-foreground">
