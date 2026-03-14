@@ -103,9 +103,20 @@ export function ControlPanel({
     setQuizWrongPart(null);
   }, [setQuizMode, setQuizTargetPart]);
 
-  // Handle quiz answer
+  // Track the selectedPart value we've already processed to avoid auto-answering
+  const lastProcessedPart = useRef<string | null>(null);
+
+  // Reset processed part when quiz starts or question changes
+  useEffect(() => {
+    lastProcessedPart.current = selectedPart ?? null;
+  }, [quizTargetPart]);
+
+  // Handle quiz answer — only react to genuinely new clicks
   useEffect(() => {
     if (!quizMode || !selectedPart || !quizTargetPart || quizFeedback) return;
+    if (selectedPart === lastProcessedPart.current) return;
+
+    lastProcessedPart.current = selectedPart;
 
     if (selectedPart === quizTargetPart) {
       setQuizFeedback('correct');
