@@ -75,7 +75,7 @@ export function MachinePartMesh({
       )}
 
       {/* Exploded view label with assembly order */}
-      {isExploded && (
+      {isExploded && showLabel && (
         <Html distanceFactor={8} position={[0, 0.8, 0]} center>
           <div className="bg-card/90 backdrop-blur border border-border rounded px-2 py-1 text-xs font-medium text-foreground whitespace-nowrap shadow-md pointer-events-none">
             <span className="text-primary font-bold mr-1">{assemblyOrder}.</span>
