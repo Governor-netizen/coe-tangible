@@ -11,6 +11,7 @@ interface InductionMotorModelProps {
   animationSpeed: number;
   isExploded: boolean;
   showLabels?: boolean;
+  explodeSpread?: number;
 }
 
 export function InductionMotorModel({
@@ -20,6 +21,7 @@ export function InductionMotorModel({
   animationSpeed,
   isExploded,
   showLabels = false,
+  explodeSpread = 1,
 }: InductionMotorModelProps) {
   const rotorRef = useRef<THREE.Group>(null);
   const shaftRef = useRef<THREE.Group>(null);

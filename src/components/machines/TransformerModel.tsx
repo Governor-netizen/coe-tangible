@@ -11,6 +11,7 @@ interface TransformerModelProps {
   animationSpeed: number;
   isExploded: boolean;
   showLabels?: boolean;
+  explodeSpread?: number;
 }
 
 export function TransformerModel({
@@ -20,6 +21,7 @@ export function TransformerModel({
   animationSpeed,
   isExploded,
   showLabels = false,
+  explodeSpread = 1,
 }: TransformerModelProps) {
   const primaryRef = useRef<THREE.Group>(null);
   const secondaryRef = useRef<THREE.Group>(null);

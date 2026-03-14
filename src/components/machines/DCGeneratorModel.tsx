@@ -11,6 +11,7 @@ interface DCGeneratorModelProps {
   animationSpeed: number;
   isExploded: boolean;
   showLabels?: boolean;
+  explodeSpread?: number;
 }
 
 export function DCGeneratorModel({
@@ -20,6 +21,7 @@ export function DCGeneratorModel({
   animationSpeed,
   isExploded,
   showLabels = false,
+  explodeSpread = 1,
 }: DCGeneratorModelProps) {
   const rotorRef = useRef<THREE.Group>(null);
   const commutatorRef = useRef<THREE.Group>(null);

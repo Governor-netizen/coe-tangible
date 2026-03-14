@@ -11,6 +11,7 @@ interface DCMotorModelProps {
   animationSpeed: number;
   isExploded: boolean;
   showLabels?: boolean;
+  explodeSpread?: number;
 }
 
 export function DCMotorModel({
@@ -20,6 +21,7 @@ export function DCMotorModel({
   animationSpeed,
   isExploded,
   showLabels = false,
+  explodeSpread = 1,
 }: DCMotorModelProps) {
   const rotorRef = useRef<THREE.Group>(null);
   const commutatorRef = useRef<THREE.Group>(null);
