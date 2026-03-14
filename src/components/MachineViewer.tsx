@@ -95,10 +95,6 @@ function MachineScene({
 }
 
 export function MachineViewer(props: MachineViewerProps) {
-  // Use Sketchfab embed for DC Motor
-  if (props.machineType === 'dc-motor') {
-    return <SketchfabDCMotor selectedPart={props.selectedPart} onPartClick={props.onPartClick} />;
-  }
 
   return (
     <div className="w-full h-full min-h-[400px] rounded-lg overflow-hidden relative" style={{ background: '#dde3ea' }}>
