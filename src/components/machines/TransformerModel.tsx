@@ -44,11 +44,11 @@ export function TransformerModel({
   return (
     <group>
       <MachinePartMesh partId="core" name={getPart('core').name} color={getPart('core').color} isSelected={selectedPart === 'core'} isExploded={isExploded} explodeOffset={getPart('core').explodeOffset} assemblyOrder={getPart('core').assemblyOrder} onClick={onPartClick} showLabel={showLabels}>
-        <mesh position={[-1.2, 0, 0]}><boxGeometry args={[0.4, 3, 0.8]} /></mesh>
-        <mesh position={[1.2, 0, 0]}><boxGeometry args={[0.4, 3, 0.8]} /></mesh>
-        <mesh position={[0, 1.5, 0]}><boxGeometry args={[2.8, 0.35, 0.8]} /></mesh>
-        <mesh position={[0, -1.5, 0]}><boxGeometry args={[2.8, 0.35, 0.8]} /></mesh>
-        <mesh position={[0, 0, 0]}><boxGeometry args={[0.4, 2.65, 0.8]} /></mesh>
+        <mesh position={[-1.2, 0, 0]} castShadow receiveShadow><boxGeometry args={[0.4, 3, 0.8]} /><meshStandardMaterial color="#4a5568" metalness={0.8} roughness={0.4} /></mesh>
+        <mesh position={[1.2, 0, 0]} castShadow receiveShadow><boxGeometry args={[0.4, 3, 0.8]} /><meshStandardMaterial color="#4a5568" metalness={0.8} roughness={0.4} /></mesh>
+        <mesh position={[0, 1.5, 0]} castShadow receiveShadow><boxGeometry args={[2.8, 0.35, 0.8]} /><meshStandardMaterial color="#4a5568" metalness={0.8} roughness={0.4} /></mesh>
+        <mesh position={[0, -1.5, 0]} castShadow receiveShadow><boxGeometry args={[2.8, 0.35, 0.8]} /><meshStandardMaterial color="#4a5568" metalness={0.8} roughness={0.4} /></mesh>
+        <mesh position={[0, 0, 0]} castShadow receiveShadow><boxGeometry args={[0.4, 2.65, 0.8]} /><meshStandardMaterial color="#4a5568" metalness={0.8} roughness={0.4} /></mesh>
       </MachinePartMesh>
 
       <MachinePartMesh partId="primaryWinding" name={getPart('primaryWinding').name} color={getPart('primaryWinding').color} isSelected={selectedPart === 'primaryWinding'} isExploded={isExploded} explodeOffset={getPart('primaryWinding').explodeOffset} assemblyOrder={getPart('primaryWinding').assemblyOrder} onClick={onPartClick} showLabel={showLabels}>
