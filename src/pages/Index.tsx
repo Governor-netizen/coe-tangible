@@ -5,6 +5,17 @@ import { MachineType, machineDatabase, machineList } from '@/data/machineData';
 import { cn } from '@/lib/utils';
 import { Upload, Home, ArrowRight, Camera } from 'lucide-react';
 import logo from '@/assets/logo.jpeg';
+import dcMotorIcon from '@/assets/icons/dc-motor.jpeg';
+import dcGeneratorIcon from '@/assets/icons/dc-generator.jpeg';
+import transformerIcon from '@/assets/icons/transformer.jpeg';
+import inductionMotorIcon from '@/assets/icons/induction-motor.jpeg';
+
+const machineIcons: Record<string, string> = {
+  'dc-motor': dcMotorIcon,
+  'dc-generator': dcGeneratorIcon,
+  'transformer': transformerIcon,
+  'induction-motor': inductionMotorIcon,
+};
 
 type View = 'home' | MachineType;
 
