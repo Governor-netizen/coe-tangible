@@ -40,7 +40,7 @@ export function DCMotorModel({
 
   return (
     <group>
-      {/* Stator - darker housing with pole shoes */}
+      {/* Stator - Yoke/Frame */}
       <MachinePartMesh
         partId="stator"
         name={getPart('stator').name}
@@ -54,30 +54,31 @@ export function DCMotorModel({
         labelOffset={[0, 2, 0]}
       >
         {/* Outer housing */}
-        <mesh>
+        <mesh castShadow receiveShadow>
           <cylinderGeometry args={[1.9, 1.9, 2.6, 32, 1, true]} />
+          <meshStandardMaterial color="#3d4450" metalness={0.7} roughness={0.6} />
         </mesh>
         {/* End caps */}
-        <mesh position={[0, 1.3, 0]}>
+        <mesh position={[0, 1.3, 0]} castShadow receiveShadow>
           <ringGeometry args={[0.6, 1.9, 32]} />
-          <meshStandardMaterial color={getPart('stator').color} roughness={0.35} metalness={0.4} />
+          <meshStandardMaterial color="#3d4450" metalness={0.7} roughness={0.6} />
         </mesh>
-        <mesh position={[0, -1.3, 0]} rotation={[Math.PI, 0, 0]}>
+        <mesh position={[0, -1.3, 0]} rotation={[Math.PI, 0, 0]} castShadow receiveShadow>
           <ringGeometry args={[0.6, 1.9, 32]} />
-          <meshStandardMaterial color={getPart('stator').color} roughness={0.35} metalness={0.4} />
+          <meshStandardMaterial color="#3d4450" metalness={0.7} roughness={0.6} />
         </mesh>
-        {/* Pole shoes - protruding inward */}
+        {/* Pole shoes */}
         {[0, Math.PI].map((angle, i) => (
-          <mesh key={i} position={[Math.cos(angle) * 1.35, 0, Math.sin(angle) * 1.35]} rotation={[0, -angle + Math.PI / 2, 0]}>
+          <mesh key={i} position={[Math.cos(angle) * 1.35, 0, Math.sin(angle) * 1.35]} rotation={[0, -angle + Math.PI / 2, 0]} castShadow receiveShadow>
             <boxGeometry args={[0.6, 2, 0.25]} />
-            <meshStandardMaterial color="#1E4A56" roughness={0.35} metalness={0.4} />
+            <meshStandardMaterial color="#4a5568" metalness={0.8} roughness={0.4} />
           </mesh>
         ))}
         {/* Mounting bolts on end caps */}
         {[0, 1, 2, 3].map((i) => {
           const a = (i * Math.PI) / 2;
           return (
-            <mesh key={`bolt-${i}`} position={[Math.cos(a) * 1.5, 1.35, Math.sin(a) * 1.5]}>
+            <mesh key={`bolt-${i}`} position={[Math.cos(a) * 1.5, 1.35, Math.sin(a) * 1.5]} castShadow>
               <cylinderGeometry args={[0.06, 0.06, 0.15, 8]} />
               <meshStandardMaterial color="#888888" roughness={0.3} metalness={0.7} />
             </mesh>
@@ -99,8 +100,9 @@ export function DCMotorModel({
         labelOffset={[1.2, 0, 0]}
       >
         <group ref={rotorRef}>
-          <mesh>
+          <mesh castShadow receiveShadow>
             <cylinderGeometry args={[0.9, 0.9, 2, 32]} />
+            <meshStandardMaterial color="#4a5568" metalness={0.8} roughness={0.4} />
           </mesh>
           {/* Lamination lines */}
           {[-0.8, -0.4, 0, 0.4, 0.8].map((y, i) => (
@@ -112,9 +114,9 @@ export function DCMotorModel({
           {/* Armature slots */}
           {[0, 1, 2, 3, 4, 5].map((i) => (
             <mesh key={`slot-${i}`} rotation={[0, (i * Math.PI) / 3, 0]}>
-              <mesh position={[0.7, 0, 0]}>
+              <mesh position={[0.7, 0, 0]} castShadow>
                 <boxGeometry args={[0.06, 1.8, 0.12]} />
-                <meshStandardMaterial color="#D4442A" roughness={0.4} metalness={0.3} />
+                <meshStandardMaterial color="#c8400a" metalness={0.6} roughness={0.3} />
               </mesh>
             </mesh>
           ))}
@@ -135,15 +137,14 @@ export function DCMotorModel({
         labelOffset={[0.8, -1.6, 0]}
       >
         <group ref={commutatorRef}>
-          {/* Segmented copper ring */}
           {Array.from({ length: 8 }).map((_, i) => {
             const angle = (i / 8) * Math.PI * 2;
             const nextAngle = ((i + 1) / 8) * Math.PI * 2;
             const midAngle = (angle + nextAngle) / 2;
             return (
-              <mesh key={i} position={[Math.cos(midAngle) * 0.38, -1.6, Math.sin(midAngle) * 0.38]} rotation={[0, -midAngle, 0]}>
+              <mesh key={i} position={[Math.cos(midAngle) * 0.38, -1.6, Math.sin(midAngle) * 0.38]} rotation={[0, -midAngle, 0]} castShadow receiveShadow>
                 <boxGeometry args={[0.28, 0.5, 0.06]} />
-                <meshStandardMaterial color={i % 2 === 0 ? '#B8860B' : '#9A7209'} roughness={0.25} metalness={0.7} />
+                <meshStandardMaterial color={i % 2 === 0 ? '#b87333' : '#a06428'} metalness={0.9} roughness={0.2} />
               </mesh>
             );
           })}
@@ -164,23 +165,24 @@ export function DCMotorModel({
         labelOffset={[1.2, -1.6, 0]}
       >
         {/* Right brush + holder */}
-        <mesh position={[0.7, -1.6, 0]}>
+        <mesh position={[0.7, -1.6, 0]} castShadow receiveShadow>
           <boxGeometry args={[0.15, 0.4, 0.3]} />
+          <meshStandardMaterial color="#2a2a3e" metalness={0.1} roughness={0.9} />
         </mesh>
-        <mesh position={[0.9, -1.6, 0]}>
+        <mesh position={[0.9, -1.6, 0]} castShadow>
           <boxGeometry args={[0.1, 0.5, 0.35]} />
           <meshStandardMaterial color="#666666" roughness={0.5} metalness={0.3} />
         </mesh>
-        {/* Spring */}
         <mesh position={[0.95, -1.35, 0]}>
           <cylinderGeometry args={[0.03, 0.03, 0.2, 8]} />
           <meshStandardMaterial color="#AAAAAA" roughness={0.3} metalness={0.6} />
         </mesh>
         {/* Left brush + holder */}
-        <mesh position={[-0.7, -1.6, 0]}>
+        <mesh position={[-0.7, -1.6, 0]} castShadow receiveShadow>
           <boxGeometry args={[0.15, 0.4, 0.3]} />
+          <meshStandardMaterial color="#2a2a3e" metalness={0.1} roughness={0.9} />
         </mesh>
-        <mesh position={[-0.9, -1.6, 0]}>
+        <mesh position={[-0.9, -1.6, 0]} castShadow>
           <boxGeometry args={[0.1, 0.5, 0.35]} />
           <meshStandardMaterial color="#666666" roughness={0.5} metalness={0.3} />
         </mesh>
@@ -204,8 +206,9 @@ export function DCMotorModel({
         labelOffset={[0, 2.8, 0]}
       >
         <group ref={shaftRef}>
-          <mesh>
+          <mesh castShadow receiveShadow>
             <cylinderGeometry args={[0.12, 0.12, 5, 16]} />
+            <meshStandardMaterial color="#d4d8e0" metalness={1.0} roughness={0.05} />
           </mesh>
         </group>
       </MachinePartMesh>
@@ -225,8 +228,9 @@ export function DCMotorModel({
       >
         <group ref={windingsRef}>
           {[0.6, 0, -0.6].map((y, i) => (
-            <mesh key={i} position={[0, y, 0]} rotation={[Math.PI / 2, 0, (i * Math.PI) / 3]}>
+            <mesh key={i} position={[0, y, 0]} rotation={[Math.PI / 2, 0, (i * Math.PI) / 3]} castShadow receiveShadow>
               <torusGeometry args={[0.65, 0.1, 8, 24]} />
+              <meshStandardMaterial color="#c8400a" metalness={0.6} roughness={0.3} />
             </mesh>
           ))}
         </group>
