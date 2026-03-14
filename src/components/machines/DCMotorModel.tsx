@@ -206,8 +206,9 @@ export function DCMotorModel({
         labelOffset={[0, 2.8, 0]}
       >
         <group ref={shaftRef}>
-          <mesh>
+          <mesh castShadow receiveShadow>
             <cylinderGeometry args={[0.12, 0.12, 5, 16]} />
+            <meshStandardMaterial color="#d4d8e0" metalness={1.0} roughness={0.05} />
           </mesh>
         </group>
       </MachinePartMesh>
