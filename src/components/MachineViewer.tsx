@@ -20,6 +20,7 @@ interface MachineViewerProps {
   showLabels?: boolean;
   customModelUrl?: string | null;
   canvasRef?: React.MutableRefObject<HTMLCanvasElement | null>;
+  explodeSpread?: number;
 }
 
 function SceneSetup() {
@@ -73,8 +74,9 @@ function MachineScene({
   isExploded,
   showLabels = false,
   customModelUrl,
+  explodeSpread = 1,
 }: MachineViewerProps) {
-  const props = { selectedPart, onPartClick, isAnimating, animationSpeed, isExploded, showLabels };
+  const props = { selectedPart, onPartClick, isAnimating, animationSpeed, isExploded, showLabels, explodeSpread };
 
   if (machineType === 'custom' && customModelUrl) {
     return <CustomModel url={customModelUrl} isAnimating={isAnimating} animationSpeed={animationSpeed} />;

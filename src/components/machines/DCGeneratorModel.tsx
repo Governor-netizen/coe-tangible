@@ -11,6 +11,7 @@ interface DCGeneratorModelProps {
   animationSpeed: number;
   isExploded: boolean;
   showLabels?: boolean;
+  explodeSpread?: number;
 }
 
 export function DCGeneratorModel({
@@ -20,6 +21,7 @@ export function DCGeneratorModel({
   animationSpeed,
   isExploded,
   showLabels = false,
+  explodeSpread = 1,
 }: DCGeneratorModelProps) {
   const rotorRef = useRef<THREE.Group>(null);
   const commutatorRef = useRef<THREE.Group>(null);
@@ -49,6 +51,7 @@ export function DCGeneratorModel({
         assemblyOrder={getPart('stator').assemblyOrder}
         onClick={onPartClick}
         showLabel={showLabels}
+        explodeSpread={explodeSpread}
         labelOffset={[0, 2, 0]}
       >
         <mesh castShadow receiveShadow>
@@ -104,6 +107,7 @@ export function DCGeneratorModel({
         assemblyOrder={getPart('rotor').assemblyOrder}
         onClick={onPartClick}
         showLabel={showLabels}
+        explodeSpread={explodeSpread}
         labelOffset={[1.2, 0, 0]}
       >
         <group ref={rotorRef}>
@@ -141,6 +145,7 @@ export function DCGeneratorModel({
         assemblyOrder={getPart('commutator').assemblyOrder}
         onClick={onPartClick}
         showLabel={showLabels}
+        explodeSpread={explodeSpread}
         labelOffset={[0.8, -1.6, 0]}
       >
         <group ref={commutatorRef}>
@@ -171,6 +176,7 @@ export function DCGeneratorModel({
         assemblyOrder={getPart('brushes').assemblyOrder}
         onClick={onPartClick}
         showLabel={showLabels}
+        explodeSpread={explodeSpread}
         labelOffset={[1.2, -1.6, 0]}
       >
         <mesh position={[0.65, -1.6, 0]} castShadow receiveShadow>
@@ -210,6 +216,7 @@ export function DCGeneratorModel({
         assemblyOrder={getPart('shaft').assemblyOrder}
         onClick={onPartClick}
         showLabel={showLabels}
+        explodeSpread={explodeSpread}
         labelOffset={[0, 2.8, 0]}
       >
         <group ref={shaftRef}>

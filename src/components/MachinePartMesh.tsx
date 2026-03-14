@@ -14,6 +14,7 @@ interface MachinePartMeshProps {
   onClick: (id: string) => void;
   showLabel?: boolean;
   labelOffset?: [number, number, number];
+  explodeSpread?: number;
   children: React.ReactNode;
 }
 
@@ -28,6 +29,7 @@ export function MachinePartMesh({
   onClick,
   showLabel = false,
   labelOffset = [0, 1.2, 0],
+  explodeSpread = 1,
   children,
 }: MachinePartMeshProps) {
   const groupRef = useRef<THREE.Group>(null);
@@ -36,7 +38,7 @@ export function MachinePartMesh({
   useFrame(() => {
     if (!groupRef.current) return;
     const target = isExploded
-      ? new THREE.Vector3(...explodeOffset)
+      ? new THREE.Vector3(explodeOffset[0] * explodeSpread, explodeOffset[1] * explodeSpread, explodeOffset[2] * explodeSpread)
       : new THREE.Vector3(0, 0, 0);
     groupRef.current.position.lerp(target, 0.08);
   });

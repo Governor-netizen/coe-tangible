@@ -216,6 +216,7 @@ const Index = () => {
             showLabels={showLabels}
             customModelUrl={customModelUrl}
             canvasRef={canvasRef}
+            explodeSpread={explodeSpread}
           />
         </div>
 

@@ -11,6 +11,7 @@ interface TransformerModelProps {
   animationSpeed: number;
   isExploded: boolean;
   showLabels?: boolean;
+  explodeSpread?: number;
 }
 
 export function TransformerModel({
@@ -20,6 +21,7 @@ export function TransformerModel({
   animationSpeed,
   isExploded,
   showLabels = false,
+  explodeSpread = 1,
 }: TransformerModelProps) {
   const primaryRef = useRef<THREE.Group>(null);
   const secondaryRef = useRef<THREE.Group>(null);
@@ -44,7 +46,7 @@ export function TransformerModel({
   return (
     <group>
       {/* CORE with lamination lines */}
-      <MachinePartMesh partId="core" name={getPart('core').name} color={getPart('core').color} isSelected={selectedPart === 'core'} isExploded={isExploded} explodeOffset={getPart('core').explodeOffset} assemblyOrder={getPart('core').assemblyOrder} onClick={onPartClick} showLabel={showLabels}>
+      <MachinePartMesh partId="core" name={getPart('core').name} color={getPart('core').color} isSelected={selectedPart === 'core'} isExploded={isExploded} explodeOffset={getPart('core').explodeOffset} assemblyOrder={getPart('core').assemblyOrder} onClick={onPartClick} showLabel={showLabels} explodeSpread={explodeSpread}>
         {/* Left limb */}
         <mesh position={[-1.2, 0, 0]} castShadow receiveShadow>
           <boxGeometry args={[0.4, 3, 0.8]} />
@@ -98,7 +100,7 @@ export function TransformerModel({
       </MachinePartMesh>
 
       {/* PRIMARY WINDING - 8 turns */}
-      <MachinePartMesh partId="primaryWinding" name={getPart('primaryWinding').name} color={getPart('primaryWinding').color} isSelected={selectedPart === 'primaryWinding'} isExploded={isExploded} explodeOffset={getPart('primaryWinding').explodeOffset} assemblyOrder={getPart('primaryWinding').assemblyOrder} onClick={onPartClick} showLabel={showLabels}>
+      <MachinePartMesh partId="primaryWinding" name={getPart('primaryWinding').name} color={getPart('primaryWinding').color} isSelected={selectedPart === 'primaryWinding'} isExploded={isExploded} explodeOffset={getPart('primaryWinding').explodeOffset} assemblyOrder={getPart('primaryWinding').assemblyOrder} onClick={onPartClick} showLabel={showLabels} explodeSpread={explodeSpread}>
         <group ref={primaryRef}>
           {Array.from({ length: 8 }).map((_, i) => (
             <mesh key={i} position={[-0.6, -0.9 + i * 0.26, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow receiveShadow>
@@ -110,7 +112,7 @@ export function TransformerModel({
       </MachinePartMesh>
 
       {/* SECONDARY WINDING - 8 turns */}
-      <MachinePartMesh partId="secondaryWinding" name={getPart('secondaryWinding').name} color={getPart('secondaryWinding').color} isSelected={selectedPart === 'secondaryWinding'} isExploded={isExploded} explodeOffset={getPart('secondaryWinding').explodeOffset} assemblyOrder={getPart('secondaryWinding').assemblyOrder} onClick={onPartClick} showLabel={showLabels}>
+      <MachinePartMesh partId="secondaryWinding" name={getPart('secondaryWinding').name} color={getPart('secondaryWinding').color} isSelected={selectedPart === 'secondaryWinding'} isExploded={isExploded} explodeOffset={getPart('secondaryWinding').explodeOffset} assemblyOrder={getPart('secondaryWinding').assemblyOrder} onClick={onPartClick} showLabel={showLabels} explodeSpread={explodeSpread}>
         <group ref={secondaryRef}>
           {Array.from({ length: 8 }).map((_, i) => (
             <mesh key={i} position={[0.6, -0.9 + i * 0.26, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow receiveShadow>
@@ -122,7 +124,7 @@ export function TransformerModel({
       </MachinePartMesh>
 
       {/* INSULATION */}
-      <MachinePartMesh partId="insulation" name={getPart('insulation').name} color={getPart('insulation').color} isSelected={selectedPart === 'insulation'} isExploded={isExploded} explodeOffset={getPart('insulation').explodeOffset} assemblyOrder={getPart('insulation').assemblyOrder} onClick={onPartClick} showLabel={showLabels}>
+      <MachinePartMesh partId="insulation" name={getPart('insulation').name} color={getPart('insulation').color} isSelected={selectedPart === 'insulation'} isExploded={isExploded} explodeOffset={getPart('insulation').explodeOffset} assemblyOrder={getPart('insulation').assemblyOrder} onClick={onPartClick} showLabel={showLabels} explodeSpread={explodeSpread}>
         <mesh position={[-0.6, 0, 0]} castShadow receiveShadow>
           <cylinderGeometry args={[0.48, 0.48, 2.2, 32, 1, true]} />
           <meshStandardMaterial color="#e8d5a3" metalness={0.0} roughness={0.8} transparent opacity={0.5} side={THREE.DoubleSide} />

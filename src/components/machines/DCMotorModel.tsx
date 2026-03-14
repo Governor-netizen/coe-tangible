@@ -11,6 +11,7 @@ interface DCMotorModelProps {
   animationSpeed: number;
   isExploded: boolean;
   showLabels?: boolean;
+  explodeSpread?: number;
 }
 
 export function DCMotorModel({
@@ -20,6 +21,7 @@ export function DCMotorModel({
   animationSpeed,
   isExploded,
   showLabels = false,
+  explodeSpread = 1,
 }: DCMotorModelProps) {
   const rotorRef = useRef<THREE.Group>(null);
   const commutatorRef = useRef<THREE.Group>(null);
@@ -51,6 +53,7 @@ export function DCMotorModel({
         assemblyOrder={getPart('stator').assemblyOrder}
         onClick={onPartClick}
         showLabel={showLabels}
+        explodeSpread={explodeSpread}
         labelOffset={[0, 2, 0]}
       >
         {/* Outer housing - high poly */}
@@ -108,6 +111,7 @@ export function DCMotorModel({
         assemblyOrder={getPart('rotor').assemblyOrder}
         onClick={onPartClick}
         showLabel={showLabels}
+        explodeSpread={explodeSpread}
         labelOffset={[1.2, 0, 0]}
       >
         <group ref={rotorRef}>
@@ -145,6 +149,7 @@ export function DCMotorModel({
         assemblyOrder={getPart('commutator').assemblyOrder}
         onClick={onPartClick}
         showLabel={showLabels}
+        explodeSpread={explodeSpread}
         labelOffset={[0.8, -1.6, 0]}
       >
         <group ref={commutatorRef}>
@@ -188,6 +193,7 @@ export function DCMotorModel({
         assemblyOrder={getPart('brushes').assemblyOrder}
         onClick={onPartClick}
         showLabel={showLabels}
+        explodeSpread={explodeSpread}
         labelOffset={[1.2, -1.6, 0]}
       >
         {/* Right brush + holder + spring */}
@@ -229,6 +235,7 @@ export function DCMotorModel({
         assemblyOrder={getPart('shaft').assemblyOrder}
         onClick={onPartClick}
         showLabel={showLabels}
+        explodeSpread={explodeSpread}
         labelOffset={[0, 2.8, 0]}
       >
         <group ref={shaftRef}>
@@ -257,6 +264,7 @@ export function DCMotorModel({
         assemblyOrder={getPart('windings').assemblyOrder}
         onClick={onPartClick}
         showLabel={showLabels}
+        explodeSpread={explodeSpread}
         labelOffset={[1, 0.4, 0]}
       >
         <group ref={windingsRef}>
