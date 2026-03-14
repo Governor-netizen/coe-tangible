@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera, Environment } from '@react-three/drei';
 import { MachineType } from '@/data/machineData';
 import { DCMotorModel } from './machines/DCMotorModel';
 import { DCGeneratorModel } from './machines/DCGeneratorModel';
@@ -170,6 +170,7 @@ export function MachineViewer(props: MachineViewerProps) {
             autoRotate={!props.isAnimating && !props.isExploded}
             autoRotateSpeed={0.5}
           />
+          <Environment preset="studio" />
           <SceneSetup />
           <MachineScene {...props} />
         </Suspense>
