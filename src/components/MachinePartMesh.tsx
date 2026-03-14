@@ -38,7 +38,7 @@ export function MachinePartMesh({
   useFrame(() => {
     if (!groupRef.current) return;
     const target = isExploded
-      ? new THREE.Vector3(...explodeOffset)
+      ? new THREE.Vector3(explodeOffset[0] * explodeSpread, explodeOffset[1] * explodeSpread, explodeOffset[2] * explodeSpread)
       : new THREE.Vector3(0, 0, 0);
     groupRef.current.position.lerp(target, 0.08);
   });

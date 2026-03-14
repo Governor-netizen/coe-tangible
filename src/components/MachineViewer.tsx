@@ -74,8 +74,9 @@ function MachineScene({
   isExploded,
   showLabels = false,
   customModelUrl,
+  explodeSpread = 1,
 }: MachineViewerProps) {
-  const props = { selectedPart, onPartClick, isAnimating, animationSpeed, isExploded, showLabels };
+  const props = { selectedPart, onPartClick, isAnimating, animationSpeed, isExploded, showLabels, explodeSpread };
 
   if (machineType === 'custom' && customModelUrl) {
     return <CustomModel url={customModelUrl} isAnimating={isAnimating} animationSpeed={animationSpeed} />;
