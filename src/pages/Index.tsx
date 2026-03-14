@@ -3,7 +3,7 @@ import { MachineViewer } from '@/components/MachineViewer';
 import { ControlPanel } from '@/components/ControlPanel';
 import { MachineType, machineDatabase, machineList } from '@/data/machineData';
 import { cn } from '@/lib/utils';
-import { Upload, Home, ArrowRight, Camera } from 'lucide-react';
+import { Upload, Home, ArrowRight } from 'lucide-react';
 import logo from '@/assets/logo.jpeg';
 import dcMotorIcon from '@/assets/icons/dc-motor.jpeg';
 import dcGeneratorIcon from '@/assets/icons/dc-generator.jpeg';
@@ -57,13 +57,6 @@ const Index = () => {
     setIsExploded(false);
   };
 
-  const handleScreenshot = useCallback(() => {
-    if (!canvasRef.current) return;
-    const link = document.createElement('a');
-    link.download = `${machine.name.replace(/\s+/g, '-').toLowerCase()}-screenshot.png`;
-    link.href = canvasRef.current.toDataURL('image/png');
-    link.click();
-  }, [machine.name]);
 
   const allTabs = [
     ...machineList,
@@ -159,18 +152,6 @@ const Index = () => {
               </h1>
             </div>
             <div className="flex items-center gap-2">
-              {/* Screenshot button */}
-              {currentView !== 'dc-motor' && (
-                <button
-                  onClick={handleScreenshot}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium border transition-colors"
-                  style={{ background: '#fff', borderColor: '#e2e8f0', color: '#475569' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#60a5fa'; e.currentTarget.style.color = '#2563eb'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.color = '#475569'; }}
-                >
-                  📷 Screenshot
-                </button>
-              )}
               <input
                 ref={fileInputRef}
                 type="file"
