@@ -57,13 +57,6 @@ const Index = () => {
     setIsExploded(false);
   };
 
-  const handleScreenshot = useCallback(() => {
-    if (!canvasRef.current) return;
-    const link = document.createElement('a');
-    link.download = `${machine.name.replace(/\s+/g, '-').toLowerCase()}-screenshot.png`;
-    link.href = canvasRef.current.toDataURL('image/png');
-    link.click();
-  }, [machine.name]);
 
   const allTabs = [
     ...machineList,
