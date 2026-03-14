@@ -81,6 +81,8 @@ function MachineScene({
   }
 
   switch (machineType) {
+    case 'dc-motor':
+      return <DCMotorModel {...props} />;
     case 'dc-generator':
       return <DCGeneratorModel {...props} />;
     case 'transformer':
