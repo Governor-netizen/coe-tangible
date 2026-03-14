@@ -41,8 +41,9 @@ export function MachinePartMesh({
     groupRef.current.position.lerp(target, 0.08);
   });
 
-  const emissiveColor = isSelected ? '#00bcd4' : hovered ? '#80deea' : '#000000';
-  const emissiveIntensity = isSelected ? 0.4 : hovered ? 0.25 : 0;
+  // Updated emissive colors per spec
+  const emissiveColor = isSelected ? '#06b6d4' : hovered ? '#2563eb' : '#000000';
+  const emissiveIntensity = isSelected ? 0.35 : hovered ? 0.15 : 0;
 
   return (
     <group ref={groupRef}>

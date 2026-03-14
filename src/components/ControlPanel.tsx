@@ -23,6 +23,8 @@ interface ControlPanelProps {
   setQuizMode: (v: boolean) => void;
   quizTargetPart: string | null;
   setQuizTargetPart: (v: string | null) => void;
+  explodeSpread?: number;
+  setExplodeSpread?: (v: number) => void;
 }
 
 export function ControlPanel({
@@ -40,6 +42,8 @@ export function ControlPanel({
   setQuizMode,
   quizTargetPart,
   setQuizTargetPart,
+  explodeSpread = 1,
+  setExplodeSpread,
 }: ControlPanelProps) {
   const [labParams, setLabParams] = useState<Record<string, number>>(() => {
     const defaults: Record<string, number> = {};
@@ -99,7 +103,7 @@ export function ControlPanel({
     setQuizWrongPart(null);
   }, [setQuizMode, setQuizTargetPart]);
 
-  // Handle quiz answer (called when a part is clicked in quiz mode)
+  // Handle quiz answer
   useEffect(() => {
     if (!quizMode || !selectedPart || !quizTargetPart || quizFeedback) return;
 
@@ -116,7 +120,6 @@ export function ControlPanel({
   const nextQuestion = useCallback(() => {
     const nextIdx = quizIndex + 1;
     if (nextIdx >= quizQuestions.length) {
-      // Reshuffle
       const questions = shuffleArray(generateQuizQuestions(machine));
       setQuizQuestions(questions);
       setQuizIndex(0);
@@ -132,15 +135,15 @@ export function ControlPanel({
   const currentQuestion = quizQuestions[quizIndex];
 
   return (
-    <div className="h-full flex flex-col overflow-hidden">
+    <div className="h-full flex flex-col overflow-hidden" style={{ background: '#fff', borderColor: '#e2e8f0' }}>
       {/* Machine title */}
-      <div className="p-4 border-b border-border">
-        <h2 className="text-lg font-serif font-bold text-foreground">{machine.name}</h2>
-        <p className="text-sm text-muted-foreground mt-1">{machine.description}</p>
+      <div className="p-4" style={{ borderBottom: '1px solid #e2e8f0' }}>
+        <h2 className="text-lg font-serif font-bold" style={{ color: '#1e293b' }}>{machine.name}</h2>
+        <p className="text-sm mt-1" style={{ color: '#64748b' }}>{machine.description}</p>
         {/* Labels toggle */}
         <div className="flex items-center gap-2 mt-2">
-          <Tag className="w-3.5 h-3.5 text-muted-foreground" />
-          <span className="text-xs text-muted-foreground">Labels</span>
+          <Tag className="w-3.5 h-3.5" style={{ color: '#94a3b8' }} />
+          <span className="text-xs" style={{ color: '#94a3b8' }}>Labels</span>
           <Switch checked={showLabels} onCheckedChange={setShowLabels} className="scale-75" />
         </div>
       </div>
@@ -174,105 +177,87 @@ export function ControlPanel({
           <TabsContent value="parts" className="mt-0">
             {currentPart && !quizMode ? (
               <div className="animate-fade-in space-y-4">
-                <Card>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="w-4 h-4 rounded-full border border-border"
-                        style={{ backgroundColor: currentPart.color }}
-                      />
-                      <CardTitle className="text-base">{currentPart.name}</CardTitle>
-                    </div>
-                    <Badge variant="outline" className="w-fit text-xs">
-                      Assembly Order: #{currentPart.assemblyOrder}
-                    </Badge>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div>
-                      <h4 className="text-sm font-semibold text-foreground mb-1">Description</h4>
-                      <p className="text-sm text-muted-foreground">{currentPart.description}</p>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-foreground mb-1">Function</h4>
-                      <p className="text-sm text-muted-foreground">{currentPart.function}</p>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-foreground mb-2">Related Concepts</h4>
-                      <div className="flex flex-wrap gap-1.5">
-                        {currentPart.concepts.map((c) => (
-                          <Badge key={c} variant="secondary" className="text-xs">
-                            {c}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                {/* Part name heading */}
+                <h3 className="text-xl font-bold" style={{ color: '#1e293b' }}>{currentPart.name}</h3>
+
+                {/* Description */}
+                <p className="text-sm leading-relaxed" style={{ color: '#475569' }}>{currentPart.description}</p>
+
+                {/* Did You Know? card */}
+                <div className="rounded-r-xl p-4" style={{ background: '#eff6ff', borderLeft: '4px solid #3b82f6' }}>
+                  <p className="text-xs font-bold mb-1" style={{ color: '#1e40af' }}>💡 Did You Know?</p>
+                  <p className="text-sm" style={{ color: '#1e40af' }}>{currentPart.function}</p>
+                </div>
+
+                {/* Related Concepts */}
+                <div>
+                  <h4 className="text-sm font-semibold mb-2" style={{ color: '#1e293b' }}>Related Concepts</h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {currentPart.concepts.map((c) => (
+                      <Badge key={c} variant="secondary" className="text-xs">
+                        {c}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Assembly order */}
+                <Badge variant="outline" className="w-fit text-xs">
+                  Assembly Order: #{currentPart.assemblyOrder}
+                </Badge>
               </div>
             ) : (
-              <div className="text-center py-12 text-muted-foreground">
-                <BookOpen className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                <p className="text-sm font-medium">Click any part of the machine</p>
-                <p className="text-xs mt-1">to see its description and function</p>
-                <div className="mt-6 space-y-2">
-                  <p className="text-xs font-semibold text-foreground">Machine Parts:</p>
-                  {machine.parts.map((part) => (
-                    <div key={part.id} className="flex items-center gap-2 text-xs">
-                      <div
-                        className="w-3 h-3 rounded-full border border-border"
-                        style={{ backgroundColor: part.color }}
-                      />
-                      <span>{part.name}</span>
-                    </div>
-                  ))}
-                </div>
+              /* Empty state */
+              <div className="text-center py-16">
+                <p className="text-4xl mb-4">👆</p>
+                <p className="text-sm font-medium" style={{ color: '#64748b' }}>Click any part to learn about it</p>
+                <p className="text-xs mt-1" style={{ color: '#94a3b8' }}>Hover over parts to highlight them</p>
               </div>
             )}
           </TabsContent>
 
           {/* Operation Tab */}
           <TabsContent value="operation" className="mt-0 space-y-4">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">Animation Control</CardTitle>
-                <CardDescription>Watch the machine in operation</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex gap-2">
-                  <Button
-                    onClick={() => setIsAnimating(!isAnimating)}
-                    className="flex-1"
-                    variant={isAnimating ? 'destructive' : 'default'}
-                  >
-                    {isAnimating ? (
-                      <><Square className="w-4 h-4" /> Stop</>
-                    ) : (
-                      <><Play className="w-4 h-4" /> Start</>
-                    )}
-                  </Button>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-foreground">
-                    Speed: {animationSpeed.toFixed(1)}×
-                  </label>
-                  <Slider
-                    value={[animationSpeed]}
-                    onValueChange={([v]) => setAnimationSpeed(v)}
-                    min={0.1}
-                    max={5}
-                    step={0.1}
-                    className="mt-2"
-                  />
-                </div>
-              </CardContent>
-            </Card>
+            {/* Toolbar area */}
+            <div className="rounded-xl p-3 space-y-3" style={{ background: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setIsAnimating(!isAnimating)}
+                  className="flex-1 flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium border transition-colors"
+                  style={
+                    isAnimating
+                      ? { background: '#eff6ff', borderColor: '#3b82f6', color: '#2563eb' }
+                      : { background: '#fff', borderColor: '#e2e8f0', color: '#475569' }
+                  }
+                >
+                  {isAnimating ? (
+                    <><Square className="w-4 h-4" /> Stop</>
+                  ) : (
+                    <><Play className="w-4 h-4" /> Start</>
+                  )}
+                </button>
+              </div>
+              <div>
+                <label className="text-sm font-medium" style={{ color: '#475569' }}>
+                  Speed: {animationSpeed.toFixed(1)}×
+                </label>
+                <Slider
+                  value={[animationSpeed]}
+                  onValueChange={([v]) => setAnimationSpeed(v)}
+                  min={0.1}
+                  max={5}
+                  step={0.1}
+                  className="mt-2"
+                />
+              </div>
+            </div>
 
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-base">How It Works</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <p className="text-sm leading-relaxed" style={{ color: '#64748b' }}>
                   {machine.operationDescription}
                 </p>
               </CardContent>
@@ -353,18 +338,41 @@ export function ControlPanel({
 
           {/* Exploded View Tab */}
           <TabsContent value="exploded" className="mt-0 space-y-4">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">Exploded View</CardTitle>
-                <CardDescription>Separate parts to see the internal structure</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-foreground">Explode Model</span>
-                  <Switch checked={isExploded} onCheckedChange={setIsExploded} />
+            <div className="rounded-xl p-3 space-y-3" style={{ background: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => setIsExploded(!isExploded)}
+                  className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium border transition-colors"
+                  style={
+                    isExploded
+                      ? { background: '#eff6ff', borderColor: '#3b82f6', color: '#2563eb' }
+                      : { background: '#fff', borderColor: '#e2e8f0', color: '#475569' }
+                  }
+                >
+                  <Layers className="w-4 h-4" />
+                  {isExploded ? 'Collapse' : 'Explode'}
+                </button>
+              </div>
+
+              {/* Explode spread slider - only when exploded */}
+              {isExploded && setExplodeSpread && (
+                <div>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="font-medium" style={{ color: '#475569' }}>Spread</span>
+                    <span className="font-mono text-sm" style={{ color: '#2563eb' }}>{explodeSpread.toFixed(1)}×</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="5"
+                    step="0.1"
+                    value={explodeSpread}
+                    onChange={(e) => setExplodeSpread(parseFloat(e.target.value))}
+                    className="w-full accent-blue-600"
+                  />
                 </div>
-              </CardContent>
-            </Card>
+              )}
+            </div>
 
             <Card>
               <CardHeader className="pb-3">
