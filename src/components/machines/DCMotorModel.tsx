@@ -137,15 +137,14 @@ export function DCMotorModel({
         labelOffset={[0.8, -1.6, 0]}
       >
         <group ref={commutatorRef}>
-          {/* Segmented copper ring */}
           {Array.from({ length: 8 }).map((_, i) => {
             const angle = (i / 8) * Math.PI * 2;
             const nextAngle = ((i + 1) / 8) * Math.PI * 2;
             const midAngle = (angle + nextAngle) / 2;
             return (
-              <mesh key={i} position={[Math.cos(midAngle) * 0.38, -1.6, Math.sin(midAngle) * 0.38]} rotation={[0, -midAngle, 0]}>
+              <mesh key={i} position={[Math.cos(midAngle) * 0.38, -1.6, Math.sin(midAngle) * 0.38]} rotation={[0, -midAngle, 0]} castShadow receiveShadow>
                 <boxGeometry args={[0.28, 0.5, 0.06]} />
-                <meshStandardMaterial color={i % 2 === 0 ? '#B8860B' : '#9A7209'} roughness={0.25} metalness={0.7} />
+                <meshStandardMaterial color={i % 2 === 0 ? '#b87333' : '#a06428'} metalness={0.9} roughness={0.2} />
               </mesh>
             );
           })}
