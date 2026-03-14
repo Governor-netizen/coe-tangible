@@ -564,9 +564,9 @@ export const machineDatabase: Record<string, MachineData> = {
   },
 };
 
-export const machineList: { id: MachineType; name: string; icon: string }[] = [
-  { id: 'dc-motor', name: 'DC Motor', icon: '⚡' },
-  { id: 'dc-generator', name: 'DC Generator', icon: '🔋' },
-  { id: 'transformer', name: 'Transformer', icon: '🔌' },
-  { id: 'induction-motor', name: 'Induction Motor', icon: '⚙️' },
+export const machineList: { id: MachineType; name: string; icon: string; image?: string }[] = [
+  { id: 'dc-motor', name: 'DC Motor', icon: '⚡', image: 'dc-motor' },
+  { id: 'dc-generator', name: 'DC Generator', icon: '🔋', image: 'dc-generator' },
+  { id: 'transformer', name: 'Transformer', icon: '🔌', image: 'transformer' },
+  { id: 'induction-motor', name: 'Induction Motor', icon: '⚙️', image: 'induction-motor' },
 ];
