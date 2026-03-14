@@ -5,6 +5,17 @@ import { MachineType, machineDatabase, machineList } from '@/data/machineData';
 import { cn } from '@/lib/utils';
 import { Upload, Home, ArrowRight, Camera } from 'lucide-react';
 import logo from '@/assets/logo.jpeg';
+import dcMotorIcon from '@/assets/icons/dc-motor.jpeg';
+import dcGeneratorIcon from '@/assets/icons/dc-generator.jpeg';
+import transformerIcon from '@/assets/icons/transformer.jpeg';
+import inductionMotorIcon from '@/assets/icons/induction-motor.jpeg';
+
+const machineIcons: Record<string, string> = {
+  'dc-motor': dcMotorIcon,
+  'dc-generator': dcGeneratorIcon,
+  'transformer': transformerIcon,
+  'induction-motor': inductionMotorIcon,
+};
 
 type View = 'home' | MachineType;
 
@@ -95,7 +106,7 @@ const Index = () => {
                 onClick={() => handleMachineChange(m.id)}
                 className="group flex flex-col items-center gap-3 p-6 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 hover:border-white/40 transition-all duration-300 hover:scale-105"
               >
-                <span className="text-4xl">{m.icon}</span>
+                <img src={machineIcons[m.id] || ''} alt={m.name} className="w-14 h-14 object-contain rounded-lg" />
                 <span className="text-sm font-medium text-white">{m.name}</span>
                 <ArrowRight className="w-4 h-4 text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all" />
               </button>
@@ -198,7 +209,7 @@ const Index = () => {
                   if (currentView !== m.id) e.currentTarget.style.background = 'transparent';
                 }}
               >
-                <span className="mr-1.5">{m.icon}</span>
+                {machineIcons[m.id] ? <img src={machineIcons[m.id]} alt={m.name} className="w-5 h-5 object-contain mr-1.5 rounded-sm" /> : <span className="mr-1.5">{m.icon}</span>}
                 {m.name}
               </button>
             ))}
