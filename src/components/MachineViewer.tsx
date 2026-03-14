@@ -71,25 +71,25 @@ function SceneSetup() {
       <fog attach="fog" args={['#dde3ea', 25, 60]} />
 
       {/* Ambient */}
-      <ambientLight intensity={0.5} />
+      <ambientLight intensity={0.6} />
 
       {/* Key light */}
       <directionalLight
         position={[5, 10, 7]}
-        intensity={1.5}
+        intensity={1.8}
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
       />
 
       {/* Fill light */}
-      <directionalLight position={[-5, 3, -3]} intensity={0.5} />
+      <directionalLight position={[-5, 3, -3]} intensity={0.6} />
 
       {/* Rim light */}
-      <directionalLight position={[0, 5, -10]} intensity={0.4} color="#88aaff" />
+      <directionalLight position={[0, 5, -10]} intensity={0.5} color="#88aaff" />
 
       {/* Hemisphere */}
-      <hemisphereLight args={['#ddeeff', '#8899aa', 0.4]} />
+      <hemisphereLight args={['#ddeeff', '#8899aa', 0.5]} />
 
       {/* Floor */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -3, 0]} receiveShadow>

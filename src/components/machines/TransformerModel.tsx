@@ -68,8 +68,8 @@ export function TransformerModel({
       </MachinePartMesh>
 
       <MachinePartMesh partId="insulation" name={getPart('insulation').name} color={getPart('insulation').color} isSelected={selectedPart === 'insulation'} isExploded={isExploded} explodeOffset={getPart('insulation').explodeOffset} assemblyOrder={getPart('insulation').assemblyOrder} onClick={onPartClick} showLabel={showLabels}>
-        <mesh position={[-0.6, 0, 0]}><cylinderGeometry args={[0.5, 0.5, 2, 16, 1, true]} /><meshStandardMaterial color={getPart('insulation').color} transparent opacity={0.4} roughness={0.8} /></mesh>
-        <mesh position={[0.6, 0, 0]}><cylinderGeometry args={[0.5, 0.5, 2, 16, 1, true]} /><meshStandardMaterial color={getPart('insulation').color} transparent opacity={0.4} roughness={0.8} /></mesh>
+        <mesh position={[-0.6, 0, 0]} castShadow receiveShadow><cylinderGeometry args={[0.5, 0.5, 2, 16, 1, true]} /><meshStandardMaterial color="#e8d5a3" metalness={0.0} roughness={0.8} transparent opacity={0.5} /></mesh>
+        <mesh position={[0.6, 0, 0]} castShadow receiveShadow><cylinderGeometry args={[0.5, 0.5, 2, 16, 1, true]} /><meshStandardMaterial color="#e8d5a3" metalness={0.0} roughness={0.8} transparent opacity={0.5} /></mesh>
       </MachinePartMesh>
     </group>
   );

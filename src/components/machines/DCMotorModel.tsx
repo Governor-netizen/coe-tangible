@@ -228,8 +228,9 @@ export function DCMotorModel({
       >
         <group ref={windingsRef}>
           {[0.6, 0, -0.6].map((y, i) => (
-            <mesh key={i} position={[0, y, 0]} rotation={[Math.PI / 2, 0, (i * Math.PI) / 3]}>
+            <mesh key={i} position={[0, y, 0]} rotation={[Math.PI / 2, 0, (i * Math.PI) / 3]} castShadow receiveShadow>
               <torusGeometry args={[0.65, 0.1, 8, 24]} />
+              <meshStandardMaterial color="#c8400a" metalness={0.6} roughness={0.3} />
             </mesh>
           ))}
         </group>
