@@ -62,15 +62,6 @@ export function MachinePartMesh({
           document.body.style.cursor = 'default';
         }}
       >
-        <meshStandardMaterial
-          color={color}
-          emissive={emissiveColor}
-          emissiveIntensity={emissiveIntensity}
-          transparent={hovered && !isSelected}
-          opacity={hovered && !isSelected ? 0.85 : 1}
-          roughness={0.4}
-          metalness={0.3}
-        />
         {children}
       </group>
 
