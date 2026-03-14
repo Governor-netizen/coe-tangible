@@ -54,7 +54,7 @@ export function TransformerModel({
       <MachinePartMesh partId="primaryWinding" name={getPart('primaryWinding').name} color={getPart('primaryWinding').color} isSelected={selectedPart === 'primaryWinding'} isExploded={isExploded} explodeOffset={getPart('primaryWinding').explodeOffset} assemblyOrder={getPart('primaryWinding').assemblyOrder} onClick={onPartClick} showLabel={showLabels}>
         <group ref={primaryRef}>
           {[-0.8, -0.4, 0, 0.4, 0.8].map((y, i) => (
-            <mesh key={i} position={[-0.6, y, 0]} rotation={[Math.PI / 2, 0, 0]}><torusGeometry args={[0.35, 0.08, 8, 16]} /></mesh>
+            <mesh key={i} position={[-0.6, y, 0]} rotation={[Math.PI / 2, 0, 0]} castShadow receiveShadow><torusGeometry args={[0.35, 0.08, 8, 16]} /><meshStandardMaterial color="#c8400a" metalness={0.6} roughness={0.3} /></mesh>
           ))}
         </group>
       </MachinePartMesh>
