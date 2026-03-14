@@ -170,6 +170,7 @@ export function MachineViewer(props: MachineViewerProps) {
             autoRotate={!props.isAnimating && !props.isExploded}
             autoRotateSpeed={0.5}
           />
+          <Environment preset="studio" />
           <SceneSetup />
           <MachineScene {...props} />
         </Suspense>
