@@ -20,6 +20,7 @@ interface MachineViewerProps {
   showLabels?: boolean;
   customModelUrl?: string | null;
   canvasRef?: React.MutableRefObject<HTMLCanvasElement | null>;
+  explodeSpread?: number;
 }
 
 function SceneSetup() {
