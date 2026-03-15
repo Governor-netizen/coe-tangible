@@ -6,7 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { MachineData, generateQuizQuestions, shuffleArray, QuizQuestion } from '@/data/machineData';
-import { Play, Square, Layers, BookOpen, Gauge, Zap, Brain, CheckCircle2, XCircle, Tag } from 'lucide-react';
+import { Play, Square, Layers, BookOpen, Gauge, Zap, Brain, CheckCircle2, XCircle, Tag, GraduationCap } from 'lucide-react';
+import { DCMachineTutor } from './DCMachineTutor';
 
 interface ControlPanelProps {
   machine: MachineData;
@@ -160,10 +161,14 @@ export function ControlPanel({
       </div>
 
       <Tabs defaultValue="parts" className="flex-1 flex flex-col overflow-hidden">
-        <TabsList className="mx-4 mt-3 grid grid-cols-5">
+        <TabsList className="mx-4 mt-3 grid grid-cols-6">
           <TabsTrigger value="parts" className="text-xs gap-1">
             <BookOpen className="w-3 h-3" />
             Parts
+          </TabsTrigger>
+          <TabsTrigger value="tutor" className="text-xs gap-1">
+            <GraduationCap className="w-3 h-3" />
+            Tutor
           </TabsTrigger>
           <TabsTrigger value="operation" className="text-xs gap-1">
             <Zap className="w-3 h-3" />
@@ -227,7 +232,12 @@ export function ControlPanel({
             )}
           </TabsContent>
 
-          {/* Operation Tab */}
+          {/* Tutor Tab */}
+          <TabsContent value="tutor" className="mt-0">
+            <DCMachineTutor />
+          </TabsContent>
+
+
           <TabsContent value="operation" className="mt-0 space-y-4">
             {/* Toolbar area */}
             <div className="rounded-xl p-3 space-y-3" style={{ background: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
