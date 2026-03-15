@@ -161,10 +161,14 @@ export function ControlPanel({
       </div>
 
       <Tabs defaultValue="parts" className="flex-1 flex flex-col overflow-hidden">
-        <TabsList className="mx-4 mt-3 grid grid-cols-5">
+        <TabsList className="mx-4 mt-3 grid grid-cols-6">
           <TabsTrigger value="parts" className="text-xs gap-1">
             <BookOpen className="w-3 h-3" />
             Parts
+          </TabsTrigger>
+          <TabsTrigger value="tutor" className="text-xs gap-1">
+            <GraduationCap className="w-3 h-3" />
+            Tutor
           </TabsTrigger>
           <TabsTrigger value="operation" className="text-xs gap-1">
             <Zap className="w-3 h-3" />
