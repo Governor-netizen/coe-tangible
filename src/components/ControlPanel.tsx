@@ -232,7 +232,12 @@ export function ControlPanel({
             )}
           </TabsContent>
 
-          {/* Operation Tab */}
+          {/* Tutor Tab */}
+          <TabsContent value="tutor" className="mt-0">
+            <DCMachineTutor />
+          </TabsContent>
+
+
           <TabsContent value="operation" className="mt-0 space-y-4">
             {/* Toolbar area */}
             <div className="rounded-xl p-3 space-y-3" style={{ background: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
