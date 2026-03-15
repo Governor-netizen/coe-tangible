@@ -6,7 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { MachineData, generateQuizQuestions, shuffleArray, QuizQuestion } from '@/data/machineData';
-import { Play, Square, Layers, BookOpen, Gauge, Zap, Brain, CheckCircle2, XCircle, Tag } from 'lucide-react';
+import { Play, Square, Layers, BookOpen, Gauge, Zap, Brain, CheckCircle2, XCircle, Tag, GraduationCap } from 'lucide-react';
+import { DCMachineTutor } from './DCMachineTutor';
 
 interface ControlPanelProps {
   machine: MachineData;
