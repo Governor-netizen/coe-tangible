@@ -208,8 +208,8 @@ const Index = () => {
         </div>
       </header>
 
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-        <div className="flex-1 md:w-[65%] p-3">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
+        <div className="h-[40vh] md:h-auto md:flex-1 md:w-[65%] p-3">
           <MachineViewer
             machineType={machineType as MachineType}
             selectedPart={selectedPart}
