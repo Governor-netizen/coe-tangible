@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, ChevronLeft, Zap, RotateCw, GitBranch, ArrowDown, ArrowRight } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Zap, RotateCw, GitBranch, ArrowDown, ArrowRight, Sparkles } from 'lucide-react';
+import { MotorPrincipleAnimation } from './MotorPrincipleAnimation';
 
 interface TutorParams {
   voltage: number;
