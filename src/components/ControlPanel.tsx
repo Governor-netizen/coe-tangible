@@ -161,29 +161,29 @@ export function ControlPanel({
       </div>
 
       <Tabs defaultValue="parts" className="flex-1 flex flex-col overflow-hidden">
-        <TabsList className="mx-4 mt-3 grid grid-cols-6">
-          <TabsTrigger value="parts" className="text-xs gap-1">
-            <BookOpen className="w-3 h-3" />
+        <TabsList className="mx-4 mt-3 grid grid-cols-3 grid-rows-2 md:grid-cols-6 md:grid-rows-1 h-auto">
+          <TabsTrigger value="parts" className="text-xs gap-1 flex items-center justify-center">
+            <BookOpen className="w-3.5 h-3.5" />
             Parts
           </TabsTrigger>
-          <TabsTrigger value="tutor" className="text-xs gap-1">
-            <GraduationCap className="w-3 h-3" />
+          <TabsTrigger value="tutor" className="text-xs gap-1 flex items-center justify-center">
+            <GraduationCap className="w-3.5 h-3.5" />
             Tutor
           </TabsTrigger>
-          <TabsTrigger value="operation" className="text-xs gap-1">
-            <Zap className="w-3 h-3" />
+          <TabsTrigger value="operation" className="text-xs gap-1 flex items-center justify-center">
+            <Zap className="w-3.5 h-3.5" />
             Operate
           </TabsTrigger>
-          <TabsTrigger value="lab" className="text-xs gap-1">
-            <Gauge className="w-3 h-3" />
+          <TabsTrigger value="lab" className="text-xs gap-1 flex items-center justify-center">
+            <Gauge className="w-3.5 h-3.5" />
             Lab
           </TabsTrigger>
-          <TabsTrigger value="exploded" className="text-xs gap-1">
-            <Layers className="w-3 h-3" />
+          <TabsTrigger value="exploded" className="text-xs gap-1 flex items-center justify-center">
+            <Layers className="w-3.5 h-3.5" />
             Explode
           </TabsTrigger>
-          <TabsTrigger value="quiz" className="text-xs gap-1">
-            <Brain className="w-3 h-3" />
+          <TabsTrigger value="quiz" className="text-xs gap-1 flex items-center justify-center">
+            <Brain className="w-3.5 h-3.5" />
             Quiz
           </TabsTrigger>
         </TabsList>

@@ -208,8 +208,8 @@ const Index = () => {
         </div>
       </header>
 
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-        <div className="flex-1 md:w-[65%] p-3">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
+        <div className="h-[40vh] md:h-auto md:flex-1 md:w-[65%] p-3">
           <MachineViewer
             machineType={machineType as MachineType}
             selectedPart={selectedPart}
@@ -224,7 +224,7 @@ const Index = () => {
           />
         </div>
 
-        <div className="md:w-[35%] border-t md:border-t-0 md:border-l overflow-hidden" style={{ background: '#fff', borderColor: '#e2e8f0' }}>
+        <div className="flex-1 min-h-0 md:w-[35%] border-t md:border-t-0 md:border-l overflow-hidden" style={{ background: '#fff', borderColor: '#e2e8f0' }}>
           <ControlPanel
             machine={machine}
             selectedPart={selectedPart}
