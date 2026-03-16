@@ -224,7 +224,7 @@ const Index = () => {
           />
         </div>
 
-        <div className="md:w-[35%] border-t md:border-t-0 md:border-l overflow-hidden" style={{ background: '#fff', borderColor: '#e2e8f0' }}>
+        <div className="flex-1 min-h-0 md:w-[35%] border-t md:border-t-0 md:border-l overflow-hidden" style={{ background: '#fff', borderColor: '#e2e8f0' }}>
           <ControlPanel
             machine={machine}
             selectedPart={selectedPart}
