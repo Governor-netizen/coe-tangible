@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, ChevronLeft, Zap, RotateCw, GitBranch, ArrowDown, ArrowRight } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Zap, RotateCw, GitBranch, ArrowDown, ArrowRight, Sparkles } from 'lucide-react';
+import { MotorPrincipleAnimation } from './MotorPrincipleAnimation';
 
 interface TutorParams {
   voltage: number;
@@ -95,6 +96,7 @@ export function DCMachineTutor() {
   const [params, setParams] = useState<TutorParams>({ voltage: 220, load: 50, speed: 1500 });
   const [windingTab, setWindingTab] = useState<'lap' | 'wave'>('lap');
   const [poles, setPoles] = useState(4);
+  const [showPrinciples, setShowPrinciples] = useState(false);
 
   const step = OPERATION_STEPS[stepIndex];
 
@@ -123,8 +125,26 @@ export function DCMachineTutor() {
     };
   }, [params, poles]);
 
+  if (showPrinciples) {
+    return <MotorPrincipleAnimation onClose={() => setShowPrinciples(false)} />;
+  }
+
   return (
     <div className="space-y-4">
+      {/* Principles CTA */}
+      <button
+        onClick={() => setShowPrinciples(true)}
+        className="w-full flex items-center gap-3 p-3 rounded-lg transition-colors"
+        style={{ background: 'hsl(var(--accent))', border: '1px solid hsl(var(--border))' }}
+      >
+        <Sparkles className="w-5 h-5 text-primary flex-shrink-0" />
+        <div className="text-left">
+          <p className="text-sm font-semibold text-foreground">⚡ Motor Principles Animation</p>
+          <p className="text-xs text-muted-foreground">5 interactive 3D scenes — from a single conductor to a rotating armature</p>
+        </div>
+        <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto" />
+      </button>
+
       {/* Step-by-step operation */}
       <Card>
         <CardHeader className="pb-2">
