@@ -124,7 +124,7 @@ const Index = () => {
           </div>
 
           <div className="mt-12 text-white/60 text-sm">
-            <p>Made by: <span className="text-white/80 font-medium">Chris Adabla</span>, <span className="text-white/80 font-medium">Eliana Adzo Amaglo</span>, <span className="text-white/80 font-medium">Chris Ameyaw Kwaku Junior</span></p>
+            <p className="text-white/80 font-semibold tracking-widest text-base">BYTECRAFT</p>
           </div>
         </div>
       </div>
