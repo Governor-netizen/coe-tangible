@@ -1,5 +1,7 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, lazy, Suspense } from 'react';
 import { ArrowRight, Upload, CheckCircle, Package, Eye, PenLine } from 'lucide-react';
+
+const HeroDCMotor = lazy(() => import('./HeroDCMotor').then(m => ({ default: m.HeroDCMotor })));
 import logo from '@/assets/logo.jpeg';
 import dcMotorIcon from '@/assets/icons/dc-motor.jpeg';
 import dcGeneratorIcon from '@/assets/icons/dc-generator.jpeg';
