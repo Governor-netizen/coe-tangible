@@ -1,14 +1,14 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { MachineViewer } from '@/components/MachineViewer';
 import { ControlPanel } from '@/components/ControlPanel';
 import { MachineType, machineDatabase, machineList } from '@/data/machineData';
-import { Upload, Home } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Upload, Home, ArrowRight } from 'lucide-react';
 import logo from '@/assets/logo.jpeg';
 import dcMotorIcon from '@/assets/icons/dc-motor.jpeg';
 import dcGeneratorIcon from '@/assets/icons/dc-generator.jpeg';
 import transformerIcon from '@/assets/icons/transformer.jpeg';
 import inductionMotorIcon from '@/assets/icons/induction-motor.jpeg';
-import { LandingPage } from '@/components/landing/LandingPage';
 
 const machineIcons: Record<string, string> = {
   'dc-motor': dcMotorIcon,
@@ -57,6 +57,7 @@ const Index = () => {
     setIsExploded(false);
   };
 
+
   const allTabs = [
     ...machineList,
     ...(customModelUrl ? [{ id: 'custom' as MachineType, name: 'Custom Model', icon: '📦' }] : []),
@@ -64,7 +65,70 @@ const Index = () => {
 
   // HOME VIEW
   if (currentView === 'home') {
-    return <LandingPage onMachineSelect={handleMachineChange} onFileUpload={handleFileUpload} />;
+    return (
+      <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          src="/videos/hero-bg.mp4"
+        />
+        <div className="absolute inset-0 bg-black/30" />
+
+        <div className="relative z-10 flex flex-col items-center text-center px-4 max-w-4xl mx-auto">
+          <img src={logo} alt="Tangible logo" className="w-16 h-16 rounded-xl mb-2" />
+          <h1
+            className="text-5xl sm:text-6xl md:text-7xl font-serif font-bold text-white mb-4"
+            style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}
+          >
+            Tangible
+          </h1>
+          <p
+            className="text-lg sm:text-xl text-white/85 mb-12 max-w-2xl"
+            style={{ textShadow: '0 1px 8px rgba(0,0,0,0.4)' }}
+          >
+            Interactive 3D Learning Platform for Electrical Machines
+          </p>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 w-full">
+            {machineList.map((m) => (
+              <button
+                key={m.id}
+                onClick={() => handleMachineChange(m.id)}
+                className="group flex flex-col items-center gap-3 p-6 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 hover:border-white/40 transition-all duration-300 hover:scale-105"
+              >
+                <img src={machineIcons[m.id] || ''} alt={m.name} className="w-14 h-14 object-contain rounded-lg" />
+                <span className="text-sm font-medium text-white">{m.name}</span>
+                <ArrowRight className="w-4 h-4 text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all" />
+              </button>
+            ))}
+          </div>
+
+          <div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".glb,.gltf"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 hover:border-white/40 transition-all duration-300 text-white font-medium"
+            >
+              <Upload className="w-4 h-4" />
+              Upload Your Own 3D Model
+            </button>
+          </div>
+
+          <div className="mt-12 text-white/60 text-sm">
+            <p className="text-white/80 font-semibold tracking-widest text-base">BYTECRAFT</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // EXPLORER VIEW
