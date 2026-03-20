@@ -136,9 +136,15 @@ export function LandingPage({ onMachineSelect, onFileUpload }: LandingPageProps)
             <div className="absolute bottom-4 right-4 font-mono-tech text-[10px] animate-float" style={{ color: '#4DFFB4', animationDelay: '0.5s' }}>
               VOLTAGE: 220V
             </div>
-            {/* Center placeholder text */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <p className="font-mono-tech text-xs" style={{ color: '#334155' }}>3D ANIMATION PLACEHOLDER</p>
+            {/* 3D DC Motor */}
+            <div className="absolute inset-0 z-0">
+              <Suspense fallback={
+                <div className="w-full h-full flex items-center justify-center">
+                  <p className="font-mono-tech text-xs" style={{ color: '#334155' }}>LOADING 3D MODEL...</p>
+                </div>
+              }>
+                <HeroDCMotor />
+              </Suspense>
             </div>
           </div>
         </div>
