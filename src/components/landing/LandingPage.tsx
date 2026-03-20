@@ -36,8 +36,8 @@ const MODEL_CARDS = [
     machineId: 'transformer' as MachineType,
   },
   {
-    tag: 'INDUCTION_MOTORS',
-    title: 'Three-Phase Induction Motor',
+    tag: 'CONTROL_SYSTEMS',
+    title: 'Inverted Pendulum',
     desc: 'Adjust PID parameters in real-time and observe the response of a classic balancing control algorithm.',
     machineId: 'induction-motor' as MachineType,
   },
