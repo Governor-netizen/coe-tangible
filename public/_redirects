@@ -1,3 +1,4 @@
 /machines/* /index.html 200
 /machines /index.html 200
-/ /clean-branding.html 200
+/auth /index.html 200
+/* /index.html 200
