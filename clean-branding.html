@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+    <link rel="preload" href="public/dc-motor.glb" as="fetch" crossorigin="anonymous" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=IBM+Plex+Mono:wght@300;400;500;600&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Noto+Serif:ital,wght@0,100..900;1,100..900&amp;family=Space+Grotesk:wght@300..700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .blueprint-grid {
+            background-image:
+                linear-gradient(to right, rgba(26, 32, 64, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(26, 32, 64, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .blueprint-grid-fine {
+            background-image:
+                linear-gradient(to right, rgba(26, 32, 64, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(26, 32, 64, 0.05) 1px, transparent 1px);
+            background-size: 8px 8px;
+        }
+
+        .perspective-text { perspective: 1000px; }
+
+        @keyframes magnetic-snap {
+            0% { transform: scale(1.1) rotate(-15deg) translateY(-20px); opacity: 0; }
+            70% { transform: scale(1.02) rotate(2deg) translateY(2px); opacity: 0.8; }
+            85% { transform: scale(0.98) rotate(-1deg) translateY(-1px); opacity: 0.9; }
+            100% { transform: scale(1) rotate(0deg) translateY(0); opacity: 1; }
+        }
+
+        @keyframes tech-label-pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        .animate-snap { animation: magnetic-snap 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .tech-tag { color: #4DFFB4; animation: tech-label-pulse 2s infinite ease-in-out; }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar { width: 4px; }
+        .dark ::-webkit-scrollbar-track, html.dark ::-webkit-scrollbar-track { background: #050505; }
+        .dark ::-webkit-scrollbar-thumb, html.dark ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        html:not(.dark) ::-webkit-scrollbar-track { background: #f0f0f0; }
+        html:not(.dark) ::-webkit-scrollbar-thumb { background: #bbb; border-radius: 4px; }
+
+        /* ── Splash Screen ── */
+        #splash-screen {
+            position: fixed; inset: 0; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: #050505;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+        #splash-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        @keyframes splash-pulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        #splash-logo { animation: splash-pulse 2s ease-in-out infinite; }
+        #splash-bar-track { width: 200px; height: 2px; background: #1a1a1a; border-radius: 2px; margin-top: 24px; overflow: hidden; }
+        #splash-bar-fill { height: 100%; width: 0%; background: #0057FF; border-radius: 2px; transition: width 0.15s ease; }
+
+        /* ── Scroll Reveal Animations ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-60px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-left.visible { opacity: 1; transform: translateX(0); }
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(60px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+        /* stagger children */
+        .reveal-stagger > * { opacity: 0; transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease; }
+        .reveal-stagger.visible > *:nth-child(1) { transition-delay: 0.1s; opacity: 1; transform: translateY(0); }
+        .reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.2s; opacity: 1; transform: translateY(0); }
+        .reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.3s; opacity: 1; transform: translateY(0); }
+        .reveal-stagger.visible > *:nth-child(4) { transition-delay: 0.4s; opacity: 1; transform: translateY(0); }
+
+        /* ── Light Mode Overrides ── */
+        html:not(.dark) body { background: #f5f5f7 !important; color: #1a1a2e; }
+        html:not(.dark) .bg-\[\#0A0C10\] { background: #ffffff !important; }
+        html:not(.dark) .bg-\[\#0C0E12\] { background: #f0f0f2 !important; }
+        html:not(.dark) .bg-\[\#050505\] { background: #f5f5f7 !important; }
+        html:not(.dark) .bg-surface { background: #fafafa !important; }
+        html:not(.dark) .bg-surface-dim { background: #f5f5f7 !important; }
+        html:not(.dark) .bg-surface-container-low { background: #f0f0f2 !important; }
+        html:not(.dark) .bg-surface-container-lowest { background: #ffffff !important; }
+        html:not(.dark) .bg-surface-container-lowest\/50 { background: rgba(255,255,255,0.5) !important; }
+        html:not(.dark) .bg-surface-container-high { background: #e8e8ec !important; }
+        html:not(.dark) .bg-surface-container { background: #eaeaee !important; }
+        html:not(.dark) .text-on-surface { color: #1a1a2e !important; }
+        html:not(.dark) .text-on-surface-variant { color: #444 !important; }
+        html:not(.dark) .text-on-primary-container { color: #fff !important; }
+        html:not(.dark) .text-white { color: #1a1a2e !important; }
+        html:not(.dark) .text-white\/60 { color: rgba(26,26,46,0.6) !important; }
+        html:not(.dark) .text-white\/70 { color: rgba(26,26,46,0.7) !important; }
+        html:not(.dark) .text-slate-400 { color: #555 !important; }
+        html:not(.dark) .text-slate-500 { color: #777 !important; }
+        html:not(.dark) .text-slate-200 { color: #222 !important; }
+        html:not(.dark) .text-slate-100 { color: #111 !important; }
+        html:not(.dark) .text-slate-600 { color: #888 !important; }
+        html:not(.dark) .text-primary { color: #0057FF !important; }
+        html:not(.dark) .text-primary-fixed-dim { color: #0046cc !important; }
+        html:not(.dark) .border-outline-variant\/15 { border-color: rgba(180,180,200,0.4) !important; }
+        html:not(.dark) .border-outline-variant\/20 { border-color: rgba(180,180,200,0.5) !important; }
+        html:not(.dark) .border-outline-variant\/10 { border-color: rgba(180,180,200,0.3) !important; }
+        html:not(.dark) .border-outline-variant { border-color: rgba(180,180,200,0.6) !important; }
+        html:not(.dark) .border-\[\#434656\]\/15 { border-color: rgba(180,180,200,0.3) !important; }
+        html:not(.dark) .border-primary\/20 { border-color: rgba(0,87,255,0.3) !important; }
+        html:not(.dark) .tech-tag { color: #00885a; }
+        html:not(.dark) #splash-screen { background: #f5f5f7; }
+        html:not(.dark) #splash-bar-track { background: #ddd; }
+
+        /* ── Light Mode: Fix images ── */
+        /* Remove mix-blend-screen which makes images invisible on white */
+        html:not(.dark) .mix-blend-screen { mix-blend-mode: normal !important; }
+        /* Boost faint image opacities */
+        html:not(.dark) img.opacity-60 { opacity: 1 !important; }
+        html:not(.dark) img.opacity-80 { opacity: 1 !important; }
+        html:not(.dark) img.opacity-40 { opacity: 0.9 !important; }
+        html:not(.dark) img.opacity-30 { opacity: 0.9 !important; }
+        html:not(.dark) .opacity-30 { opacity: 0.5 !important; }
+        html:not(.dark) .opacity-20 { opacity: 0.3 !important; }
+        html:not(.dark) .opacity-50 { opacity: 0.8 !important; }
+        html:not(.dark) .opacity-80 { opacity: 1 !important; }
+        /* Remove grayscale filter on images in light mode */
+        html:not(.dark) img.grayscale { filter: none !important; }
+        /* Fix dark image containers to have a soft background instead */
+        html:not(.dark) .bg-surface-container-lowest\/50 { background: rgba(240,240,245,0.8) !important; }
+        /* Ensure card images have contrast */
+        html:not(.dark) .group img { opacity: 1 !important; filter: none !important; mix-blend-mode: normal !important; }
+        /* Fix the hero motor visualization area */
+        html:not(.dark) .bg-\[\#0A0C10\].border { background: #eee !important; }
+        /* Fix the scrolly section background for light mode */
+        html:not(.dark) #scrolly-section { background-color: #e8e8ec !important; }
+        html:not(.dark) #loading-overlay { background: #f5f5f7 !important; }
+        /* Fix button text that should stay white */
+        html:not(.dark) .bg-primary-container .text-white,
+        html:not(.dark) .bg-primary-container.text-white,
+        html:not(.dark) button.bg-primary-container { color: #fff !important; }
+
+        /* Theme toggle button */
+        #theme-toggle { cursor: pointer; transition: transform 0.3s ease; }
+        #theme-toggle:hover { transform: scale(1.15); }
+
+        #loading-overlay { transition: opacity 0.5s ease; }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-fixed": "#002113",
+                        "inverse-primary": "#004ee7",
+                        "inverse-on-surface": "#2f3035",
+                        "surface-variant": "#333539",
+                        "on-primary-fixed": "#001550",
+                        "primary-container": "#0057ff",
+                        "surface-dim": "#111318",
+                        "on-tertiary-fixed-variant": "#005234",
+                        "tertiary-fixed-dim": "#17e29a",
+                        "on-primary-fixed-variant": "#003ab2",
+                        "surface": "#111318",
+                        "tertiary-fixed": "#4dffb4",
+                        "inverse-surface": "#e2e2e8",
+                        "secondary-fixed": "#ffddb4",
+                        "surface-bright": "#37393e",
+                        "primary-fixed": "#dce1ff",
+                        "error-container": "#93000a",
+                        "on-primary-container": "#e5e8ff",
+                        "on-error-container": "#ffdad6",
+                        "tertiary-container": "#00784f",
+                        "outline": "#8d90a2",
+                        "secondary-container": "#dc9100",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "on-tertiary": "#003823",
+                        "on-secondary": "#452b00",
+                        "tertiary": "#17e29a",
+                        "surface-container-lowest": "#0c0e12",
+                        "secondary-fixed-dim": "#ffb955",
+                        "primary": "#b6c4ff",
+                        "on-surface": "#e2e2e8",
+                        "on-primary": "#00277f",
+                        "secondary": "#ffb955",
+                        "surface-container": "#1e2024",
+                        "on-tertiary-container": "#8fffc6",
+                        "on-secondary-container": "#4f3100",
+                        "surface-container-high": "#282a2e",
+                        "outline-variant": "#434656",
+                        "on-surface-variant": "#c3c5d9",
+                        "error": "#ffb4ab",
+                        "on-error": "#690005",
+                        "on-secondary-fixed-variant": "#633f00",
+                        "on-secondary-fixed": "#291800",
+                        "surface-tint": "#b6c4ff",
+                        "surface-container-low": "#1a1c20",
+                        "background": "#111318",
+                        "surface-container-highest": "#333539",
+                        "on-background": "#e2e2e8"
+                    },
+                    fontFamily: {
+                        "headline": ["Playfair Display", "serif"],
+                        "body": ["Source Serif 4", "serif"],
+                        "label": ["IBM Plex Mono", "monospace"],
+                        "serif-body": ["Source Serif 4", "serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="bg-[#050505] overflow-x-hidden text-on-surface selection:bg-primary-container selection:text-white">
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div id="splash-logo" class="flex flex-col items-center gap-4">
+            <img alt="Tangible Logo" class="w-16 h-16 object-contain" src="src/assets/logo.jpeg" />
+            <div class="text-3xl font-serif text-[#B6C4FF]">Tangible<sup class="text-xs text-[#0057FF]">3D</sup></div>
+        </div>
+        <div id="splash-bar-track">
+            <div id="splash-bar-fill"></div>
+        </div>
+        <div id="splash-percent" class="font-label text-[10px] text-[#0057FF] tracking-widest mt-3 uppercase">0%</div>
+    </div>
+
+    <!-- TopNavBar -->
+    <nav
+        class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-8 py-4 bg-[#0A0C10] dark:bg-[#0A0C10] transition-all duration-300">
+        <div class="flex items-center gap-3">
+            <img alt="Tangible Logo" class="w-8 h-8 object-contain" src="src/assets/logo.jpeg" />
+            <div
+                class="text-2xl font-serif text-[#0057FF] dark:text-[#B6C4FF] after:content-['3D'] after:text-xs after:align-top after:ml-0.5 after:text-[#0057FF]">
+                Tangible</div>
+        </div>
+        <div class="hidden md:flex items-center gap-8">
+            <a class="text-slate-400 dark:text-slate-500 font-normal font-label text-xs tracking-widest hover:text-[#0057FF] dark:hover:text-[#4DFFB4] transition-colors duration-200"
+                href="/machines" data-machines-link>MACHINES</a>
+            <a class="text-slate-400 dark:text-slate-500 font-normal font-label text-xs tracking-widest hover:text-[#0057FF] dark:hover:text-[#4DFFB4] transition-colors duration-200"
+                href="#">SYSTEMS</a>
+            <a class="text-slate-400 dark:text-slate-500 font-normal font-label text-xs tracking-widest hover:text-[#0057FF] dark:hover:text-[#4DFFB4] transition-colors duration-200"
+                href="#">COURSES</a>
+            <a class="text-slate-400 dark:text-slate-500 font-normal font-label text-xs tracking-widest hover:text-[#0057FF] dark:hover:text-[#4DFFB4] transition-colors duration-200"
+                href="#">RESEARCH</a>
+            <a class="text-slate-400 dark:text-slate-500 font-normal font-label text-xs tracking-widest hover:text-[#0057FF] dark:hover:text-[#4DFFB4] transition-colors duration-200"
+                href="#">ABOUT</a>
+        </div>
+        <div class="flex items-center gap-6">
+            <button id="theme-toggle" class="text-slate-400 hover:text-white transition-colors" title="Toggle light/dark mode">
+                <span class="material-symbols-outlined text-xl" id="theme-icon">dark_mode</span>
+            </button>
+            <button
+                class="font-label text-xs tracking-widest text-slate-400 hover:text-white transition-colors uppercase">Sign
+                In</button>
+            <button
+                class="bg-primary-container text-white font-label text-xs tracking-widest px-6 py-2.5 rounded-none active:scale-95 duration-75 uppercase">Get
+                Access →</button>
+        </div>
+    </nav>
+
+    <!-- Scrollytelling Canvas Animation -->
+    <section id="scrolly-section" style="height: 400vh; background-color: #050505; position: relative;">
+        <div style="position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+            
+            <canvas id="motor-canvas" style="position: absolute; inset: 0; width: 100%; height: 100%; mix-blend-mode: screen; z-index: 0;"></canvas>
+
+            <!-- Loading Overlay -->
+            <div id="loading-overlay" style="position: absolute; inset: 0; background: #050505; z-index: 50; display: flex; align-items: center; justify-content: center;">
+                <div class="text-[#0057FF] font-label text-sm animate-pulse tracking-widest uppercase">LOADING 3D DATA STRUCTS (240F)...</div>
+            </div>
+
+            <!-- Text Beats Overlay -->
+            <div style="position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; padding: 2rem; padding-bottom: 8rem;">
+                
+                <div id="beat-a" style="position: absolute; text-align: center; display: flex; flex-direction: column; align-items: center; opacity: 1;">
+                    <h2 class="text-5xl md:text-7xl lg:text-9xl font-bold tracking-tighter text-white drop-shadow-2xl mb-4 font-headline uppercase">Understand Machines.</h2>
+                    <p class="text-white/60 text-lg md:text-xl max-w-2xl font-serif-body">Dive into the architecture of motion through high-fidelity visualization.</p>
+                </div>
+
+                <div id="beat-b" style="position: absolute; text-align: center; display: flex; flex-direction: column; align-items: center; opacity: 0;">
+                    <h2 class="text-5xl md:text-7xl lg:text-9xl font-bold tracking-tighter text-white drop-shadow-2xl mb-4 font-headline uppercase">Electromagnetic Core.</h2>
+                    <p class="text-white/60 text-lg md:text-xl max-w-2xl font-serif-body">The high-density copper armature rotates within a calibrated magnetic stator.</p>
+                </div>
+
+                <div id="beat-c" style="position: absolute; text-align: center; display: flex; flex-direction: column; align-items: center; opacity: 0;">
+                    <h2 class="text-5xl md:text-7xl lg:text-9xl font-bold tracking-tighter text-white drop-shadow-2xl mb-4 font-headline uppercase">Precision Components.</h2>
+                    <p class="text-white/60 text-lg md:text-xl max-w-2xl font-serif-body">From carbon brushes to neodymium magnets, every part is engineered for torque.</p>
+                </div>
+
+                <div id="beat-d" style="position: absolute; text-align: center; display: flex; flex-direction: column; align-items: center; opacity: 0;">
+                    <h2 class="text-5xl md:text-7xl lg:text-9xl font-bold tracking-tighter text-[#0057FF] drop-shadow-2xl mb-4 font-headline uppercase">Beyond the Surface.</h2>
+                    <p class="text-white/60 text-lg md:text-xl max-w-2xl font-serif-body mb-8">Explore our full library of interactive 3D machines below.</p>
+                    <div class="h-1 w-32 bg-[#0057FF] mx-auto rounded-full blur-[1px] shadow-[0_0_15px_#0057FF]"></div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center bg-[#0A0C10] overflow-hidden">
+        <div class="absolute inset-0 blueprint-grid opacity-30"></div>
+        <div class="absolute inset-0 blueprint-grid-fine opacity-20"></div>
+        <div class="container mx-auto px-4 md:px-8 grid lg:grid-cols-12 gap-8 lg:gap-12 relative z-10 pt-24 lg:pt-20">
+            <div class="lg:col-span-7 flex flex-col justify-center">
+                <span class="font-label tech-tag font-medium tracking-widest mb-6">ENGINEERING · VISUALIZED</span>
+                <h1 class="font-headline text-5xl md:text-7xl lg:text-8xl leading-none text-on-surface mb-8">
+                    Understand <span class="italic text-primary">Machines</span> Through Motion.
+                </h1>
+                <p class="font-serif-body text-lg md:text-xl text-on-surface-variant max-w-xl mb-10 leading-relaxed">
+                    Interactive 3D models for DC machines, transformers, control systems, and more — designed for deep
+                    technical learning and spatial intuition.
+                </p>
+                <div class="flex flex-wrap gap-6">
+                    <a
+                        href="/machines"
+                        data-machines-link
+                        class="bg-primary-container text-on-primary-container px-10 py-4 font-label text-sm tracking-widest rounded uppercase flex items-center gap-3 group hover:bg-opacity-90 transition-all">
+                        → Explore the Library
+                    </a>
+                    <a
+                        href="/machines"
+                        data-machines-link
+                        class="border border-outline-variant bg-surface-container-low text-on-surface px-10 py-4 font-label text-sm tracking-widest rounded uppercase hover:bg-surface-container-high transition-all">
+                        View Featured: DC Motor Series ↗
+                    </a>
+                </div>
+            </div>
+            <div class="lg:col-span-5 relative flex items-center justify-center">
+                <!-- Exploded View Visualization Simulation Area -->
+                <div
+                    class="w-full aspect-square relative rounded border border-outline-variant/20 bg-surface-container-lowest/50 backdrop-blur-sm overflow-hidden flex items-center justify-center">
+                    <!-- Placeholder for the "Exploded View Assembly" -->
+                    <div class="relative w-full h-full p-8 flex items-center justify-center">
+                        <model-viewer id="hero-model" src="public/dc-motor.glb" alt="A 3D model of a DC Motor" auto-rotate camera-controls shadow-intensity="1" class="w-full h-full object-contain mix-blend-screen animate-snap"></model-viewer>
+                        <div
+                            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 border-2 border-primary/20 rounded-full border-dashed animate-[spin_20s_linear_infinite]">
+                        </div>
+                        <div class="absolute top-4 left-4 font-label text-[10px] tech-tag tracking-tighter opacity-80">
+                            SYSTEM_STABLE: 104.2Hz<br />
+                            DC_MOTOR_MODEL_A1
+                        </div>
+                        <div
+                            class="absolute bottom-4 right-4 font-label text-[10px] tech-tag tracking-tighter text-right opacity-80">
+                            FIELD_WINDING: NOMINAL<br />
+                            VOLTAGE: 220V
+                        </div>
+                        <!-- Decorative UI elements -->
+                        <div class="absolute inset-0 pointer-events-none border-[1px] border-outline-variant/10"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Section 2: Recently Published Models -->
+    <section class="py-16 lg:py-24 bg-surface px-4 md:px-8">
+        <div class="container mx-auto">
+            <div class="flex items-center gap-4 mb-12 lg:mb-16">
+                <div class="w-1.5 h-12 bg-primary-container"></div>
+                <h2 class="font-headline text-3xl md:text-4xl">Recently Published Models</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                <!-- Card 1 -->
+                <div
+                    class="group bg-surface-container-low border border-outline-variant/15 p-5 md:p-6 hover:border-primary-container transition-all duration-300 hover:-translate-y-1">
+                    <div
+                        class="relative aspect-video bg-surface-container-lowest mb-6 overflow-hidden flex items-center justify-center border border-outline-variant/10">
+                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-60"
+                            data-alt="3D render of a squirrel cage induction motor"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNoSqDsYu0GcJhHgvBVDV6QZnHAL1m5kCfdOV7XPfuFGCxtgLoTKMXGuTfzqxB7JWZcaqWAb74jo6YKTQk8HHipc_Gf4U6yp-So5wclj3C38HLplYoMHHMtDJuwq6uIDhMZyunQLFvUDnhhA5__0kZAaApJFPoNffARTSHysgH4m2lST0aVDw40KhTYJD65sonUGgcHwwY4vBurKPt9vGLEzG8GWXlinXAbckU06gKEiGB1ZBLRGSZW0nhUzllt_Xw--CO9af0JDIJ" />
+                        <div class="absolute top-3 right-3 flex items-center gap-1.5 bg-surface-dim/80 px-2 py-1">
+                            <span class="w-2 h-2 rounded-full bg-secondary"></span>
+                            <span class="font-label text-[10px] text-secondary">NEW</span>
+                        </div>
+                    </div>
+                    <div class="font-label text-[10px] tech-tag tracking-widest mb-2 uppercase">DC_MACHINES</div>
+                    <h3 class="font-headline text-2xl mb-4">Shunt-Wound DC Generator</h3>
+                    <p class="font-serif-body text-on-surface-variant text-sm mb-8 leading-relaxed">
+                        Exploration of voltage-current characteristics under varying load conditions with interactive
+                        field rheostat.
+                    </p>
+                    <a class="font-label text-xs text-primary-fixed-dim hover:text-primary transition-colors tracking-widest group flex items-center gap-2"
+                        href="#">
+                        OPEN MODEL <span class="group-hover:translate-x-1 transition-transform">→</span>
+                    </a>
+                </div>
+                <!-- Card 2 -->
+                <div
+                    class="group bg-surface-container-low border border-outline-variant/15 p-6 hover:border-primary-container transition-all duration-300 hover:-translate-y-1">
+                    <div
+                        class="relative aspect-video bg-surface-container-lowest mb-6 overflow-hidden flex items-center justify-center border border-outline-variant/10">
+                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-60"
+                            data-alt="Technical schematic of power transformer core"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpXb6NNUBV7njbdln-syO0aOmsU1EMUyidBQ7Io6bNRGlWVYoXBkjywpOUY_H7wf6NrFFWqK7rJd4D5-Mm1p_Z7DO339NLLqndSITW2waLIrmg0FuWzYSN5Op08Bx-fVvQmiKIa_Jkl3SCkemfqq9akl4bSYbJ9lVNwya0s7GmeYFLc5sIag_Es64QCu4CfE_vXaFH2JD0jbkR4gYsFsCZH4cF-Kxf1_Vbv7VacM03WEGITqKMZ_YEBmSGf1MfaP64w183dvd4A6l-" />
+                    </div>
+                    <div class="font-label text-[10px] tech-tag tracking-widest mb-2 uppercase">TRANSFORMERS</div>
+                    <h3 class="font-headline text-2xl mb-4">Single-Phase Core Type</h3>
+                    <p class="font-serif-body text-on-surface-variant text-sm mb-8 leading-relaxed">
+                        Visualize magnetic flux distribution and eddy current losses across high-fidelity laminated core
+                        sections.
+                    </p>
+                    <a class="font-label text-xs text-primary-fixed-dim hover:text-primary transition-colors tracking-widest group flex items-center gap-2"
+                        href="#">
+                        OPEN MODEL <span class="group-hover:translate-x-1 transition-transform">→</span>
+                    </a>
+                </div>
+                <!-- Card 3 -->
+                <div
+                    class="group bg-surface-container-low border border-outline-variant/15 p-6 hover:border-primary-container transition-all duration-300 hover:-translate-y-1">
+                    <div
+                        class="relative aspect-video bg-surface-container-lowest mb-6 overflow-hidden flex items-center justify-center border border-outline-variant/10">
+                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-60"
+                            data-alt="Abstract engineering gear and machinery"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMI7lJvAuqOhvkhy3tt5htTc7CaA6iKQRl_eBO5NBWPkVmFolw8aXVbqUeUWsYTuOrsRvvMOsQS0JRB5q4v6P3pgMuF5_tSNRWneUBtFN6z5AnMv5OjYaUpHVgD2Pn60DkQpxCIlpI50xAtLQ2heyIFbZCzCF1zrJUJYSo9NnB0P3KMa1KJj0YmiH5hWUwgwGFR6PjoJSQMcCO6DErkvBh-u-YXj7ok6ucGX22fL_ROlN-Pf22Fo0oWkzqtHHAI_sgCq1L6VW4BKUj" />
+                    </div>
+                    <div class="font-label text-[10px] tech-tag tracking-widest mb-2 uppercase">CONTROL_SYSTEMS</div>
+                    <h3 class="font-headline text-2xl mb-4">Inverted Pendulum</h3>
+                    <p class="font-serif-body text-on-surface-variant text-sm mb-8 leading-relaxed">
+                        Adjust PID parameters in real-time and observe the response of a classic balancing control
+                        algorithm.
+                    </p>
+                    <a class="font-label text-xs text-primary-fixed-dim hover:text-primary transition-colors tracking-widest group flex items-center gap-2"
+                        href="#">
+                        OPEN MODEL <span class="group-hover:translate-x-1 transition-transform">→</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Section 3: How it Works -->
+    <section class="py-16 lg:py-24 bg-surface-container-lowest overflow-hidden">
+        <div class="container mx-auto px-4 md:px-8">
+            <h2 class="font-headline text-4xl lg:text-5xl text-center mb-16 lg:mb-20">A Scientific Workflow</h2>
+            <div class="relative grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16 max-w-5xl mx-auto">
+                <!-- Connector Line -->
+                <div
+                    class="hidden lg:block absolute top-12 left-0 w-full h-px border-t border-dashed border-secondary/30 -z-0">
+                </div>
+                <!-- Step 1 -->
+                <div class="relative z-10 text-center flex flex-col items-center">
+                    <div
+                        class="w-24 h-24 bg-surface border border-outline-variant flex items-center justify-center mb-8">
+                        <span class="material-symbols-outlined text-4xl text-primary">inventory_2</span>
+                    </div>
+                    <div class="font-label text-sm tech-tag mb-4">STEP_01</div>
+                    <h3 class="font-headline text-xl mb-4">Browse Library</h3>
+                    <p class="font-serif-body text-sm text-on-surface-variant">Select from hundreds of machines mapped
+                        to university curricula.</p>
+                </div>
+                <!-- Step 2 -->
+                <div class="relative z-10 text-center flex flex-col items-center">
+                    <div
+                        class="w-24 h-24 bg-surface border border-outline-variant flex items-center justify-center mb-8">
+                        <span class="material-symbols-outlined text-4xl text-primary">view_in_ar</span>
+                    </div>
+                    <div class="font-label text-sm tech-tag mb-4">STEP_02</div>
+                    <h3 class="font-headline text-xl mb-4">Open 3D</h3>
+                    <p class="font-serif-body text-sm text-on-surface-variant">Manipulate models in real-time. Toggle
+                        exploded views and animations.</p>
+                </div>
+                <!-- Step 3 -->
+                <div class="relative z-10 text-center flex flex-col items-center">
+                    <div
+                        class="w-24 h-24 bg-surface border border-outline-variant flex items-center justify-center mb-8">
+                        <span class="material-symbols-outlined text-4xl text-primary">edit_note</span>
+                    </div>
+                    <div class="font-label text-sm tech-tag mb-4">STEP_03</div>
+                    <h3 class="font-headline text-xl mb-4">Annotate &amp; Study</h3>
+                    <p class="font-serif-body text-sm text-on-surface-variant">Layer technical data and equations
+                        directly over the active 3D components.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Section 4: Course Integration Banner -->
+    <section class="py-16 lg:py-24 px-4 md:px-8 border-y border-outline-variant/10">
+        <div class="container mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div>
+                <h2 class="font-headline text-4xl md:text-5xl lg:text-6xl leading-[1.1] mb-6 lg:mb-8">From lecture to <br /><span
+                        class="italic text-primary">spatial understanding</span>.</h2>
+                <p class="font-serif-body text-lg text-on-surface-variant mb-10 max-w-md">
+                    Every model is mapped to specific course weeks, ensuring that visual aids are perfectly synced with
+                    the theoretical concepts being taught in the classroom.
+                </p>
+                <button
+                    class="bg-surface-container-high border border-outline-variant/30 text-on-surface font-label text-xs tracking-widest px-8 py-4 uppercase flex items-center gap-3">
+                    View Course Mapping →
+                </button>
+            </div>
+            <div class="relative h-[400px]">
+                <!-- Layered magazine composition -->
+                <div
+                    class="absolute top-0 right-0 w-3/4 aspect-[3/4] bg-surface-container border border-outline-variant/20 shadow-2xl z-0 transform rotate-3">
+                    <img class="w-full h-full object-cover grayscale opacity-30"
+                        data-alt="Technical notebook with machine sketches"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDz7Q_6nEzRtn_TQ1n6DOUUWlBTLivaweK9R8UtVwNP94olEPrW30qlX4GqmVqPsC4e9eC4ry5oSCJGiDidZCfaGirzUb-4qi1yi7mQjarMVDlZU9L-HGZ1wX-BCd5QfYs3PCgaprGH2EHhRHT5l1CIdlf5kak2xhi81FKagz4D8MQ8UrFRJ2obwP0DIIE4tcBXZB4oU3sP8KCgqISA5RmxZjqEDWHyRrp8zWVog3WA4UEYw2YA5GZ9Poe77afC6uaDapobRP8Ig6cl" />
+                </div>
+                <div
+                    class="absolute top-10 right-20 w-3/4 aspect-square bg-[#0A0C10] border border-primary/20 p-4 z-10 transform -rotate-2 flex items-center justify-center">
+                    <img class="w-full h-full object-contain mix-blend-screen opacity-80"
+                        data-alt="DC motor wireframe diagram"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNoSqDsYu0GcJhHgvBVDV6QZnHAL1m5kCfdOV7XPfuFGCxtgLoTKMXGuTfzqxB7JWZcaqWAb74jo6YKTQk8HHipc_Gf4U6yp-So5wclj3C38HLplYoMHHMtDJuwq6uIDhMZyunQLFvUDnhhA5__0kZAaApJFPoNffARTSHysgH4m2lST0aVDw40KhTYJD65sonUGgcHwwY4vBurKPt9vGLEzG8GWXlinXAbckU06gKEiGB1ZBLRGSZW0nhUzllt_Xw--CO9af0JDIJ" />
+                    <div class="absolute top-4 left-4 font-label text-[10px] tech-tag">MODEL_REF: DC_SERIES_V1</div>
+                </div>
+                <div class="absolute bottom-4 left-10 bg-primary-container p-6 w-56 z-20">
+                    <div class="font-label text-[10px] text-white/70 mb-2">SYLLABUS_MAP</div>
+                    <div class="text-white font-headline text-lg">EE304: Electrical Machines I</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Section 5: Stats Bar -->
+    <section class="bg-surface-container-low py-12 lg:py-16">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8">
+                <div class="text-center border-r md:border-r border-outline-variant/20 last:border-r-0 max-md:[&:nth-child(2n)]:border-r-0">
+                    <div class="font-headline text-5xl text-primary mb-2">150+</div>
+                    <div class="font-label text-[10px] tracking-widest tech-tag uppercase">Interactive Models</div>
+                </div>
+                <div class="text-center border-r border-outline-variant/20 last:border-r-0">
+                    <div class="font-headline text-5xl text-primary mb-2">24</div>
+                    <div class="font-label text-[10px] tracking-widest tech-tag uppercase">African Partner Unis</div>
+                </div>
+                <div class="text-center border-r border-outline-variant/20 last:border-r-0">
+                    <div class="font-headline text-5xl text-primary mb-2">98%</div>
+                    <div class="font-label text-[10px] tracking-widest tech-tag uppercase">Retention Improvement</div>
+                </div>
+                <div class="text-center border-r border-outline-variant/20 last:border-r-0">
+                    <div class="font-headline text-5xl text-primary mb-2">0.5s</div>
+                    <div class="font-label text-[10px] tracking-widest tech-tag uppercase">Latency Rendering</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Section 6: Featured DC Motor Deep Dive -->
+    <section class="py-16 lg:py-24 bg-surface px-4 md:px-8">
+        <div class="container mx-auto bg-surface-container-lowest border border-outline-variant/10">
+            <div class="grid lg:grid-cols-2">
+                <!-- Left: Interactive Visual -->
+                <div
+                    class="p-12 relative border-b lg:border-b-0 lg:border-r border-outline-variant/10 flex flex-col justify-center items-center overflow-hidden">
+                    <div class="font-label text-xs tech-tag self-start mb-8 tracking-[0.2em]">FEATURED_DEEP_DIVE</div>
+                    <div class="relative w-full max-w-md aspect-square flex items-center justify-center">
+                        <img class="w-4/5 h-4/5 object-contain opacity-40 mix-blend-screen animate-snap"
+                            data-alt="Detailed view of electrical motor armature and commutator"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNoSqDsYu0GcJhHgvBVDV6QZnHAL1m5kCfdOV7XPfuFGCxtgLoTKMXGuTfzqxB7JWZcaqWAb74jo6YKTQk8HHipc_Gf4U6yp-So5wclj3C38HLplYoMHHMtDJuwq6uIDhMZyunQLFvUDnhhA5__0kZAaApJFPoNffARTSHysgH4m2lST0aVDw40KhTYJD65sonUGgcHwwY4vBurKPt9vGLEzG8GWXlinXAbckU06gKEiGB1ZBLRGSZW0nhUzllt_Xw--CO9af0JDIJ" />
+                        <!-- Callout lines simulation -->
+                        <div class="absolute top-1/4 left-0 flex items-center">
+                            <div class="w-16 h-px bg-tertiary"></div>
+                            <div class="font-label text-[10px] tech-tag ml-2">STATOR</div>
+                        </div>
+                        <div class="absolute top-1/2 right-0 flex items-center">
+                            <div class="font-label text-[10px] tech-tag mr-2">ARMATURE</div>
+                            <div class="w-16 h-px bg-tertiary"></div>
+                        </div>
+                        <div class="absolute bottom-1/4 left-1/3 flex flex-col items-center">
+                            <div class="w-px h-16 bg-tertiary"></div>
+                            <div class="font-label text-[10px] tech-tag mt-2 uppercase">Commutator Brushes</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right: Tabbed Info -->
+                <div class="p-12 flex flex-col">
+                    <div class="flex gap-6 mb-10 overflow-x-auto pb-4 scrollbar-hide">
+                        <button
+                            class="font-label text-xs tracking-widest text-primary border-b border-primary pb-1 whitespace-nowrap">OVERVIEW</button>
+                        <button
+                            class="font-label text-xs tracking-widest text-outline hover:text-white pb-1 whitespace-nowrap">WORKING
+                            PRINCIPLE</button>
+                        <button
+                            class="font-label text-xs tracking-widest text-outline hover:text-white pb-1 whitespace-nowrap">EQUATIONS</button>
+                        <button
+                            class="font-label text-xs tracking-widest text-outline hover:text-white pb-1 whitespace-nowrap">3D
+                            VIEW</button>
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="font-headline text-4xl mb-6">The Series DC Motor</h3>
+                        <p class="font-serif-body text-on-surface-variant leading-relaxed mb-6">
+                            Commonly used in applications requiring high starting torque, such as electric locomotives
+                            and cranes. In a series-wound motor, the field winding is connected in series with the
+                            armature winding.
+                        </p>
+                        <div class="space-y-4 mb-10">
+                            <div class="flex items-start gap-3">
+                                <span class="material-symbols-outlined tech-tag text-lg">check_circle</span>
+                                <span class="text-sm font-serif-body">High starting torque at low speeds.</span>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span class="material-symbols-outlined tech-tag text-lg">check_circle</span>
+                                <span class="text-sm font-serif-body">Self-governing magnetic flux based on load
+                                    current.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <a
+                        href="/machines"
+                        data-machines-link
+                        class="w-full bg-primary-container text-white font-label text-xs tracking-widest py-5 uppercase group flex justify-center items-center gap-2">
+                        Open Full 3D Model <span class="group-hover:translate-x-1 transition-transform">→</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Footer -->
+    <footer
+        class="w-full py-10 px-4 md:px-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-[#0C0E12] dark:bg-[#0C0E12] border-t border-[#434656]/15">
+        <div class="flex flex-col gap-2">
+            <div class="flex items-center gap-2">
+                <img alt="Tangible Logo" class="w-6 h-6 object-contain grayscale opacity-50"
+                    src="src/assets/logo.jpeg" />
+                <div class="text-xl font-serif text-slate-200 dark:text-slate-100">Tangible</div>
+            </div>
+            <div class="font-label text-[10px] text-slate-500 tracking-wider uppercase">Built for engineering education
+                in Africa</div>
+        </div>
+        <div class="flex flex-wrap gap-x-8 gap-y-2">
+            <a class="font-label text-[10px] text-slate-500 dark:text-slate-600 tracking-widest uppercase hover:text-white dark:hover:text-[#0057FF] underline underline-offset-4 transition-all duration-300"
+                href="#">ResearchGate</a>
+            <a class="font-label text-[10px] text-slate-500 dark:text-slate-600 tracking-widest uppercase hover:text-white dark:hover:text-[#0057FF] underline underline-offset-4 transition-all duration-300"
+                href="#">GitHub</a>
+            <a class="font-label text-[10px] text-slate-500 dark:text-slate-600 tracking-widest uppercase hover:text-white dark:hover:text-[#0057FF] underline underline-offset-4 transition-all duration-300"
+                href="#">LinkedIn</a>
+            <a class="font-label text-[10px] text-slate-500 dark:text-slate-600 tracking-widest uppercase hover:text-white dark:hover:text-[#0057FF] underline underline-offset-4 transition-all duration-300"
+                href="#">Privacy</a>
+            <a class="font-label text-[10px] text-slate-500 dark:text-slate-600 tracking-widest uppercase hover:text-white dark:hover:text-[#0057FF] underline underline-offset-4 transition-all duration-300"
+                href="#">Terms</a>
+        </div>
+        <div class="font-label text-[10px] text-slate-600">
+            © 2026 TANGIBLE
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // If opened via file://, route machine links to local dev server.
+            if (window.location.protocol === 'file:') {
+                document.querySelectorAll('[data-machines-link]').forEach((el) => {
+                    el.setAttribute('href', 'http://localhost:8080/machines');
+                });
+            }
+
+            /* ── Theme Toggle ── */
+            const html = document.documentElement;
+            const themeToggle = document.getElementById("theme-toggle");
+            const themeIcon = document.getElementById("theme-icon");
+            const savedTheme = localStorage.getItem("tangible-theme");
+
+            if (savedTheme === "light") {
+                html.classList.remove("dark");
+                themeIcon.textContent = "light_mode";
+            } else {
+                html.classList.add("dark");
+                themeIcon.textContent = "dark_mode";
+            }
+
+            themeToggle.addEventListener("click", () => {
+                html.classList.toggle("dark");
+                const isDark = html.classList.contains("dark");
+                themeIcon.textContent = isDark ? "dark_mode" : "light_mode";
+                localStorage.setItem("tangible-theme", isDark ? "dark" : "light");
+            });
+
+            /* ── Splash Screen ── */
+            const splash = document.getElementById("splash-screen");
+            const splashBar = document.getElementById("splash-bar-fill");
+            const splashPercent = document.getElementById("splash-percent");
+
+            /* ── Canvas Animation ── */
+            const canvas = document.getElementById("motor-canvas");
+            const ctx = canvas.getContext("2d");
+            const section = document.getElementById("scrolly-section");
+            const beatA = document.getElementById("beat-a");
+            const beatB = document.getElementById("beat-b");
+            const beatC = document.getElementById("beat-c");
+            const beatD = document.getElementById("beat-d");
+            const loader = document.getElementById("loading-overlay");
+            const heroModel = document.getElementById("hero-model");
+
+            const frameCount = 138;
+            const images = [];
+
+            const getFramePath = index => {
+                const filename = `ezgif-frame-${index.toString().padStart(3, '0')}.jpg`;
+                return `./public/ezgif/${filename}`;
+            };
+
+            const resizeCanvas = () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            };
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            // Splash blocks only on startup-critical assets:
+            // - first scrolly frame
+            // - hero 3D model
+            const criticalReady = {
+                firstFrame: false,
+                heroModel: !heroModel
+            };
+            const criticalTotal = Object.values(criticalReady).filter(v => !v).length;
+            let criticalLoaded = 0;
+
+            const hideSplash = () => {
+                splash.classList.add('hidden');
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.display = 'none', 500);
+            };
+
+            const updateProgress = () => {
+                const pct = criticalTotal === 0 ? 100 : Math.round((criticalLoaded / criticalTotal) * 100);
+                splashBar.style.width = pct + '%';
+                splashPercent.textContent = pct + '%';
+
+                if (criticalLoaded >= criticalTotal) {
+                    hideSplash();
+                }
+            };
+
+            const markCriticalLoaded = (key) => {
+                if (criticalReady[key]) return;
+                criticalReady[key] = true;
+                criticalLoaded++;
+                updateProgress();
+            };
+
+            const preloadFrame = (index, onDone) => {
+                const img = new Image();
+                images[index - 1] = img;
+                const done = () => {
+                    if (typeof onDone === 'function') onDone();
+                };
+                img.onload = done;
+                img.onerror = done;
+                img.src = getFramePath(index);
+            };
+
+            // Blocking preload: first frame only
+            preloadFrame(1, () => markCriticalLoaded('firstFrame'));
+
+            // Non-blocking preload: prioritize early scroll frames first.
+            for (let i = 2; i <= Math.min(20, frameCount); i++) {
+                preloadFrame(i);
+            }
+
+            // Defer the long tail so initial interaction stays snappy.
+            setTimeout(() => {
+                for (let i = 21; i <= frameCount; i++) {
+                    preloadFrame(i);
+                }
+            }, 250);
+
+            // Blocking preload: hero 3D model only
+            if (heroModel) {
+                const onHeroReady = () => markCriticalLoaded('heroModel');
+                heroModel.addEventListener('load', onHeroReady, { once: true });
+                heroModel.addEventListener('error', onHeroReady, { once: true });
+
+                // If model is already ready before listeners attach.
+                if (heroModel.model) {
+                    onHeroReady();
+                }
+            }
+
+            updateProgress();
+
+            // Safety timeout for slow/unstable networks
+            setTimeout(() => {
+                if (!splash.classList.contains('hidden')) {
+                    hideSplash();
+                }
+            }, 5000);
+
+            let targetProgress = 0;
+            let smoothProgress = 0;
+
+            window.addEventListener("scroll", () => {
+                const rect = section.getBoundingClientRect();
+                const scrollOffset = -rect.top;
+                const totalScrollable = rect.height - window.innerHeight;
+                let perc = scrollOffset / totalScrollable;
+                targetProgress = Math.min(1, Math.max(0, perc));
+            });
+
+            const getOpacity = (val, thresholds) => {
+                const [a, b, c, d] = thresholds;
+                if (val < a || val > d) return 0;
+                if (val >= b && val <= c) return 1;
+                if (val >= a && val < b) return (val - a) / (b - a);
+                if (val > c && val <= d) return 1 - ((val - c) / (d - c));
+                return 0;
+            };
+
+            const render = () => {
+                smoothProgress += (targetProgress - smoothProgress) * 0.08;
+
+                beatA.style.opacity = getOpacity(smoothProgress, [0, 0.15, 0.2, 0.25]);
+                beatB.style.opacity = getOpacity(smoothProgress, [0.2, 0.25, 0.4, 0.45]);
+                beatC.style.opacity = getOpacity(smoothProgress, [0.45, 0.5, 0.65, 0.7]);
+                beatD.style.opacity = getOpacity(smoothProgress, [0.7, 0.75, 0.9, 0.95]);
+
+                const frameIndex = Math.min(frameCount - 1, Math.floor(smoothProgress * frameCount));
+                const img = images[frameIndex];
+
+                if (img && img.complete && img.naturalWidth > 0) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    const canvasAspect = canvas.width / canvas.height;
+                    const imgAspect = img.width / img.height;
+                    const isMobileViewport = window.matchMedia('(max-width: 768px)').matches;
+                    const mobileScale = 0.9;
+                    let drawWidth, drawHeight, drawX, drawY;
+
+                    if (isMobileViewport) {
+                        // Mobile uses cover-style scaling to fill taller containers.
+                        if (canvasAspect > imgAspect) {
+                            drawWidth = canvas.width;
+                            drawHeight = img.height * (canvas.width / img.width);
+                            drawX = 0;
+                            drawY = (canvas.height - drawHeight) / 2;
+                        } else {
+                            drawHeight = canvas.height;
+                            drawWidth = img.width * (canvas.height / img.height);
+                            drawX = (canvas.width - drawWidth) / 2;
+                            drawY = 0;
+                        }
+
+                        drawWidth *= mobileScale;
+                        drawHeight *= mobileScale;
+                        drawX = (canvas.width - drawWidth) / 2;
+                        drawY = (canvas.height - drawHeight) / 2;
+                    } else {
+                        if (canvasAspect > imgAspect) {
+                            drawHeight = canvas.height;
+                            drawWidth = img.width * (canvas.height / img.height);
+                            drawX = (canvas.width - drawWidth) / 2;
+                            drawY = 0;
+                        } else {
+                            drawWidth = canvas.width;
+                            drawHeight = img.height * (canvas.width / img.width);
+                            drawX = 0;
+                            drawY = (canvas.height - drawHeight) / 2;
+                        }
+                    }
+                    ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+                }
+                requestAnimationFrame(render);
+            };
+            render();
+
+            /* ── Scroll Reveal via IntersectionObserver ── */
+            const allSections = document.querySelectorAll('section:not(#scrolly-section)');
+            allSections.forEach((el, i) => {
+                el.classList.add('reveal');
+                el.style.transitionDelay = '0.1s';
+            });
+
+            // Also reveal individual cards, headings, and stat divs
+            document.querySelectorAll('.group, .flex.items-start.gap-3, footer').forEach(el => {
+                el.classList.add('reveal');
+            });
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-stagger').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -145,69 +145,71 @@ export function ControlPanel({
   }, [quizIndex, quizQuestions, machine, setQuizTargetPart]);
 
   const currentQuestion = quizQuestions[quizIndex];
+  const tabTriggerClass =
+    "text-[11px] gap-1.5 flex items-center justify-center font-label tracking-widest uppercase text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/80 data-[state=active]:bg-primary-container data-[state=active]:text-on-primary-container data-[state=active]:shadow-none rounded";
 
   return (
-    <div className="h-full flex flex-col overflow-hidden" style={{ background: '#fff', borderColor: '#e2e8f0' }}>
+    <div className="h-full flex flex-col overflow-hidden bg-surface-container text-on-surface">
       {/* Machine title */}
-      <div className="p-4" style={{ borderBottom: '1px solid #e2e8f0' }}>
-        <h2 className="text-lg font-serif font-bold" style={{ color: '#1e293b' }}>{machine.name}</h2>
-        <p className="text-sm mt-1" style={{ color: '#64748b' }}>{machine.description}</p>
+      <div className="p-4 border-b border-outline-variant/30">
+        <h2 className="text-lg font-serif font-bold text-on-surface">{machine.name}</h2>
+        <p className="text-sm mt-1 text-on-surface-variant">{machine.description}</p>
         {/* Labels toggle */}
         <div className="flex items-center gap-2 mt-2">
-          <Tag className="w-3.5 h-3.5" style={{ color: '#94a3b8' }} />
-          <span className="text-xs" style={{ color: '#94a3b8' }}>Labels</span>
+          <Tag className="w-3.5 h-3.5 text-on-surface-variant" />
+          <span className="text-xs text-on-surface-variant font-label tracking-wider uppercase">Labels</span>
           <Switch checked={showLabels} onCheckedChange={setShowLabels} className="scale-75" />
         </div>
       </div>
 
       <Tabs defaultValue="parts" className="flex-1 flex flex-col overflow-hidden">
-        <TabsList className="mx-4 mt-3 grid grid-cols-3 grid-rows-2 md:grid-cols-6 md:grid-rows-1 h-auto">
-          <TabsTrigger value="parts" className="text-xs gap-1 flex items-center justify-center">
+        <TabsList className="mx-4 mt-3 mb-1 grid grid-cols-3 grid-rows-2 md:grid-cols-6 md:grid-rows-1 h-auto bg-surface-container-low border border-outline-variant/20 p-1 gap-1 rounded-none">
+          <TabsTrigger value="parts" className={tabTriggerClass}>
             <BookOpen className="w-3.5 h-3.5" />
             Parts
           </TabsTrigger>
-          <TabsTrigger value="tutor" className="text-xs gap-1 flex items-center justify-center">
+          <TabsTrigger value="tutor" className={tabTriggerClass}>
             <GraduationCap className="w-3.5 h-3.5" />
             Tutor
           </TabsTrigger>
-          <TabsTrigger value="operation" className="text-xs gap-1 flex items-center justify-center">
+          <TabsTrigger value="operation" className={tabTriggerClass}>
             <Zap className="w-3.5 h-3.5" />
             Operate
           </TabsTrigger>
-          <TabsTrigger value="lab" className="text-xs gap-1 flex items-center justify-center">
+          <TabsTrigger value="lab" className={tabTriggerClass}>
             <Gauge className="w-3.5 h-3.5" />
             Lab
           </TabsTrigger>
-          <TabsTrigger value="exploded" className="text-xs gap-1 flex items-center justify-center">
+          <TabsTrigger value="exploded" className={tabTriggerClass}>
             <Layers className="w-3.5 h-3.5" />
             Explode
           </TabsTrigger>
-          <TabsTrigger value="quiz" className="text-xs gap-1 flex items-center justify-center">
+          <TabsTrigger value="quiz" className={tabTriggerClass}>
             <Brain className="w-3.5 h-3.5" />
             Quiz
           </TabsTrigger>
         </TabsList>
 
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 overflow-y-auto p-4 bg-surface-container">
           {/* Parts Info Tab */}
           <TabsContent value="parts" className="mt-0">
             {currentPart && !quizMode ? (
               <div className="animate-fade-in space-y-4">
                 {/* Part name heading */}
-                <h3 className="text-xl font-bold" style={{ color: '#1e293b' }}>{currentPart.name}</h3>
+                <h3 className="text-xl font-bold text-on-surface">{currentPart.name}</h3>
 
                 {/* Description */}
-                <p className="text-sm leading-relaxed" style={{ color: '#475569' }}>{currentPart.description}</p>
+                <p className="text-sm leading-relaxed text-on-surface-variant">{currentPart.description}</p>
 
                 {/* Did You Know? card */}
-                <div className="rounded-r-xl p-4" style={{ background: '#eff6ff', borderLeft: '4px solid #3b82f6' }}>
-                  <p className="text-xs font-bold mb-1" style={{ color: '#1e40af' }}>💡 Did You Know?</p>
-                  <p className="text-sm" style={{ color: '#1e40af' }}>{currentPart.function}</p>
+                <div className="rounded-r-xl p-4 bg-surface-container-high border-l-4 border-primary-container">
+                  <p className="text-xs font-bold mb-1 text-primary font-label tracking-wider uppercase">Did You Know?</p>
+                  <p className="text-sm text-on-surface">{currentPart.function}</p>
                 </div>
 
                 {/* Related Concepts */}
                 <div>
-                  <h4 className="text-sm font-semibold mb-2" style={{ color: '#1e293b' }}>Related Concepts</h4>
+                  <h4 className="text-sm font-semibold mb-2 text-on-surface">Related Concepts</h4>
                   <div className="flex flex-wrap gap-1.5">
                     {currentPart.concepts.map((c) => (
                       <Badge key={c} variant="secondary" className="text-xs">
@@ -226,8 +228,8 @@ export function ControlPanel({
               /* Empty state */
               <div className="text-center py-16">
                 <p className="text-4xl mb-4">👆</p>
-                <p className="text-sm font-medium" style={{ color: '#64748b' }}>Click any part to learn about it</p>
-                <p className="text-xs mt-1" style={{ color: '#94a3b8' }}>Hover over parts to highlight them</p>
+                <p className="text-sm font-medium text-on-surface-variant">Click any part to learn about it</p>
+                <p className="text-xs mt-1 text-outline">Hover over parts to highlight them</p>
               </div>
             )}
           </TabsContent>
@@ -240,16 +242,15 @@ export function ControlPanel({
 
           <TabsContent value="operation" className="mt-0 space-y-4">
             {/* Toolbar area */}
-            <div className="rounded-xl p-3 space-y-3" style={{ background: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
+            <div className="rounded p-3 space-y-3 bg-surface-container-low border border-outline-variant/20">
               <div className="flex gap-2">
                 <button
                   onClick={() => setIsAnimating(!isAnimating)}
-                  className="flex-1 flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium border transition-colors"
-                  style={
+                  className={`flex-1 flex items-center justify-center gap-1.5 rounded px-3 py-2 text-xs font-label tracking-wider uppercase border transition-all ${
                     isAnimating
-                      ? { background: '#eff6ff', borderColor: '#3b82f6', color: '#2563eb' }
-                      : { background: '#fff', borderColor: '#e2e8f0', color: '#475569' }
-                  }
+                      ? "bg-primary-container border-primary text-on-primary-container"
+                      : "bg-surface-container border-outline-variant/40 text-on-surface-variant hover:bg-surface-container-high"
+                  }`}
                 >
                   {isAnimating ? (
                     <><Square className="w-4 h-4" /> Stop</>
@@ -259,7 +260,7 @@ export function ControlPanel({
                 </button>
               </div>
               <div>
-                <label className="text-sm font-medium" style={{ color: '#475569' }}>
+                <label className="text-sm font-medium text-on-surface-variant">
                   Speed: {animationSpeed.toFixed(1)}×
                 </label>
                 <Slider
@@ -273,12 +274,12 @@ export function ControlPanel({
               </div>
             </div>
 
-            <Card>
+            <Card className="bg-surface-container-low border-outline-variant/25">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">How It Works</CardTitle>
+                <CardTitle className="text-base text-on-surface">How It Works</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm leading-relaxed" style={{ color: '#64748b' }}>
+                <p className="text-sm leading-relaxed text-on-surface-variant">
                   {machine.operationDescription}
                 </p>
               </CardContent>
@@ -287,10 +288,10 @@ export function ControlPanel({
 
           {/* Virtual Lab Tab */}
           <TabsContent value="lab" className="mt-0 space-y-4">
-            <Card>
+            <Card className="bg-surface-container-low border-outline-variant/25">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Parameters</CardTitle>
-                <CardDescription>Adjust values and see real-time results</CardDescription>
+                <CardTitle className="text-base text-on-surface">Parameters</CardTitle>
+                <CardDescription className="text-on-surface-variant">Adjust values and see real-time results</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {machine.labParameters.map((param) => (
@@ -313,20 +314,20 @@ export function ControlPanel({
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-surface-container-low border-outline-variant/25">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Output Values</CardTitle>
+                <CardTitle className="text-base text-on-surface">Output Values</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 gap-3">
                   {labOutputs.map((out) => (
                     <div
                       key={out.id}
-                      className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
+                      className="flex items-center justify-between p-3 rounded border border-outline-variant/20 bg-surface-container"
                     >
-                      <span className="text-sm font-medium text-foreground">{out.name}</span>
+                      <span className="text-sm font-medium text-on-surface">{out.name}</span>
                       <span className="text-lg font-mono font-bold text-primary">
-                        {out.value} <span className="text-xs text-muted-foreground">{out.unit}</span>
+                        {out.value} <span className="text-xs text-on-surface-variant">{out.unit}</span>
                       </span>
                     </div>
                   ))}
@@ -334,18 +335,18 @@ export function ControlPanel({
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-surface-container-low border-outline-variant/25">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Formulas</CardTitle>
+                <CardTitle className="text-base text-on-surface">Formulas</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {machine.formulas.map((f) => (
-                  <div key={f.name} className="p-3 rounded-lg bg-muted/50">
-                    <p className="text-xs font-semibold text-foreground mb-1">{f.name}</p>
+                  <div key={f.name} className="p-3 rounded border border-outline-variant/20 bg-surface-container">
+                    <p className="text-xs font-semibold text-on-surface mb-1">{f.name}</p>
                     <p className="formula-text text-base text-primary">{f.formula}</p>
                     <div className="mt-2 space-y-0.5">
                       {f.variables.map((v) => (
-                        <p key={v.symbol} className="text-xs text-muted-foreground">
+                        <p key={v.symbol} className="text-xs text-on-surface-variant">
                           <span className="font-mono font-medium">{v.symbol}</span> = {v.name}
                           {v.unit && ` (${v.unit})`}
                         </p>
@@ -359,16 +360,15 @@ export function ControlPanel({
 
           {/* Exploded View Tab */}
           <TabsContent value="exploded" className="mt-0 space-y-4">
-            <div className="rounded-xl p-3 space-y-3" style={{ background: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
+            <div className="rounded p-3 space-y-3 bg-surface-container-low border border-outline-variant/20">
               <div className="flex items-center justify-between">
                 <button
                   onClick={() => setIsExploded(!isExploded)}
-                  className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium border transition-colors"
-                  style={
+                  className={`flex items-center gap-1.5 rounded px-3 py-2 text-xs font-label tracking-wider uppercase border transition-all ${
                     isExploded
-                      ? { background: '#eff6ff', borderColor: '#3b82f6', color: '#2563eb' }
-                      : { background: '#fff', borderColor: '#e2e8f0', color: '#475569' }
-                  }
+                      ? "bg-primary-container border-primary text-on-primary-container"
+                      : "bg-surface-container border-outline-variant/40 text-on-surface-variant hover:bg-surface-container-high"
+                  }`}
                 >
                   <Layers className="w-4 h-4" />
                   {isExploded ? 'Collapse' : 'Explode'}
@@ -379,8 +379,8 @@ export function ControlPanel({
               {isExploded && setExplodeSpread && (
                 <div>
                   <div className="flex justify-between text-sm mb-1">
-                    <span className="font-medium" style={{ color: '#475569' }}>Spread</span>
-                    <span className="font-mono text-sm" style={{ color: '#2563eb' }}>{explodeSpread.toFixed(1)}×</span>
+                    <span className="font-medium text-on-surface-variant">Spread</span>
+                    <span className="font-mono text-sm text-primary">{explodeSpread.toFixed(1)}×</span>
                   </div>
                   <input
                     type="range"
@@ -389,15 +389,15 @@ export function ControlPanel({
                     step="0.1"
                     value={explodeSpread}
                     onChange={(e) => setExplodeSpread(parseFloat(e.target.value))}
-                    className="w-full accent-blue-600"
+                    className="w-full accent-primary-container"
                   />
                 </div>
               )}
             </div>
 
-            <Card>
+            <Card className="bg-surface-container-low border-outline-variant/25">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Assembly Order</CardTitle>
+                <CardTitle className="text-base text-on-surface">Assembly Order</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
@@ -406,16 +406,16 @@ export function ControlPanel({
                     .map((part) => (
                       <div
                         key={part.id}
-                        className="flex items-center gap-3 p-2 rounded-md hover:bg-muted/50 transition-colors"
+                        className="flex items-center gap-3 p-2 rounded hover:bg-surface-container-high transition-colors"
                       >
                         <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">
                           {part.assemblyOrder}
                         </span>
                         <div
-                          className="w-3 h-3 rounded-full border border-border"
+                          className="w-3 h-3 rounded-full border border-outline-variant"
                           style={{ backgroundColor: part.color }}
                         />
-                        <span className="text-sm text-foreground">{part.name}</span>
+                        <span className="text-sm text-on-surface">{part.name}</span>
                       </div>
                     ))}
                 </div>
@@ -426,17 +426,17 @@ export function ControlPanel({
           {/* Quiz Tab */}
           <TabsContent value="quiz" className="mt-0 space-y-4">
             {!quizMode ? (
-              <Card>
+              <Card className="bg-surface-container-low border-outline-variant/25">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base flex items-center gap-2">
+                  <CardTitle className="text-base text-on-surface flex items-center gap-2">
                     <Brain className="w-4 h-4" /> Assessment Mode
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-on-surface-variant">
                     Test your knowledge! Identify machine parts by clicking on them in the 3D view.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button onClick={startQuiz} className="w-full">
+                  <Button onClick={startQuiz} className="w-full bg-primary-container text-on-primary-container hover:bg-primary-container/90">
                     <Brain className="w-4 h-4" /> Start Quiz
                   </Button>
                 </CardContent>
@@ -444,18 +444,18 @@ export function ControlPanel({
             ) : (
               <>
                 {/* Score */}
-                <Card>
+                <Card className="bg-surface-container-low border-outline-variant/25">
                   <CardContent className="pt-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-foreground">Score</span>
+                      <span className="text-sm font-medium text-on-surface">Score</span>
                       <span className="text-lg font-mono font-bold text-primary">
                         {quizScore} / {quizTotal}
                       </span>
                     </div>
                     {quizTotal > 0 && (
-                      <div className="w-full bg-muted rounded-full h-2 mt-2">
+                      <div className="w-full bg-surface-container-high rounded-full h-2 mt-2">
                         <div
-                          className="bg-primary h-2 rounded-full transition-all"
+                          className="bg-primary-container h-2 rounded-full transition-all"
                           style={{ width: `${(quizScore / quizTotal) * 100}%` }}
                         />
                       </div>
@@ -465,37 +465,37 @@ export function ControlPanel({
 
                 {/* Current question */}
                 {currentQuestion && (
-                  <Card>
+                  <Card className="bg-surface-container-low border-outline-variant/25">
                     <CardHeader className="pb-3">
-                      <CardTitle className="text-base">Find this part:</CardTitle>
+                      <CardTitle className="text-base text-on-surface">Find this part:</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
-                      <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
+                      <div className="p-3 rounded bg-surface-container-high border border-primary/20">
                         <p className="text-base font-bold text-primary">{currentQuestion.targetPartName}</p>
-                        <p className="text-xs text-muted-foreground mt-1">{currentQuestion.hint}</p>
+                        <p className="text-xs text-on-surface-variant mt-1">{currentQuestion.hint}</p>
                       </div>
 
                       {quizFeedback === 'correct' && (
-                        <div className="flex items-center gap-2 p-3 rounded-lg bg-green-50 border border-green-200">
-                          <CheckCircle2 className="w-5 h-5 text-green-600" />
-                          <span className="text-sm font-medium text-green-700">Correct! 🎉</span>
+                        <div className="flex items-center gap-2 p-3 rounded border border-tertiary/30 bg-tertiary-container/25">
+                          <CheckCircle2 className="w-5 h-5 text-tertiary-fixed" />
+                          <span className="text-sm font-medium text-tertiary-fixed">Correct! 🎉</span>
                         </div>
                       )}
 
                       {quizFeedback === 'wrong' && (
-                        <div className="p-3 rounded-lg bg-red-50 border border-red-200 space-y-1">
+                        <div className="p-3 rounded border border-error/40 bg-error-container/30 space-y-1">
                           <div className="flex items-center gap-2">
-                            <XCircle className="w-5 h-5 text-red-600" />
-                            <span className="text-sm font-medium text-red-700">
+                            <XCircle className="w-5 h-5 text-error" />
+                            <span className="text-sm font-medium text-error">
                               Wrong! You clicked: {machine.parts.find((p) => p.id === quizWrongPart)?.name}
                             </span>
                           </div>
-                          <p className="text-xs text-red-600">Try to find the correct part next time.</p>
+                          <p className="text-xs text-on-surface-variant">Try to find the correct part next time.</p>
                         </div>
                       )}
 
                       {quizFeedback && (
-                        <Button onClick={nextQuestion} className="w-full" variant="outline">
+                        <Button onClick={nextQuestion} className="w-full border-outline-variant/40 bg-surface-container text-on-surface hover:bg-surface-container-high" variant="outline">
                           Next Question →
                         </Button>
                       )}
@@ -503,7 +503,7 @@ export function ControlPanel({
                   </Card>
                 )}
 
-                <Button onClick={stopQuiz} variant="ghost" className="w-full text-muted-foreground">
+                <Button onClick={stopQuiz} variant="ghost" className="w-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high">
                   End Quiz
                 </Button>
               </>

@@ -1,26 +1,34 @@
-import { useState, useRef, useCallback } from 'react';
-import { MachineViewer } from '@/components/MachineViewer';
-import { ControlPanel } from '@/components/ControlPanel';
-import { MachineType, machineDatabase, machineList } from '@/data/machineData';
-import { cn } from '@/lib/utils';
-import { Upload, Home, ArrowRight } from 'lucide-react';
-import logo from '@/assets/logo.jpeg';
-import dcMotorIcon from '@/assets/icons/dc-motor.jpeg';
-import dcGeneratorIcon from '@/assets/icons/dc-generator.jpeg';
-import transformerIcon from '@/assets/icons/transformer.jpeg';
-import inductionMotorIcon from '@/assets/icons/induction-motor.jpeg';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Home, Upload } from "lucide-react";
+import logo from "../assets/logo.jpeg";
+import LandingPage from "./LandingPage";
+import { MachineViewer } from "../components/MachineViewer";
+import { ControlPanel } from "../components/ControlPanel";
+import { ThemeToggle } from "../components/ThemeToggle";
+import { machineDatabase, machineList, MachineData, MachineType } from "../data/machineData";
 
-const machineIcons: Record<string, string> = {
-  'dc-motor': dcMotorIcon,
-  'dc-generator': dcGeneratorIcon,
-  'transformer': transformerIcon,
-  'induction-motor': inductionMotorIcon,
+type AppView = "home" | "machines";
+
+const customMachineData: MachineData = {
+  id: "custom",
+  name: "Custom Model",
+  description: "Interact with your uploaded model using the same explorer workflow.",
+  parts: [],
+  formulas: [],
+  labParameters: [],
+  labOutputs: [],
+  operationDescription: "Upload a GLB/GLTF model and explore it in the viewer.",
 };
 
-type View = 'home' | MachineType;
-
 const Index = () => {
-  const [currentView, setCurrentView] = useState<View>('home');
+  const navigate = useNavigate();
+  const location = useLocation();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  const [currentView, setCurrentView] = useState<AppView>("home");
+  const [machineType, setMachineType] = useState<MachineType>("dc-motor");
   const [selectedPart, setSelectedPart] = useState<string | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [animationSpeed, setAnimationSpeed] = useState(1);
@@ -28,190 +36,158 @@ const Index = () => {
   const [showLabels, setShowLabels] = useState(true);
   const [quizMode, setQuizMode] = useState(false);
   const [quizTargetPart, setQuizTargetPart] = useState<string | null>(null);
-  const [customModelUrl, setCustomModelUrl] = useState<string | null>(null);
   const [explodeSpread, setExplodeSpread] = useState(1);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [customModelUrl, setCustomModelUrl] = useState<string | null>(null);
 
-  const machineType = currentView === 'home' ? 'dc-motor' : currentView;
-  const machine = machineDatabase[machineType] || machineDatabase['dc-motor'];
+  useEffect(() => {
+    setCurrentView(location.pathname === "/machines" ? "machines" : "home");
+  }, [location.pathname]);
 
-  const handleMachineChange = (id: MachineType) => {
-    setCurrentView(id);
+  const activeMachine = useMemo(() => {
+    if (machineType === "custom") return customMachineData;
+    return machineDatabase[machineType];
+  }, [machineType]);
+
+  const resetMachineTransientState = useCallback(() => {
     setSelectedPart(null);
-    setIsAnimating(false);
-    setIsExploded(false);
-    setAnimationSpeed(1);
     setQuizMode(false);
     setQuizTargetPart(null);
-  };
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const url = URL.createObjectURL(file);
-    setCustomModelUrl(url);
-    setCurrentView('custom');
-    setSelectedPart(null);
-    setIsAnimating(false);
     setIsExploded(false);
+    setIsAnimating(false);
+  }, []);
+
+  const handleMachineChange = useCallback(
+    (nextMachine: "dc-motor" | "dc-generator" | "transformer" | "induction-motor") => {
+      setMachineType(nextMachine);
+      resetMachineTransientState();
+      setCurrentView("machines");
+      if (location.pathname !== "/machines") {
+        navigate("/machines");
+      }
+    },
+    [location.pathname, navigate, resetMachineTransientState],
+  );
+
+  const handleGoHome = useCallback(() => {
+    setCurrentView("home");
+    if (location.pathname !== "/") {
+      navigate("/");
+    }
+  }, [location.pathname, navigate]);
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
   };
 
+  const handleUploadChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-  const allTabs = [
-    ...machineList,
-    ...(customModelUrl ? [{ id: 'custom' as MachineType, name: 'Custom Model', icon: '📦' }] : []),
-  ];
+    const fileName = file.name.toLowerCase();
+    if (!fileName.endsWith(".glb") && !fileName.endsWith(".gltf")) {
+      event.target.value = "";
+      return;
+    }
 
-  // HOME VIEW
-  if (currentView === 'home') {
-    return (
-      <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-          src="/videos/hero-bg.mp4"
-        />
-        <div className="absolute inset-0 bg-black/30" />
+    setCustomModelUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return URL.createObjectURL(file);
+    });
 
-        <div className="relative z-10 flex flex-col items-center text-center px-4 max-w-4xl mx-auto">
-          <img src={logo} alt="Tangible logo" className="w-16 h-16 rounded-xl mb-2" />
-          <h1
-            className="text-5xl sm:text-6xl md:text-7xl font-serif font-bold text-white mb-4"
-            style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}
-          >
-            Tangible
-          </h1>
-          <p
-            className="text-lg sm:text-xl text-white/85 mb-12 max-w-2xl"
-            style={{ textShadow: '0 1px 8px rgba(0,0,0,0.4)' }}
-          >
-            Interactive 3D Learning Platform for Electrical Machines
-          </p>
+    setMachineType("custom");
+    resetMachineTransientState();
+    setCurrentView("machines");
+    if (location.pathname !== "/machines") {
+      navigate("/machines");
+    }
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 w-full">
-            {machineList.map((m) => (
-              <button
-                key={m.id}
-                onClick={() => handleMachineChange(m.id)}
-                className="group flex flex-col items-center gap-3 p-6 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 hover:border-white/40 transition-all duration-300 hover:scale-105"
-              >
-                <img src={machineIcons[m.id] || ''} alt={m.name} className="w-14 h-14 object-contain rounded-lg" />
-                <span className="text-sm font-medium text-white">{m.name}</span>
-                <ArrowRight className="w-4 h-4 text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all" />
-              </button>
-            ))}
+    event.target.value = "";
+  };
+
+  useEffect(() => {
+    return () => {
+      if (customModelUrl) {
+        URL.revokeObjectURL(customModelUrl);
+      }
+    };
+  }, [customModelUrl]);
+
+  if (currentView === "home") {
+    return <LandingPage onMachineSelect={handleMachineChange} />;
+  }
+
+  return (
+    <div className="min-h-screen bg-surface-dim text-on-surface">
+      <header className="px-4 py-3 border-b border-outline-variant/40 bg-surface-container-low sticky top-0 z-30">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handleGoHome}
+              className="inline-flex items-center gap-2 text-on-surface-variant hover:text-on-surface text-xs font-label tracking-widest uppercase transition-colors"
+            >
+              <Home className="w-4 h-4" />
+              Home
+            </button>
+            <div className="h-6 w-px bg-outline-variant/60" />
+            <div className="flex items-center gap-2">
+              <img alt="Tangible Logo" className="w-6 h-6 object-contain" src={logo} />
+              <span className="text-3xl font-serif text-primary">Tangible</span>
+            </div>
           </div>
 
-          <div>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
             <input
               ref={fileInputRef}
               type="file"
-              accept=".glb,.gltf"
-              onChange={handleFileUpload}
+              accept=".glb,.gltf,model/gltf-binary,model/gltf+json"
+              onChange={handleUploadChange}
               className="hidden"
             />
             <button
-              onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 hover:border-white/40 transition-all duration-300 text-white font-medium"
+              onClick={handleUploadClick}
+              className="inline-flex items-center gap-2 bg-primary-container text-on-primary-container px-6 py-2.5 rounded-none text-xs font-label tracking-widest uppercase transition-all hover:bg-opacity-90"
             >
               <Upload className="w-4 h-4" />
-              Upload Your Own 3D Model
+              Upload 3D Model
             </button>
           </div>
-
-          <div className="mt-12 text-white/60 text-sm">
-            <p className="text-white/80 font-semibold tracking-widest text-base">BYTECRAFT</p>
-          </div>
         </div>
-      </div>
-    );
-  }
 
-  // EXPLORER VIEW
-  return (
-    <div className="flex flex-col h-screen" style={{ background: '#1e293b' }}>
-      {/* Header - dark slate style */}
-      <header className="border-b" style={{ background: '#1e293b', borderColor: '#334155' }}>
-        <div className="px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setCurrentView('home')}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm font-medium transition-colors"
-                style={{ color: '#94a3b8' }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = '#334155'; e.currentTarget.style.color = '#e2e8f0'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#94a3b8'; }}
-              >
-                <Home className="w-4 h-4" />
-                <span className="hidden sm:inline">Home</span>
-              </button>
-              <div className="w-px h-5" style={{ background: '#334155' }} />
-              <img src={logo} alt="Tangible logo" className="w-7 h-7 rounded" />
-              <h1 className="text-lg font-serif font-bold tracking-tight" style={{ color: '#e2e8f0' }}>
-                Tangible
-              </h1>
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".glb,.gltf"
-                onChange={handleFileUpload}
-                className="hidden"
-              />
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
-                style={{ background: '#2563eb', color: '#fff' }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = '#1d4ed8'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = '#2563eb'; }}
-              >
-                <Upload className="w-3.5 h-3.5" />
-                Upload 3D Model
-              </button>
-            </div>
-          </div>
-          {/* Tabs */}
-          <nav className="flex gap-1 mt-3 overflow-x-auto">
-            {allTabs.map((m) => (
+        <div className="flex flex-wrap gap-3 mt-4">
+          {machineList.map((m) => {
+            const active = machineType === m.id;
+            return (
               <button
                 key={m.id}
-                onClick={() => handleMachineChange(m.id)}
-                className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap"
-                style={
-                  currentView === m.id
-                    ? { background: '#2563eb', color: '#fff' }
-                    : { color: '#cbd5e1' }
-                }
-                onMouseEnter={(e) => {
-                  if (currentView !== m.id) e.currentTarget.style.background = '#334155';
-                }}
-                onMouseLeave={(e) => {
-                  if (currentView !== m.id) e.currentTarget.style.background = 'transparent';
-                }}
+                onClick={() => handleMachineChange(m.id as "dc-motor" | "dc-generator" | "transformer" | "induction-motor")}
+                className={`inline-flex items-center gap-2 rounded px-3 py-2 border transition-all font-label text-xs tracking-wider ${
+                  active
+                    ? "bg-primary-container border-primary text-on-primary-container"
+                    : "bg-surface-container border-outline-variant/40 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface"
+                }`}
               >
-                {machineIcons[m.id] ? <img src={machineIcons[m.id]} alt={m.name} className="w-5 h-5 object-contain mr-1.5 rounded-sm" /> : <span className="mr-1.5">{m.icon}</span>}
-                {m.name}
+                <span className="text-base">{m.icon}</span>
+                <span>{m.name}</span>
               </button>
-            ))}
-          </nav>
-          {/* Camera hints */}
-          <div className="flex justify-center gap-4 mt-2 pb-1" style={{ color: '#64748b', fontSize: '11px' }}>
-            <span>🖱️ Drag to rotate</span>
-            <span>🖱️ Scroll to zoom</span>
-            <span>🖱️ Right-click to pan</span>
-          </div>
+            );
+          })}
+          {machineType === "custom" && (
+            <span className="inline-flex items-center rounded px-3 py-2 border border-tertiary/50 bg-tertiary-container/25 text-tertiary-fixed text-xs font-label tracking-wider uppercase">
+              Custom Model Loaded
+            </span>
+          )}
         </div>
       </header>
 
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
-        <div className="h-[40vh] md:h-auto md:flex-1 md:w-[65%] p-3">
+      <div className="px-4 py-3 text-on-surface-variant text-xs font-label tracking-widest uppercase text-center border-b border-outline-variant/20">
+        Drag to rotate   Scroll to zoom   Right-click to pan
+      </div>
+
+      <main className="grid grid-cols-1 xl:grid-cols-[1.05fr_1fr] gap-3 px-4 py-4">
+        <div className="min-h-[420px] rounded border border-outline-variant/30 bg-surface-container-lowest overflow-hidden">
           <MachineViewer
-            machineType={machineType as MachineType}
+            machineType={machineType}
             selectedPart={selectedPart}
             onPartClick={setSelectedPart}
             isAnimating={isAnimating}
@@ -224,9 +200,9 @@ const Index = () => {
           />
         </div>
 
-        <div className="flex-1 min-h-0 md:w-[35%] border-t md:border-t-0 md:border-l overflow-hidden" style={{ background: '#fff', borderColor: '#e2e8f0' }}>
+        <div className="min-h-[420px] rounded border border-outline-variant/30 bg-surface-container overflow-hidden">
           <ControlPanel
-            machine={machine}
+            machine={activeMachine}
             selectedPart={selectedPart}
             isAnimating={isAnimating}
             setIsAnimating={setIsAnimating}
@@ -244,7 +220,7 @@ const Index = () => {
             setExplodeSpread={setExplodeSpread}
           />
         </div>
-      </div>
+      </main>
     </div>
   );
 };

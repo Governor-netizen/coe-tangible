@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=IBM+Plex+Mono:wght@300;400;500;600&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Noto+Serif:ital,wght@0,100..900;1,100..900&amp;family=Space+Grotesk:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .blueprint-grid {
+            background-image: 
+                linear-gradient(to right, rgba(26, 32, 64, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(26, 32, 64, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .blueprint-grid-fine {
+            background-image: 
+                linear-gradient(to right, rgba(26, 32, 64, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(26, 32, 64, 0.05) 1px, transparent 1px);
+            background-size: 8px 8px;
+        }
+        .perspective-text {
+            perspective: 1000px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-fixed": "#002113",
+                        "inverse-primary": "#004ee7",
+                        "inverse-on-surface": "#2f3035",
+                        "surface-variant": "#333539",
+                        "on-primary-fixed": "#001550",
+                        "primary-container": "#0057ff",
+                        "surface-dim": "#111318",
+                        "on-tertiary-fixed-variant": "#005234",
+                        "tertiary-fixed-dim": "#17e29a",
+                        "on-primary-fixed-variant": "#003ab2",
+                        "surface": "#111318",
+                        "tertiary-fixed": "#4dffb4",
+                        "inverse-surface": "#e2e2e8",
+                        "secondary-fixed": "#ffddb4",
+                        "surface-bright": "#37393e",
+                        "primary-fixed": "#dce1ff",
+                        "error-container": "#93000a",
+                        "on-primary-container": "#e5e8ff",
+                        "on-error-container": "#ffdad6",
+                        "tertiary-container": "#00784f",
+                        "outline": "#8d90a2",
+                        "secondary-container": "#dc9100",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "on-tertiary": "#003823",
+                        "on-secondary": "#452b00",
+                        "tertiary": "#17e29a",
+                        "surface-container-lowest": "#0c0e12",
+                        "secondary-fixed-dim": "#ffb955",
+                        "primary": "#b6c4ff",
+                        "on-surface": "#e2e2e8",
+                        "on-primary": "#00277f",
+                        "secondary": "#ffb955",
+                        "surface-container": "#1e2024",
+                        "on-tertiary-container": "#8fffc6",
+                        "on-secondary-container": "#4f3100",
+                        "surface-container-high": "#282a2e",
+                        "outline-variant": "#434656",
+                        "on-surface-variant": "#c3c5d9",
+                        "error": "#ffb4ab",
+                        "on-error": "#690005",
+                        "on-secondary-fixed-variant": "#633f00",
+                        "on-secondary-fixed": "#291800",
+                        "surface-tint": "#b6c4ff",
+                        "surface-container-low": "#1a1c20",
+                        "background": "#111318",
+                        "surface-container-highest": "#333539",
+                        "on-background": "#e2e2e8"
+                    },
+                    fontFamily: {
+                        "headline": ["Playfair Display", "serif"],
+                        "body": ["Source Serif 4", "serif"],
+                        "label": ["IBM Plex Mono", "monospace"],
+                        "serif-body": ["Source Serif 4", "serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface-dim text-on-surface selection:bg-primary-container selection:text-white">
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-8 py-4 bg-[#0A0C10] dark:bg-[#0A0C10] transition-all duration-300">
+<div class="text-2xl font-serif text-[#0057FF] dark:text-[#B6C4FF] after:content-['3D'] after:text-xs after:align-top after:ml-0.5">EduModels</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-slate-400 dark:text-slate-500 font-normal font-label text-xs tracking-widest hover:text-[#0057FF] dark:hover:text-[#4DFFB4] transition-colors duration-200" href="#">MACHINES</a>
+<a class="text-slate-400 dark:text-slate-500 font-normal font-label text-xs tracking-widest hover:text-[#0057FF] dark:hover:text-[#4DFFB4] transition-colors duration-200" href="#">SYSTEMS</a>
+<a class="text-slate-400 dark:text-slate-500 font-normal font-label text-xs tracking-widest hover:text-[#0057FF] dark:hover:text-[#4DFFB4] transition-colors duration-200" href="#">COURSES</a>
+<a class="text-slate-400 dark:text-slate-500 font-normal font-label text-xs tracking-widest hover:text-[#0057FF] dark:hover:text-[#4DFFB4] transition-colors duration-200" href="#">RESEARCH</a>
+<a class="text-slate-400 dark:text-slate-500 font-normal font-label text-xs tracking-widest hover:text-[#0057FF] dark:hover:text-[#4DFFB4] transition-colors duration-200" href="#">ABOUT</a>
+</div>
+<div class="flex items-center gap-6">
+<button class="font-label text-xs tracking-widest text-slate-400 hover:text-white transition-colors uppercase">Sign In</button>
+<button class="bg-primary-container text-white font-label text-xs tracking-widest px-6 py-2.5 rounded-none active:scale-95 duration-75 uppercase">Get Access →</button>
+</div>
+</nav>
+<!-- Hero Section -->
+<section class="relative min-h-screen flex items-center bg-[#0A0C10] overflow-hidden">
+<div class="absolute inset-0 blueprint-grid opacity-30"></div>
+<div class="absolute inset-0 blueprint-grid-fine opacity-20"></div>
+<div class="container mx-auto px-8 grid lg:grid-cols-12 gap-12 relative z-10 pt-20">
+<div class="lg:col-span-7 flex flex-col justify-center">
+<span class="font-label text-secondary font-medium tracking-widest mb-6">ENGINEERING · VISUALIZED</span>
+<h1 class="font-headline text-7xl lg:text-8xl leading-none text-on-surface mb-8">
+                    Understand <span class="italic text-primary">Machines</span> Through Motion.
+                </h1>
+<p class="font-serif-body text-xl text-on-surface-variant max-w-xl mb-10 leading-relaxed">
+                    Interactive 3D models for DC machines, transformers, control systems, and more — designed for deep technical learning and spatial intuition.
+                </p>
+<div class="flex flex-wrap gap-6">
+<button class="bg-primary-container text-on-primary-container px-10 py-4 font-label text-sm tracking-widest rounded uppercase flex items-center gap-3 group hover:bg-opacity-90 transition-all">
+                        → Explore the Library
+                    </button>
+<button class="border border-outline-variant bg-surface-container-low text-on-surface px-10 py-4 font-label text-sm tracking-widest rounded uppercase hover:bg-surface-container-high transition-all">
+                        View Featured: DC Motor Series ↗
+                    </button>
+</div>
+</div>
+<div class="lg:col-span-5 relative flex items-center justify-center">
+<!-- Exploded View Visualization Simulation Area -->
+<div class="w-full aspect-square relative rounded border border-outline-variant/20 bg-surface-container-lowest/50 backdrop-blur-sm overflow-hidden flex items-center justify-center">
+<!-- Placeholder for the "Exploded View Assembly" -->
+<div class="relative w-full h-full p-8">
+<img class="w-full h-full object-contain opacity-50 mix-blend-screen" data-alt="Technical schematic of a DC motor assembly" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6qkVd8iVhwjAA-QgwUGnF1ojqMw2ahnNXYGXFCWFZP_OF2yF2i5cIvjIM_Q0AnA01Bg887yRe_QID8FLy1pOjDUt6XwYMSKTkSi_0-iJulXGkXr9owQLHXuTuiOwDY1DGT11Pf5N1QGHqaB1Re70VBGMdEIIrMd7KK0WL1ghpMR-4f3xl3b3pTcxCrQ9-b-m1NDSXyNiASSXBh8J-OnyyM6pX9wBkN0C1Lpmg6CPsCIRXydjhlGzk6NkpxnV9idC2esCRcFIuxhaB"/>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 border-2 border-primary/20 rounded-full border-dashed animate-[spin_20s_linear_infinite]"></div>
+<div class="absolute top-4 left-4 font-label text-[10px] text-tertiary tracking-tighter opacity-80">
+                            SYSTEM_STABLE: 104.2Hz<br/>
+                            DC_MOTOR_MODEL_A1
+                        </div>
+<div class="absolute bottom-4 right-4 font-label text-[10px] text-secondary tracking-tighter text-right opacity-80">
+                            FIELD_WINDING: NOMINAL<br/>
+                            VOLTAGE: 220V
+                        </div>
+<!-- Decorative UI elements -->
+<div class="absolute inset-0 pointer-events-none border-[1px] border-outline-variant/10"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Recently Published Models -->
+<section class="py-24 bg-surface px-8">
+<div class="container mx-auto">
+<div class="flex items-center gap-4 mb-16">
+<div class="w-1.5 h-12 bg-primary-container"></div>
+<h2 class="font-headline text-4xl">Recently Published Models</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Card 1 -->
+<div class="group bg-surface-container-low border border-outline-variant/15 p-6 hover:border-primary-container transition-all duration-300 hover:-translate-y-1">
+<div class="relative aspect-video bg-surface-container-lowest mb-6 overflow-hidden flex items-center justify-center border border-outline-variant/10">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-60" data-alt="3D render of a squirrel cage induction motor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNoSqDsYu0GcJhHgvBVDV6QZnHAL1m5kCfdOV7XPfuFGCxtgLoTKMXGuTfzqxB7JWZcaqWAb74jo6YKTQk8HHipc_Gf4U6yp-So5wclj3C38HLplYoMHHMtDJuwq6uIDhMZyunQLFvUDnhhA5__0kZAaApJFPoNffARTSHysgH4m2lST0aVDw40KhTYJD65sonUGgcHwwY4vBurKPt9vGLEzG8GWXlinXAbckU06gKEiGB1ZBLRGSZW0nhUzllt_Xw--CO9af0JDIJ"/>
+<div class="absolute top-3 right-3 flex items-center gap-1.5 bg-surface-dim/80 px-2 py-1">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-label text-[10px] text-secondary">NEW</span>
+</div>
+</div>
+<div class="font-label text-[10px] text-outline tracking-widest mb-2 uppercase">DC_MACHINES</div>
+<h3 class="font-headline text-2xl mb-4">Shunt-Wound DC Generator</h3>
+<p class="font-serif-body text-on-surface-variant text-sm mb-8 leading-relaxed">
+                        Exploration of voltage-current characteristics under varying load conditions with interactive field rheostat.
+                    </p>
+<a class="font-label text-xs text-primary-fixed-dim hover:text-primary transition-colors tracking-widest group flex items-center gap-2" href="#">
+                        OPEN MODEL <span class="group-hover:translate-x-1 transition-transform">→</span>
+</a>
+</div>
+<!-- Card 2 -->
+<div class="group bg-surface-container-low border border-outline-variant/15 p-6 hover:border-primary-container transition-all duration-300 hover:-translate-y-1">
+<div class="relative aspect-video bg-surface-container-lowest mb-6 overflow-hidden flex items-center justify-center border border-outline-variant/10">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-60" data-alt="Technical schematic of power transformer core" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpXb6NNUBV7njbdln-syO0aOmsU1EMUyidBQ7Io6bNRGlWVYoXBkjywpOUY_H7wf6NrFFWqK7rJd4D5-Mm1p_Z7DO339NLLqndSITW2waLIrmg0FuWzYSN5Op08Bx-fVvQmiKIa_Jkl3SCkemfqq9akl4bSYbJ9lVNwya0s7GmeYFLc5sIag_Es64QCu4CfE_vXaFH2JD0jbkR4gYsFsCZH4cF-Kxf1_Vbv7VacM03WEGITqKMZ_YEBmSGf1MfaP64w183dvd4A6l-"/>
+</div>
+<div class="font-label text-[10px] text-outline tracking-widest mb-2 uppercase">TRANSFORMERS</div>
+<h3 class="font-headline text-2xl mb-4">Single-Phase Core Type</h3>
+<p class="font-serif-body text-on-surface-variant text-sm mb-8 leading-relaxed">
+                        Visualize magnetic flux distribution and eddy current losses across high-fidelity laminated core sections.
+                    </p>
+<a class="font-label text-xs text-primary-fixed-dim hover:text-primary transition-colors tracking-widest group flex items-center gap-2" href="#">
+                        OPEN MODEL <span class="group-hover:translate-x-1 transition-transform">→</span>
+</a>
+</div>
+<!-- Card 3 -->
+<div class="group bg-surface-container-low border border-outline-variant/15 p-6 hover:border-primary-container transition-all duration-300 hover:-translate-y-1">
+<div class="relative aspect-video bg-surface-container-lowest mb-6 overflow-hidden flex items-center justify-center border border-outline-variant/10">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-60" data-alt="Abstract engineering gear and machinery" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMI7lJvAuqOhvkhy3tt5htTc7CaA6iKQRl_eBO5NBWPkVmFolw8aXVbqUeUWsYTuOrsRvvMOsQS0JRB5q4v6P3pgMuF5_tSNRWneUBtFN6z5AnMv5OjYaUpHVgD2Pn60DkQpxCIlpI50xAtLQ2heyIFbZCzCF1zrJUJYSo9NnB0P3KMa1KJj0YmiH5hWUwgwGFR6PjoJSQMcCO6DErkvBh-u-YXj7ok6ucGX22fL_ROlN-Pf22Fo0oWkzqtHHAI_sgCq1L6VW4BKUj"/>
+</div>
+<div class="font-label text-[10px] text-outline tracking-widest mb-2 uppercase">CONTROL_SYSTEMS</div>
+<h3 class="font-headline text-2xl mb-4">Inverted Pendulum</h3>
+<p class="font-serif-body text-on-surface-variant text-sm mb-8 leading-relaxed">
+                        Adjust PID parameters in real-time and observe the response of a classic balancing control algorithm.
+                    </p>
+<a class="font-label text-xs text-primary-fixed-dim hover:text-primary transition-colors tracking-widest group flex items-center gap-2" href="#">
+                        OPEN MODEL <span class="group-hover:translate-x-1 transition-transform">→</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: How it Works -->
+<section class="py-24 bg-surface-container-lowest overflow-hidden">
+<div class="container mx-auto px-8">
+<h2 class="font-headline text-5xl text-center mb-20">A Scientific Workflow</h2>
+<div class="relative grid grid-cols-1 lg:grid-cols-3 gap-16 max-w-5xl mx-auto">
+<!-- Connector Line -->
+<div class="hidden lg:block absolute top-12 left-0 w-full h-px border-t border-dashed border-secondary/30 -z-0"></div>
+<!-- Step 1 -->
+<div class="relative z-10 text-center flex flex-col items-center">
+<div class="w-24 h-24 bg-surface border border-outline-variant flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-4xl text-primary">inventory_2</span>
+</div>
+<div class="font-label text-sm text-secondary mb-4">STEP_01</div>
+<h3 class="font-headline text-xl mb-4">Browse Library</h3>
+<p class="font-serif-body text-sm text-on-surface-variant">Select from hundreds of machines mapped to university curricula.</p>
+</div>
+<!-- Step 2 -->
+<div class="relative z-10 text-center flex flex-col items-center">
+<div class="w-24 h-24 bg-surface border border-outline-variant flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-4xl text-primary">view_in_ar</span>
+</div>
+<div class="font-label text-sm text-secondary mb-4">STEP_02</div>
+<h3 class="font-headline text-xl mb-4">Open 3D</h3>
+<p class="font-serif-body text-sm text-on-surface-variant">Manipulate models in real-time. Toggle exploded views and animations.</p>
+</div>
+<!-- Step 3 -->
+<div class="relative z-10 text-center flex flex-col items-center">
+<div class="w-24 h-24 bg-surface border border-outline-variant flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-4xl text-primary">edit_note</span>
+</div>
+<div class="font-label text-sm text-secondary mb-4">STEP_03</div>
+<h3 class="font-headline text-xl mb-4">Annotate &amp; Study</h3>
+<p class="font-serif-body text-sm text-on-surface-variant">Layer technical data and equations directly over the active 3D components.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 4: Course Integration Banner -->
+<section class="py-24 px-8 border-y border-outline-variant/10">
+<div class="container mx-auto grid lg:grid-cols-2 gap-16 items-center">
+<div>
+<h2 class="font-headline text-6xl leading-[1.1] mb-8">From lecture to <br/><span class="italic text-primary">spatial understanding</span>.</h2>
+<p class="font-serif-body text-lg text-on-surface-variant mb-10 max-w-md">
+                    Every model is mapped to specific course weeks, ensuring that visual aids are perfectly synced with the theoretical concepts being taught in the classroom.
+                </p>
+<button class="bg-surface-container-high border border-outline-variant/30 text-on-surface font-label text-xs tracking-widest px-8 py-4 uppercase flex items-center gap-3">
+                    View Course Mapping →
+                </button>
+</div>
+<div class="relative h-[400px]">
+<!-- Layered magazine composition -->
+<div class="absolute top-0 right-0 w-3/4 aspect-[3/4] bg-surface-container border border-outline-variant/20 shadow-2xl z-0 transform rotate-3">
+<img class="w-full h-full object-cover grayscale opacity-30" data-alt="Technical notebook with machine sketches" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDz7Q_6nEzRtn_TQ1n6DOUUWlBTLivaweK9R8UtVwNP94olEPrW30qlX4GqmVqPsC4e9eC4ry5oSCJGiDidZCfaGirzUb-4qi1yi7mQjarMVDlZU9L-HGZ1wX-BCd5QfYs3PCgaprGH2EHhRHT5l1CIdlf5kak2xhi81FKagz4D8MQ8UrFRJ2obwP0DIIE4tcBXZB4oU3sP8KCgqISA5RmxZjqEDWHyRrp8zWVog3WA4UEYw2YA5GZ9Poe77afC6uaDapobRP8Ig6cl"/>
+</div>
+<div class="absolute top-10 right-20 w-3/4 aspect-square bg-[#0A0C10] border border-primary/20 p-4 z-10 transform -rotate-2 flex items-center justify-center">
+<img class="w-full h-full object-contain mix-blend-screen opacity-80" data-alt="DC motor wireframe diagram" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7bM3qR-bQfOpNqx0RZDbpviNvSejt9_DWd5a0ePiZYW6OWV4JaszocdZ_G6s1XX66dC4ZFfbo2Itu9qs7fPbeVhPgidmbdIKR5Bl6g1Ma9QIpL6GQt7cJYuaYA28N33LeavPBM8vcoye2nUMuSkpWCUWsJ_TdRntRurajREO4oDuzqgi4bI5NFpogir-vmEj-Px9YAi6eEvJB8vYA-7zxW2FRDTzRSSB6lGtWTwRKVa54KmAsr4lkutndHI4LwOt2vTgZbdX5_0ee"/>
+<div class="absolute top-4 left-4 font-label text-[10px] text-tertiary">MODEL_REF: DC_SERIES_V1</div>
+</div>
+<div class="absolute bottom-4 left-10 bg-primary-container p-6 w-56 z-20">
+<div class="font-label text-[10px] text-white/70 mb-2">SYLLABUS_MAP</div>
+<div class="text-white font-headline text-lg">EE304: Electrical Machines I</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 5: Stats Bar -->
+<section class="bg-surface-container-low py-16">
+<div class="container mx-auto px-8">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+<div class="text-center border-r border-outline-variant/20 last:border-r-0">
+<div class="font-headline text-5xl text-primary mb-2">150+</div>
+<div class="font-label text-[10px] tracking-widest text-outline uppercase">Interactive Models</div>
+</div>
+<div class="text-center border-r border-outline-variant/20 last:border-r-0">
+<div class="font-headline text-5xl text-primary mb-2">24</div>
+<div class="font-label text-[10px] tracking-widest text-outline uppercase">African Partner Unis</div>
+</div>
+<div class="text-center border-r border-outline-variant/20 last:border-r-0">
+<div class="font-headline text-5xl text-primary mb-2">98%</div>
+<div class="font-label text-[10px] tracking-widest text-outline uppercase">Retention Improvement</div>
+</div>
+<div class="text-center border-r border-outline-variant/20 last:border-r-0">
+<div class="font-headline text-5xl text-primary mb-2">0.5s</div>
+<div class="font-label text-[10px] tracking-widest text-outline uppercase">Latency Rendering</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 6: Featured DC Motor Deep Dive -->
+<section class="py-24 bg-surface px-8">
+<div class="container mx-auto bg-surface-container-lowest border border-outline-variant/10">
+<div class="grid lg:grid-cols-2">
+<!-- Left: Interactive Visual -->
+<div class="p-12 relative border-b lg:border-b-0 lg:border-r border-outline-variant/10 flex flex-col justify-center items-center overflow-hidden">
+<div class="font-label text-xs text-secondary self-start mb-8 tracking-[0.2em]">FEATURED_DEEP_DIVE</div>
+<div class="relative w-full max-w-md aspect-square">
+<img class="w-full h-full object-contain opacity-40 mix-blend-screen" data-alt="Detailed view of electrical motor armature and commutator" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALv9Vp-ocsG8AjbEBXSfdfVPbDxZ3sG5K56ufYi03pf6o72TUxveS6YJHT4Xd2iX2WDBjln4ZLm-vNX4gnshMctPfzZVeXVK3HdUxuiyR4zeYSGVkp70mBfYjFYivtrZXw06HgcehvanzFSSgR6WBYiQANb5Xe5CDfLH2MzRIqCJq0wXi8H9CuvRY0gpEY3R3Cn87kYfBBhBqe25XeeNbrmCONVDLW5U-hPj8nZO-LrhLQonlLFFKhxGo_VPT5q9-hwFMKKwU5VWKU"/>
+<!-- Callout lines simulation -->
+<div class="absolute top-1/4 left-0 flex items-center">
+<div class="w-16 h-px bg-tertiary"></div>
+<div class="font-label text-[10px] text-tertiary ml-2">STATOR</div>
+</div>
+<div class="absolute top-1/2 right-0 flex items-center">
+<div class="font-label text-[10px] text-tertiary mr-2">ARMATURE</div>
+<div class="w-16 h-px bg-tertiary"></div>
+</div>
+<div class="absolute bottom-1/4 left-1/3 flex flex-col items-center">
+<div class="w-px h-16 bg-tertiary"></div>
+<div class="font-label text-[10px] text-tertiary mt-2 uppercase">Commutator Brushes</div>
+</div>
+</div>
+</div>
+<!-- Right: Tabbed Info -->
+<div class="p-12 flex flex-col">
+<div class="flex gap-6 mb-10 overflow-x-auto pb-4 scrollbar-hide">
+<button class="font-label text-xs tracking-widest text-primary border-b border-primary pb-1 whitespace-nowrap">OVERVIEW</button>
+<button class="font-label text-xs tracking-widest text-outline hover:text-white pb-1 whitespace-nowrap">WORKING PRINCIPLE</button>
+<button class="font-label text-xs tracking-widest text-outline hover:text-white pb-1 whitespace-nowrap">EQUATIONS</button>
+<button class="font-label text-xs tracking-widest text-outline hover:text-white pb-1 whitespace-nowrap">3D VIEW</button>
+</div>
+<div class="flex-grow">
+<h3 class="font-headline text-4xl mb-6">The Series DC Motor</h3>
+<p class="font-serif-body text-on-surface-variant leading-relaxed mb-6">
+                            Commonly used in applications requiring high starting torque, such as electric locomotives and cranes. In a series-wound motor, the field winding is connected in series with the armature winding.
+                        </p>
+<div class="space-y-4 mb-10">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-tertiary text-lg">check_circle</span>
+<span class="text-sm font-serif-body">High starting torque at low speeds.</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-tertiary text-lg">check_circle</span>
+<span class="text-sm font-serif-body">Self-governing magnetic flux based on load current.</span>
+</div>
+</div>
+</div>
+<button class="w-full bg-primary-container text-white font-label text-xs tracking-widest py-5 uppercase group flex justify-center items-center gap-2">
+                        Open Full 3D Model <span class="group-hover:translate-x-1 transition-transform">→</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="w-full py-12 px-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-[#0C0E12] dark:bg-[#0C0E12] border-t border-[#434656]/15">
+<div class="flex flex-col gap-2">
+<div class="text-xl font-serif text-slate-200 dark:text-slate-100">EduModels</div>
+<div class="font-label text-[10px] text-slate-500 tracking-wider uppercase">Built for engineering education in Africa</div>
+</div>
+<div class="flex flex-wrap gap-x-8 gap-y-2">
+<a class="font-label text-[10px] text-slate-500 dark:text-slate-600 tracking-widest uppercase hover:text-white dark:hover:text-[#0057FF] underline underline-offset-4 transition-all duration-300" href="#">ResearchGate</a>
+<a class="font-label text-[10px] text-slate-500 dark:text-slate-600 tracking-widest uppercase hover:text-white dark:hover:text-[#0057FF] underline underline-offset-4 transition-all duration-300" href="#">GitHub</a>
+<a class="font-label text-[10px] text-slate-500 dark:text-slate-600 tracking-widest uppercase hover:text-white dark:hover:text-[#0057FF] underline underline-offset-4 transition-all duration-300" href="#">LinkedIn</a>
+<a class="font-label text-[10px] text-slate-500 dark:text-slate-600 tracking-widest uppercase hover:text-white dark:hover:text-[#0057FF] underline underline-offset-4 transition-all duration-300" href="#">Privacy</a>
+<a class="font-label text-[10px] text-slate-500 dark:text-slate-600 tracking-widest uppercase hover:text-white dark:hover:text-[#0057FF] underline underline-offset-4 transition-all duration-300" href="#">Terms</a>
+</div>
+<div class="font-label text-[10px] text-slate-600">
+            © 2024 TAMGIBLE EDUMODELS
+        </div>
+</footer>
+</body></html>
