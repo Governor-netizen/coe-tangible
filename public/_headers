@@ -1,0 +1,14 @@
+/ezgif/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/dc-motor.glb
+  Cache-Control: public, max-age=31536000, immutable
+
+/me.glb
+  Cache-Control: public, max-age=31536000, immutable
+
+/stitch-images/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/videos/*
+  Cache-Control: public, max-age=31536000, immutable

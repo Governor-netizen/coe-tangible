@@ -5,7 +5,31 @@ const frameCount = 138;
 const frameIndex = (index: number) => `/ezgif/ezgif-frame-${index.toString().padStart(3, '0')}.jpg`;
 const firstFrameReadyStorageKey = "tangible:first-frame-ready";
 const frameCache: (HTMLImageElement | undefined)[] = new Array(frameCount);
+const eagerFrameCount = 40;
+const preloadConcurrency = 12;
 let firstFrameReadyCache = false;
+
+const getPerformanceProfile = () => {
+  if (typeof navigator === "undefined") {
+    return { eager: eagerFrameCount, concurrency: preloadConcurrency, frameStep: 1 };
+  }
+
+  const nav = navigator as Navigator & {
+    deviceMemory?: number;
+    connection?: { saveData?: boolean };
+  };
+
+  const cores = nav.hardwareConcurrency ?? 8;
+  const memory = nav.deviceMemory ?? 8;
+  const saveData = nav.connection?.saveData === true;
+  const lowEnd = saveData || cores <= 4 || memory <= 4;
+
+  return {
+    eager: lowEnd ? 20 : eagerFrameCount,
+    concurrency: lowEnd ? 6 : preloadConcurrency,
+    frameStep: lowEnd ? 2 : 1,
+  };
+};
 
 export default function MotorScrolly() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -13,6 +37,10 @@ export default function MotorScrolly() {
   const imagesRef = useRef<(HTMLImageElement | undefined)[]>([...frameCache]);
   const lastFrameRef = useRef(-1);
   const rafDrawRef = useRef<number | null>(null);
+  const hasDrawnFrameRef = useRef(false);
+  const pendingFrameRef = useRef(0);
+  const viewportRef = useRef({ width: 0, height: 0 });
+  const perfProfileRef = useRef(getPerformanceProfile());
   const [hasDrawnFrame, setHasDrawnFrame] = useState(false);
   const [loaded, setLoaded] = useState(() => {
     if (firstFrameReadyCache) return true;
@@ -25,7 +53,10 @@ export default function MotorScrolly() {
 
   // Preload first frame immediately, then progressively load the rest.
   useEffect(() => {
-    const preloadFrame = (i: number, onDone?: () => void) => {
+    let cancelled = false;
+
+    const preloadFrame = (i: number, onDone?: () => void, priority: "high" | "low" = "low") => {
+      if (cancelled) return;
       if (frameCache[i] && frameCache[i]?.complete) {
         imagesRef.current[i] = frameCache[i];
         onDone?.();
@@ -34,8 +65,10 @@ export default function MotorScrolly() {
 
       const img = new Image();
       img.decoding = "async";
+      img.fetchPriority = priority;
       img.src = frameIndex(i + 1);
       img.onload = () => {
+        if (cancelled) return;
         imagesRef.current[i] = img;
         frameCache[i] = img;
         onDone?.();
@@ -43,28 +76,57 @@ export default function MotorScrolly() {
       img.onerror = () => onDone?.();
     };
 
+    // Limit in-flight image requests to avoid decode/network bursts.
+    const queuePreload = (start: number, end: number, concurrency: number) => {
+      let next = start;
+      let inFlight = 0;
+
+      const pump = () => {
+        if (cancelled) return;
+        while (inFlight < concurrency && next < end) {
+          const idx = next;
+          next += 1;
+          inFlight += 1;
+          preloadFrame(idx, () => {
+            inFlight -= 1;
+            pump();
+          }, "high");
+        }
+      };
+
+      pump();
+    };
+
     preloadFrame(0, () => {
       firstFrameReadyCache = true;
       sessionStorage.setItem(firstFrameReadyStorageKey, "true");
       setLoaded(true);
-    });
+    }, "high");
 
-    for (let i = 1; i < Math.min(24, frameCount); i++) {
-      preloadFrame(i);
+    const { eager, concurrency } = perfProfileRef.current;
+
+    for (let i = 1; i < Math.min(eager, frameCount); i++) {
+      preloadFrame(i, undefined, "high");
     }
 
+    const kickQueue = () => queuePreload(eager, frameCount, concurrency);
+    const idleId = typeof window.requestIdleCallback === "function"
+      ? window.requestIdleCallback(kickQueue, { timeout: 300 })
+      : null;
     const delayed = window.setTimeout(() => {
-      for (let i = 24; i < frameCount; i++) {
-        preloadFrame(i);
-      }
-    }, 220);
+      if (idleId === null) kickQueue();
+    }, 120);
 
     // Safety timeout for slow connections.
     const timeout = window.setTimeout(() => setLoaded(true), 5000);
 
     return () => {
+      cancelled = true;
       clearTimeout(timeout);
       clearTimeout(delayed);
+      if (idleId !== null && typeof window.cancelIdleCallback === "function") {
+        window.cancelIdleCallback(idleId);
+      }
     };
   }, []);
 
@@ -88,9 +150,11 @@ export default function MotorScrolly() {
       canvas.height = Math.floor(window.innerHeight * dpr);
       canvas.style.width = `${window.innerWidth}px`;
       canvas.style.height = `${window.innerHeight}px`;
+      viewportRef.current.width = window.innerWidth;
+      viewportRef.current.height = window.innerHeight;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = "high";
+      ctx.imageSmoothingQuality = "medium";
       lastFrameRef.current = -1;
     };
 
@@ -99,11 +163,15 @@ export default function MotorScrolly() {
       const img = imagesRef.current[frameNum];
       if (!img || !img.complete || img.naturalWidth === 0) return;
       lastFrameRef.current = frameNum;
-      if (!hasDrawnFrame) setHasDrawnFrame(true);
+      if (!hasDrawnFrameRef.current) {
+        hasDrawnFrameRef.current = true;
+        setHasDrawnFrame(true);
+      }
 
-      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      const { width, height } = viewportRef.current;
+      ctx.clearRect(0, 0, width, height);
 
-      const canvasAspect = window.innerWidth / window.innerHeight;
+      const canvasAspect = width / height;
       const imgAspect = img.width / img.height;
 
       let drawWidth;
@@ -112,38 +180,74 @@ export default function MotorScrolly() {
       let drawY;
 
       if (canvasAspect > imgAspect) {
-        drawHeight = window.innerHeight;
-        drawWidth = img.width * (window.innerHeight / img.height);
-        drawX = (window.innerWidth - drawWidth) / 2;
+        drawHeight = height;
+        drawWidth = img.width * (height / img.height);
+        drawX = (width - drawWidth) / 2;
         drawY = 0;
       } else {
-        drawWidth = window.innerWidth;
-        drawHeight = img.height * (window.innerWidth / img.width);
+        drawWidth = width;
+        drawHeight = img.height * (width / img.width);
         drawX = 0;
-        drawY = (window.innerHeight - drawHeight) / 2;
+        drawY = (height - drawHeight) / 2;
       }
 
       ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
     };
 
+    const findNearestLoadedFrame = (target: number) => {
+      const exact = imagesRef.current[target];
+      if (exact && exact.complete && exact.naturalWidth > 0) return target;
+
+      for (let offset = 1; offset < frameCount; offset++) {
+        const backward = target - offset;
+        if (backward >= 0) {
+          const backImg = imagesRef.current[backward];
+          if (backImg && backImg.complete && backImg.naturalWidth > 0) return backward;
+        }
+        const forward = target + offset;
+        if (forward < frameCount) {
+          const fwdImg = imagesRef.current[forward];
+          if (fwdImg && fwdImg.complete && fwdImg.naturalWidth > 0) return forward;
+        }
+      }
+
+      return -1;
+    };
+
     const scheduleDraw = (progress: number) => {
-      const frameNum = Math.min(frameCount - 1, Math.max(0, Math.floor(progress * (frameCount - 1))));
-      if (rafDrawRef.current !== null) cancelAnimationFrame(rafDrawRef.current);
-      rafDrawRef.current = requestAnimationFrame(() => drawFrame(frameNum));
+      const rawFrame = Math.min(frameCount - 1, Math.max(0, Math.floor(progress * (frameCount - 1))));
+      const { frameStep } = perfProfileRef.current;
+      const quantized = Math.floor(rawFrame / frameStep) * frameStep;
+      pendingFrameRef.current = quantized;
+      if (rafDrawRef.current !== null) return;
+      rafDrawRef.current = requestAnimationFrame(() => {
+        rafDrawRef.current = null;
+        const nextFrame = findNearestLoadedFrame(pendingFrameRef.current);
+        if (nextFrame >= 0) drawFrame(nextFrame);
+      });
     };
 
     resizeCanvas();
     drawFrame(0);
 
     const unsubscribe = smoothProgress.on("change", (v) => scheduleDraw(v));
+    const onVisibilityChange = () => {
+      if (document.visibilityState !== "visible" && rafDrawRef.current !== null) {
+        cancelAnimationFrame(rafDrawRef.current);
+        rafDrawRef.current = null;
+      }
+    };
+
     window.addEventListener("resize", resizeCanvas);
+    document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
       unsubscribe();
       window.removeEventListener("resize", resizeCanvas);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
       if (rafDrawRef.current !== null) cancelAnimationFrame(rafDrawRef.current);
     };
-  }, [hasDrawnFrame, loaded, smoothProgress]);
+  }, [loaded, smoothProgress]);
 
   // Beat A: 0-20%
   const opacityA = useTransform(smoothProgress, [0, 0.15, 0.2, 0.25], [1, 1, 0, 0]);

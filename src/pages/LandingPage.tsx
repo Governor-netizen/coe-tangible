@@ -1,12 +1,21 @@
 import { Suspense, useEffect, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, useGLTF } from "@react-three/drei";
+import { OrbitControls, useGLTF, Html, useProgress } from "@react-three/drei";
 import logo from "../assets/logo.jpeg";
 import MotorScrolly from "../components/MotorScrolly";
 import { ThemeToggle } from "../components/ThemeToggle";
 
 interface LandingPageProps {
   onMachineSelect: (machineId: "dc-motor" | "dc-generator" | "transformer" | "induction-motor") => void;
+}
+
+function Loader() {
+  const { progress } = useProgress();
+  return (
+    <Html center className="text-primary font-label text-xs tracking-widest whitespace-nowrap bg-surface-container-low/80 px-4 py-2 rounded backdrop-blur-sm border border-outline-variant/30">
+      {progress.toFixed(0)}% LOADED
+    </Html>
+  );
 }
 
 function DCMotorGLBModel() {
@@ -23,7 +32,7 @@ function DCMotorGLBPreview({ className = "" }: { className?: string }) {
         <ambientLight intensity={0.85} />
         <directionalLight position={[6, 6, 6]} intensity={1.2} />
         <directionalLight position={[-5, 3, -3]} intensity={0.55} />
-        <Suspense fallback={null}>
+        <Suspense fallback={<Loader />}>
           <DCMotorGLBModel />
         </Suspense>
         <OrbitControls enablePan={false} enableZoom={false} autoRotate autoRotateSpeed={0.8} />
@@ -36,6 +45,16 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
   const openAuthNow = () => {
     window.location.assign("/auth");
   };
+
+  useEffect(() => {
+    if (document.head.querySelector('link[rel="preload"][href="/dc-motor.glb"]')) return;
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "fetch";
+    link.href = "/dc-motor.glb";
+    link.crossOrigin = "anonymous";
+    document.head.appendChild(link);
+  }, []);
 
   useEffect(() => {
     const vismeUrl = "https://forms.visme.co/formsPlayer/q74edmvw-membership-sign-up-form";
@@ -54,23 +73,27 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
     makeHint("dns-prefetch", "https://forms.visme.co");
     makeHint("preconnect", "https://forms.visme.co");
 
-    if (!document.getElementById("visme-auth-prewarm")) {
-      const prewarmFrame = document.createElement("iframe");
-      prewarmFrame.id = "visme-auth-prewarm";
-      prewarmFrame.src = vismeUrl;
-      prewarmFrame.loading = "eager";
-      prewarmFrame.setAttribute("aria-hidden", "true");
-      prewarmFrame.tabIndex = -1;
-      prewarmFrame.style.position = "fixed";
-      prewarmFrame.style.width = "1px";
-      prewarmFrame.style.height = "1px";
-      prewarmFrame.style.opacity = "0";
-      prewarmFrame.style.pointerEvents = "none";
-      prewarmFrame.style.left = "-9999px";
-      prewarmFrame.style.top = "-9999px";
-      prewarmFrame.style.border = "0";
-      document.body.appendChild(prewarmFrame);
-    }
+    const timer = setTimeout(() => {
+      if (!document.getElementById("visme-auth-prewarm")) {
+        const prewarmFrame = document.createElement("iframe");
+        prewarmFrame.id = "visme-auth-prewarm";
+        prewarmFrame.src = vismeUrl;
+        prewarmFrame.loading = "lazy";
+        prewarmFrame.setAttribute("aria-hidden", "true");
+        prewarmFrame.tabIndex = -1;
+        prewarmFrame.style.position = "fixed";
+        prewarmFrame.style.width = "1px";
+        prewarmFrame.style.height = "1px";
+        prewarmFrame.style.opacity = "0";
+        prewarmFrame.style.pointerEvents = "none";
+        prewarmFrame.style.left = "-9999px";
+        prewarmFrame.style.top = "-9999px";
+        prewarmFrame.style.border = "0";
+        document.body.appendChild(prewarmFrame);
+      }
+    }, 4000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   return (

@@ -47,25 +47,46 @@ export function SplashScreen({ onHidden }: SplashScreenProps) {
       updateProgress();
     };
 
-    // Preload first 20 scrolly frames (blocking)
-    for (let i = 1; i <= requiredFrameCount; i++) {
-      const frame = new Image();
-      const onFrameDone = () => markFrameLoaded(i);
-      frame.onload = onFrameDone;
-      frame.onerror = onFrameDone;
-      frame.src = `/ezgif/ezgif-frame-${i.toString().padStart(3, "0")}.jpg`;
-    }
+    // Bounded concurrent preload for frames with decode support
+    const preloadFrames = async () => {
+      let nextFrame = 1;
+      const concurrency = typeof navigator !== "undefined" && navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4 ? 3 : 6;
+      
+      const worker = async () => {
+        while (nextFrame <= requiredFrameCount) {
+          const i = nextFrame++;
+          try {
+            const frame = new Image();
+            frame.src = `/ezgif/ezgif-frame-${i.toString().padStart(3, "0")}.jpg`;
+            if ("decode" in frame) {
+              await frame.decode();
+            } else {
+              await new Promise((res, rej) => {
+                frame.onload = res;
+                frame.onerror = rej;
+              });
+            }
+          } catch (err) {
+            // Ignore error but progress
+          }
+          markFrameLoaded(i);
+        }
+      };
 
-    // Preload hero GLB model (blocking)
+      for (let w = 0; w < concurrency; w++) worker();
+    };
+    preloadFrames();
+
+    // Preload hero GLB model correctly by waiting for full download
     const preloadGLB = async () => {
       try {
         const response = await fetch("/dc-motor.glb");
         if (response.ok) {
-          markHeroModelReady();
-        } else {
-          markHeroModelReady();
+          await response.blob(); // Wait for the whole file to download
         }
       } catch {
+        // fail gracefully
+      } finally {
         markHeroModelReady();
       }
     };
