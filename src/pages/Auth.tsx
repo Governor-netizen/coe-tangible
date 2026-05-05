@@ -1,41 +1,103 @@
-import { useState } from "react";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
-
-const VISME_FORM_URL = "https://forms.visme.co/formsPlayer/q74edmvw-membership-sign-up-form";
+import { ArrowLeft, Mail, Lock } from "lucide-react";
+import "./Auth.css";
 
 export default function Auth() {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const circleContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const circleContainer = circleContainerRef.current;
+    if (!circleContainer) return;
+
+    const numBars = 50;
+    let activeBars = 0;
+
+    // Create bars
+    for (let i = 0; i < numBars; i++) {
+      const bar = document.createElement("div");
+      bar.className = "bar";
+      bar.style.transform = `rotate(${(360 / numBars) * i}deg) translateY(-170px)`;
+      circleContainer.appendChild(bar);
+    }
+
+    const interval = setInterval(() => {
+      const bars = circleContainer.querySelectorAll(".bar");
+      if (bars.length === 0) return;
+
+      bars[activeBars % numBars].classList.add("active");
+
+      if (activeBars > 8) {
+        bars[(activeBars - 8) % numBars].classList.remove("active");
+      }
+
+      activeBars++;
+    }, 100);
+
+    return () => {
+      clearInterval(interval);
+      if (circleContainer) {
+        circleContainer.innerHTML = "";
+      }
+    };
+  }, []);
 
   return (
-    <div className="min-h-screen bg-[#f0f0f0] relative">
+    <div className="auth-page-wrapper">
       <div className="absolute top-4 left-4 z-20">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 border border-outline-variant/40 bg-white/95 px-3 py-2 text-xs font-label tracking-widest uppercase text-[#3b3f51] hover:text-[#1a1a2e] hover:bg-white transition-colors"
+          className="inline-flex items-center gap-2 border border-white/20 bg-white/10 px-3 py-2 text-xs font-label tracking-widest uppercase text-white hover:bg-white/20 transition-colors backdrop-blur-md rounded"
         >
           <ArrowLeft className="w-4 h-4" />
           Back To Landing
         </Link>
       </div>
 
-      {!isLoaded && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#f0f0f0]">
-          <div className="text-center">
-            <div className="mx-auto mb-4 h-10 w-10 rounded-full border-2 border-[#cfd4e3] border-t-[#0057ff] animate-spin" />
-            <p className="font-label text-xs tracking-widest uppercase text-[#0057ff]">Loading Sign In Form</p>
+      <div className="container">
+        <div className="circle-container" ref={circleContainerRef}></div>
+
+        <div className="login-box">
+          <h2>Login</h2>
+
+          <form onSubmit={(e) => e.preventDefault()}>
+            <div className="input-group">
+              <input type="email" placeholder="Email" required />
+              <span className="input-icon">
+                <Mail className="w-4 h-4 text-white" />
+              </span>
+            </div>
+
+            <div className="input-group">
+              <input type="password" placeholder="Password" required />
+              <span className="input-icon toggle-password">
+                <Lock className="w-4 h-4 text-white" />
+              </span>
+            </div>
+
+            <div className="forgot-password">
+              <a href="#">Forgot your password ?</a>
+            </div>
+
+            <button type="submit" className="login-btn">
+              LOGIN
+            </button>
+          </form>
+
+          <div className="social-login">
+            <p>log in with</p>
+            <div className="social-icons">
+              <div className="social-icon facebook">f</div>
+              <div className="social-icon twitter">𝕏</div>
+              <div className="social-icon google">G</div>
+            </div>
+          </div>
+
+          <div className="signup-link">
+            <a href="#">Sign Up</a>
           </div>
         </div>
-      )}
-      <iframe
-        src={VISME_FORM_URL}
-        title="Membership Sign Up Form"
-        className={`w-full h-screen border-0 transition-opacity duration-200 ${isLoaded ? "opacity-100" : "opacity-0"}`}
-        loading="eager"
-        referrerPolicy="strict-origin-when-cross-origin"
-        allow="clipboard-read; clipboard-write"
-        onLoad={() => setIsLoaded(true)}
-      />
+      </div>
     </div>
   );
 }
