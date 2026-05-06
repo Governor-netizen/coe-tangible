@@ -1,6 +1,7 @@
-import { Suspense, useEffect, useMemo } from "react";
+import { Suspense, useEffect, useMemo, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useGLTF, Html, useProgress } from "@react-three/drei";
+import { motion, useScroll, useTransform } from "framer-motion";
 import logo from "../assets/logo.jpeg";
 import MotorScrolly from "../components/MotorScrolly";
 import { ThemeToggle } from "../components/ThemeToggle";
@@ -45,6 +46,14 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
   const openAuthNow = () => {
     window.location.assign("/auth");
   };
+
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: drawerRef,
+    offset: ["start end", "start start"],
+  });
+  const drawerY = useTransform(scrollYProgress, [0, 1], ["100%", "0%"]);
+  const drawerBorderRadius = useTransform(scrollYProgress, [0, 0.6], ["32px", "0px"]);
 
   useEffect(() => {
     if (document.head.querySelector('link[rel="preload"][href="/dc-motor.glb"]')) return;
@@ -144,56 +153,66 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
         </div>
       </nav>
 
-      <MotorScrolly />
+      {/* Scroll drawer wrapper — hero stays fixed while drawer section pulls up over it */}
+      <div ref={drawerRef} className="relative">
+        {/* Hero: sticky so it stays in view while the drawer slides up */}
+        <div className="sticky top-0 z-0 h-screen">
+          <MotorScrolly />
+        </div>
 
-      <section className="relative min-h-screen flex items-center bg-[#0A0C10] overflow-hidden">
-        <div className="absolute inset-0 blueprint-grid opacity-30"></div>
-        <div className="absolute inset-0 blueprint-grid-fine opacity-20"></div>
-        <div className="container mx-auto px-4 md:px-8 grid lg:grid-cols-12 gap-8 lg:gap-12 relative z-10 pt-24 lg:pt-20">
-          <div className="lg:col-span-7 flex flex-col justify-center">
-            <span className="font-label tech-tag font-medium tracking-widest mb-6">ENGINEERING · VISUALIZED</span>
-            <h1 className="font-headline text-5xl md:text-7xl lg:text-8xl leading-none text-on-surface mb-8">
-              Understand <span className="italic text-primary">Machines</span> Through Motion.
-            </h1>
-            <p className="font-serif-body text-lg md:text-xl text-on-surface-variant max-w-xl mb-10 leading-relaxed">
-              Interactive 3D models for DC machines, transformers, control systems, and more — designed for deep technical learning and spatial intuition.
-            </p>
-            <div className="flex flex-wrap gap-6">
-              <button
-                onClick={() => onMachineSelect("dc-motor")}
-                className="bg-primary-container text-on-primary-container px-10 py-4 font-label text-sm tracking-widest rounded uppercase flex items-center gap-3 group hover:bg-opacity-90 transition-all"
-              >
-                → Explore the Library
-              </button>
-              <button
-                onClick={() => onMachineSelect("dc-motor")}
-                className="border border-outline-variant bg-surface-container-low text-on-surface px-10 py-4 font-label text-sm tracking-widest rounded uppercase hover:bg-surface-container-high transition-all"
-              >
-                View Featured: DC Motor Series ↗
-              </button>
+        {/* Drawer section: slides up from below over the hero */}
+        <motion.section
+          style={{ y: drawerY, borderTopLeftRadius: drawerBorderRadius, borderTopRightRadius: drawerBorderRadius }}
+          className="relative z-10 min-h-screen flex items-center bg-[#0A0C10] overflow-hidden shadow-[0_-20px_80px_rgba(0,0,0,0.8)]"
+        >
+          <div className="absolute inset-0 blueprint-grid opacity-30"></div>
+          <div className="absolute inset-0 blueprint-grid-fine opacity-20"></div>
+          <div className="container mx-auto px-4 md:px-8 grid lg:grid-cols-12 gap-8 lg:gap-12 relative z-10 pt-24 lg:pt-20">
+            <div className="lg:col-span-7 flex flex-col justify-center">
+              <span className="font-label tech-tag font-medium tracking-widest mb-6">ENGINEERING · VISUALIZED</span>
+              <h1 className="font-headline text-5xl md:text-7xl lg:text-8xl leading-none text-on-surface mb-8">
+                Understand <span className="italic text-primary">Machines</span> Through Motion.
+              </h1>
+              <p className="font-serif-body text-lg md:text-xl text-on-surface-variant max-w-xl mb-10 leading-relaxed">
+                Interactive 3D models for DC machines, transformers, control systems, and more — designed for deep technical learning and spatial intuition.
+              </p>
+              <div className="flex flex-wrap gap-6">
+                <button
+                  onClick={() => onMachineSelect("dc-motor")}
+                  className="bg-primary-container text-on-primary-container px-10 py-4 font-label text-sm tracking-widest rounded uppercase flex items-center gap-3 group hover:bg-opacity-90 transition-all"
+                >
+                  → Explore the Library
+                </button>
+                <button
+                  onClick={() => onMachineSelect("dc-motor")}
+                  className="border border-outline-variant bg-surface-container-low text-on-surface px-10 py-4 font-label text-sm tracking-widest rounded uppercase hover:bg-surface-container-high transition-all"
+                >
+                  View Featured: DC Motor Series ↗
+                </button>
+              </div>
             </div>
-          </div>
-          <div className="lg:col-span-5 relative flex items-center justify-center">
-            <div className="w-full aspect-square relative rounded border border-outline-variant/20 bg-surface-container-lowest/50 backdrop-blur-sm overflow-hidden flex items-center justify-center">
-              <div className="relative w-full h-full p-8 flex items-center justify-center">
-                <DCMotorGLBPreview className="hero-glb-preview w-full h-full" />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 border-2 border-primary/20 rounded-full border-dashed animate-[spin_20s_linear_infinite]"></div>
-                <div className="absolute top-4 left-4 font-label text-[10px] tech-tag tracking-tighter opacity-80">
-                  SYSTEM_STABLE: 104.2Hz
-                  <br />
-                  DC_MOTOR_MODEL_A1
+            <div className="lg:col-span-5 relative flex items-center justify-center">
+              <div className="w-full aspect-square relative rounded border border-outline-variant/20 bg-surface-container-lowest/50 backdrop-blur-sm overflow-hidden flex items-center justify-center">
+                <div className="relative w-full h-full p-8 flex items-center justify-center">
+                  <DCMotorGLBPreview className="hero-glb-preview w-full h-full" />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 border-2 border-primary/20 rounded-full border-dashed animate-[spin_20s_linear_infinite]"></div>
+                  <div className="absolute top-4 left-4 font-label text-[10px] tech-tag tracking-tighter opacity-80">
+                    SYSTEM_STABLE: 104.2Hz
+                    <br />
+                    DC_MOTOR_MODEL_A1
+                  </div>
+                  <div className="absolute bottom-4 right-4 font-label text-[10px] tech-tag tracking-tighter text-right opacity-80">
+                    FIELD_WINDING: NOMINAL
+                    <br />
+                    VOLTAGE: 220V
+                  </div>
+                  <div className="absolute inset-0 pointer-events-none border-[1px] border-outline-variant/10"></div>
                 </div>
-                <div className="absolute bottom-4 right-4 font-label text-[10px] tech-tag tracking-tighter text-right opacity-80">
-                  FIELD_WINDING: NOMINAL
-                  <br />
-                  VOLTAGE: 220V
-                </div>
-                <div className="absolute inset-0 pointer-events-none border-[1px] border-outline-variant/10"></div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </motion.section>
+      </div>
 
       <section className="py-16 lg:py-24 bg-surface px-4 md:px-8">
         <div className="container mx-auto">

@@ -17,8 +17,7 @@ export const initializeTheme = (): ThemeMode => {
   if (typeof window === "undefined") return "dark";
 
   const stored = window.localStorage.getItem(STORAGE_KEY) as ThemeMode | null;
-  const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const theme: ThemeMode = stored ?? (systemPrefersDark ? "dark" : "light");
+  const theme: ThemeMode = stored ?? "dark";
 
   applyTheme(theme);
   return theme;
