@@ -29,7 +29,12 @@ function DCMotorGLBModel() {
 function DCMotorGLBPreview({ className = "" }: { className?: string }) {
   return (
     <div className={className}>
-      <Canvas camera={{ position: [4.0, 2.6, 4.2], fov: 38 }}>
+      <Canvas
+        camera={{ position: [4.0, 2.6, 4.2], fov: 38 }}
+        dpr={[1, 1.5]}
+        performance={{ min: 0.5 }}
+        gl={{ antialias: true, powerPreference: "high-performance" }}
+      >
         <ambientLight intensity={0.85} />
         <directionalLight position={[6, 6, 6]} intensity={1.2} />
         <directionalLight position={[-5, 3, -3]} intensity={0.55} />

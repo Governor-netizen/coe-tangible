@@ -58,7 +58,7 @@ export default function MotorScrolly() {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -100, opacity: 0 }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-              className={`text-5xl md:text-7xl lg:text-9xl font-bold tracking-tighter mb-4 font-headline uppercase [text-shadow:_0_2px_20px_rgba(0,0,0,0.9),_0_0_40px_rgba(0,0,0,0.6)] ${messages[currentIndex].color}`}
+              className={`text-5xl md:text-7xl lg:text-9xl font-bold tracking-tighter mb-4 font-headline uppercase [text-shadow:_0_1px_8px_rgba(0,0,0,0.5)] ${messages[currentIndex].color}`}
             >
               {messages[currentIndex].title}
             </motion.h2>
@@ -69,7 +69,7 @@ export default function MotorScrolly() {
               animate={{ x: 0, y: 0, opacity: 1 }}
               exit={{ x: 80, y: 60, opacity: 0 }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
-              className="text-white/80 text-lg md:text-xl max-w-2xl font-serif-body mb-8 [text-shadow:_0_2px_12px_rgba(0,0,0,0.8)]"
+              className="text-white/80 text-lg md:text-xl max-w-2xl font-serif-body mb-8 [text-shadow:_0_1px_6px_rgba(0,0,0,0.4)]"
             >
               {messages[currentIndex].desc}
             </motion.p>
