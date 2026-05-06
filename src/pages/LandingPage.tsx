@@ -141,17 +141,17 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
           </a>
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-3 sm:gap-6">
           <ThemeToggle className="w-8 h-8" />
           <button
             onClick={openAuthNow}
-            className="font-label text-xs tracking-widest text-slate-400 hover:text-white transition-colors uppercase"
+            className="hidden sm:inline font-label text-xs tracking-widest text-slate-400 hover:text-white transition-colors uppercase"
           >
             Sign In
           </button>
           <button
             onClick={openAuthNow}
-            className="bg-primary-container text-white font-label text-xs tracking-widest px-6 py-2.5 rounded-none active:scale-95 duration-75 uppercase"
+            className="bg-primary-container text-white font-label text-[10px] sm:text-xs tracking-widest px-3 sm:px-6 py-2 sm:py-2.5 rounded-none active:scale-95 duration-75 uppercase"
           >
             Get Access →
           </button>
@@ -172,32 +172,32 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
         >
           <div className="absolute inset-0 blueprint-grid opacity-30"></div>
           <div className="absolute inset-0 blueprint-grid-fine opacity-20"></div>
-          <div className="container mx-auto px-4 md:px-8 grid lg:grid-cols-12 gap-8 lg:gap-12 relative z-10 pt-24 lg:pt-20">
+          <div className="container mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 relative z-10 pt-20 pb-12 lg:pt-20 lg:pb-0">
             <div className="lg:col-span-7 flex flex-col justify-center">
               <span className="font-label tech-tag font-medium tracking-widest mb-6">ENGINEERING · VISUALIZED</span>
-              <h1 className="font-headline text-5xl md:text-7xl lg:text-8xl leading-none text-on-surface mb-8">
+              <h1 className="font-headline text-3xl sm:text-5xl md:text-7xl lg:text-8xl leading-none text-on-surface mb-6 sm:mb-8">
                 Understand <span className="italic text-primary">Machines</span> Through Motion.
               </h1>
               <p className="font-serif-body text-lg md:text-xl text-on-surface-variant max-w-xl mb-10 leading-relaxed">
                 Interactive 3D models for DC machines, transformers, control systems, and more — designed for deep technical learning and spatial intuition.
               </p>
-              <div className="flex flex-wrap gap-6">
+              <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-6">
                 <button
                   onClick={() => onMachineSelect("dc-motor")}
-                  className="bg-primary-container text-on-primary-container px-10 py-4 font-label text-sm tracking-widest rounded uppercase flex items-center gap-3 group hover:bg-opacity-90 transition-all"
+                  className="bg-primary-container text-on-primary-container px-6 sm:px-10 py-3 sm:py-4 font-label text-xs sm:text-sm tracking-widest rounded uppercase flex items-center justify-center gap-3 group hover:bg-opacity-90 transition-all"
                 >
                   → Explore the Library
                 </button>
                 <button
                   onClick={() => onMachineSelect("dc-motor")}
-                  className="border border-outline-variant bg-surface-container-low text-on-surface px-10 py-4 font-label text-sm tracking-widest rounded uppercase hover:bg-surface-container-high transition-all"
+                  className="border border-outline-variant bg-surface-container-low text-on-surface px-6 sm:px-10 py-3 sm:py-4 font-label text-xs sm:text-sm tracking-widest rounded uppercase hover:bg-surface-container-high transition-all text-center"
                 >
-                  View Featured: DC Motor Series ↗
+                  View Featured: DC Motor ↗
                 </button>
               </div>
             </div>
-            <div className="lg:col-span-5 relative flex items-center justify-center">
-              <div className="w-full aspect-square relative rounded border border-outline-variant/20 bg-surface-container-lowest/50 backdrop-blur-sm overflow-hidden flex items-center justify-center">
+            <div className="lg:col-span-5 relative flex items-center justify-center mt-4 lg:mt-0">
+              <div className="w-full max-w-sm lg:max-w-none aspect-square relative rounded border border-outline-variant/20 bg-surface-container-lowest/50 backdrop-blur-sm overflow-hidden flex items-center justify-center">
                 <div className="relative w-full h-full p-8 flex items-center justify-center">
                   <DCMotorGLBPreview className="hero-glb-preview w-full h-full" />
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 border-2 border-primary/20 rounded-full border-dashed animate-[spin_20s_linear_infinite]"></div>
@@ -299,15 +299,15 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
             </button>
           </div>
 
-          <div className="relative h-[360px] md:h-[420px]">
+          <div className="relative h-[280px] sm:h-[360px] md:h-[420px]">
             <div className="absolute top-0 right-0 w-3/4 aspect-[3/4] bg-surface-container border border-outline-variant/20 shadow-2xl z-0 transform rotate-3 overflow-hidden">
               <img className="w-full h-full object-cover grayscale opacity-50" alt="Technical notebook sketch" src="/stitch-images/sketch.png" />
             </div>
-            <div className="absolute top-10 right-20 w-3/4 aspect-square bg-[#0A0C10] border border-primary/20 p-4 z-10 transform -rotate-2 flex items-center justify-center overflow-hidden">
+            <div className="absolute top-10 right-4 sm:right-20 w-3/4 aspect-square bg-[#0A0C10] border border-primary/20 p-4 z-10 transform -rotate-2 flex items-center justify-center overflow-hidden">
               <img className="w-full h-full object-contain mix-blend-screen opacity-80" alt="DC motor wireframe" src="/stitch-images/dc-motor.png" />
               <div className="absolute top-4 left-4 font-label text-[10px] tech-tag">MODEL_REF: DC_SERIES_V1</div>
             </div>
-            <div className="absolute bottom-4 left-8 bg-primary-container p-6 w-56 z-20">
+            <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-8 bg-primary-container p-4 sm:p-6 w-44 sm:w-56 z-20">
               <div className="font-label text-[10px] text-white/70 mb-2">SYLLABUS_MAP</div>
               <div className="text-white font-headline text-lg">EE304: Electrical Machines I</div>
             </div>
@@ -318,13 +318,13 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
       <section className="py-24 bg-surface px-4 md:px-8">
         <div className="container mx-auto bg-surface-container-lowest border border-outline-variant/10">
           <div className="grid lg:grid-cols-2">
-            <div className="p-12 relative border-b lg:border-b-0 lg:border-r border-outline-variant/10 flex flex-col justify-center items-center overflow-hidden">
+            <div className="p-6 sm:p-12 relative border-b lg:border-b-0 lg:border-r border-outline-variant/10 flex flex-col justify-center items-center overflow-hidden">
               <div className="font-label text-xs tech-tag self-start mb-8 tracking-[0.2em]">FEATURED_DEEP_DIVE</div>
               <div className="relative w-full max-w-md aspect-square flex items-center justify-center">
                 <img className="w-4/5 h-4/5 object-contain opacity-40 mix-blend-screen animate-snap" alt="DC Motor Breakdown" src="/stitch-images/dc-motor.png" />
               </div>
             </div>
-            <div className="p-12 flex flex-col">
+            <div className="p-6 sm:p-12 flex flex-col">
               <div className="flex gap-6 mb-10 overflow-x-auto pb-4 scrollbar-hide">
                 <button className="font-label text-xs tracking-widest text-primary border-b border-primary pb-1 whitespace-nowrap">OVERVIEW</button>
                 <button className="font-label text-xs tracking-widest text-outline hover:text-white pb-1 whitespace-nowrap">WORKING PRINCIPLE</button>
