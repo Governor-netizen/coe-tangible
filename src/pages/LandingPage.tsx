@@ -1,9 +1,11 @@
-import { Suspense, useEffect, useMemo, useRef } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useGLTF, Html, useProgress } from "@react-three/drei";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+import type { User } from "@supabase/supabase-js";
+import { supabase } from "../lib/supabase";
 import logo from "../assets/logo.jpeg";
 import MotorScrolly from "../components/MotorScrolly";
 import { ThemeToggle } from "../components/ThemeToggle";
@@ -57,6 +59,25 @@ function DCMotorGLBPreview({ className = "" }: { className?: string }) {
 
 export default function LandingPage({ onMachineSelect }: LandingPageProps) {
   const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+  };
   
   const openAuthNow = () => {
     navigate("/auth");
@@ -153,18 +174,34 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
 
         <div className="flex items-center gap-3 sm:gap-6">
           <ThemeToggle className="w-8 h-8" />
-          <button
-            onClick={openAuthNow}
-            className="hidden sm:inline font-label text-xs tracking-widest text-slate-400 hover:text-white transition-colors uppercase"
-          >
-            Sign In
-          </button>
-          <button
-            onClick={openAuthNow}
-            className="bg-primary-container text-white font-label text-[10px] sm:text-xs tracking-widest px-3 sm:px-6 py-2 sm:py-2.5 rounded-none active:scale-95 duration-75 uppercase"
-          >
-            Get Access →
-          </button>
+          {user ? (
+            <div className="flex items-center gap-4">
+              <span className="hidden sm:inline font-label text-xs tracking-widest text-[#B6C4FF]">
+                Welcome, {user.user_metadata?.full_name || user.email?.split('@')[0]}!
+              </span>
+              <button
+                onClick={handleSignOut}
+                className="bg-red-600/10 text-red-500 hover:bg-red-600 hover:text-white font-label text-[10px] sm:text-xs tracking-widest px-3 sm:px-6 py-2 sm:py-2.5 rounded-none active:scale-95 transition-all duration-200 uppercase"
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <>
+              <button
+                onClick={openAuthNow}
+                className="hidden sm:inline font-label text-xs tracking-widest text-slate-400 hover:text-white transition-colors uppercase"
+              >
+                Sign In
+              </button>
+              <button
+                onClick={openAuthNow}
+                className="bg-primary-container text-white font-label text-[10px] sm:text-xs tracking-widest px-3 sm:px-6 py-2 sm:py-2.5 rounded-none active:scale-95 duration-75 uppercase"
+              >
+                Get Access →
+              </button>
+            </>
+          )}
         </div>
       </nav>
 
