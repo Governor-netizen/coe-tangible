@@ -1,11 +1,62 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { supabase } from "../lib/supabase";
 import logo from "../assets/logo.jpeg";
 import "./Auth.css";
 
 export default function Auth() {
+  const navigate = useNavigate();
   const [isRightPanelActive, setIsRightPanelActive] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Form states
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    const { error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
+      },
+    });
+
+    if (signUpError) {
+      setError(signUpError.message);
+    } else {
+      alert("Success! Check your email for a confirmation link.");
+      setIsRightPanelActive(false); // Switch to login
+    }
+    setLoading(false);
+  };
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (signInError) {
+      setError(signInError.message);
+    } else {
+      navigate("/"); // Redirect to home on success
+    }
+    setLoading(false);
+  };
 
   return (
     <div className="auth-page">
@@ -23,7 +74,7 @@ export default function Auth() {
       <div className={`auth-container ${isRightPanelActive ? "right-panel-active" : ""}`}>
         {/* Sign Up Form */}
         <div className="auth-form-container auth-sign-up">
-          <form onSubmit={(e) => e.preventDefault()}>
+          <form onSubmit={handleSignUp}>
             <h1>Create Account</h1>
             <div className="auth-social-container">
               <a href="#" aria-label="Sign up with Google">G</a>
@@ -31,13 +82,38 @@ export default function Auth() {
               <a href="#" aria-label="Sign up with LinkedIn">in</a>
             </div>
             <span>or use your email for registration</span>
-            <input type="text" placeholder="Full Name" required />
-            <input type="email" placeholder="Email" required />
-            <input type="password" placeholder="Password" required />
-            <button type="submit">Sign Up</button>
+            {error && isRightPanelActive && <div className="text-red-500 text-sm my-2">{error}</div>}
+            <input 
+              type="text" 
+              placeholder="Full Name" 
+              required 
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+            />
+            <input 
+              type="email" 
+              placeholder="Email" 
+              required 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input 
+              type="password" 
+              placeholder="Password" 
+              required 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button type="submit" disabled={loading}>
+              {loading ? "Signing up..." : "Sign Up"}
+            </button>
             <div className="auth-mobile-toggle">
               Already have an account?{" "}
-              <a href="#" onClick={(e) => { e.preventDefault(); setIsRightPanelActive(false); }}>
+              <a href="#" onClick={(e) => { 
+                e.preventDefault(); 
+                setError(null);
+                setIsRightPanelActive(false); 
+              }}>
                 Sign In
               </a>
             </div>
@@ -46,7 +122,7 @@ export default function Auth() {
 
         {/* Sign In Form */}
         <div className="auth-form-container auth-sign-in">
-          <form onSubmit={(e) => e.preventDefault()}>
+          <form onSubmit={handleSignIn}>
             <h1>Sign In</h1>
             <div className="auth-social-container">
               <a href="#" aria-label="Sign in with Google">G</a>
@@ -54,13 +130,32 @@ export default function Auth() {
               <a href="#" aria-label="Sign in with LinkedIn">in</a>
             </div>
             <span>or use your account</span>
-            <input type="email" placeholder="Email" required />
-            <input type="password" placeholder="Password" required />
+            {error && !isRightPanelActive && <div className="text-red-500 text-sm my-2">{error}</div>}
+            <input 
+              type="email" 
+              placeholder="Email" 
+              required 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input 
+              type="password" 
+              placeholder="Password" 
+              required 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
             <a href="#">Forgot your password?</a>
-            <button type="submit">Sign In</button>
+            <button type="submit" disabled={loading}>
+              {loading ? "Signing in..." : "Sign In"}
+            </button>
             <div className="auth-mobile-toggle">
               Don't have an account?{" "}
-              <a href="#" onClick={(e) => { e.preventDefault(); setIsRightPanelActive(true); }}>
+              <a href="#" onClick={(e) => { 
+                e.preventDefault();
+                setError(null); 
+                setIsRightPanelActive(true); 
+              }}>
                 Sign Up
               </a>
             </div>
