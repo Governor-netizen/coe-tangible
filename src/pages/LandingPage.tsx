@@ -60,6 +60,7 @@ function DCMotorGLBPreview({ className = "" }: { className?: string }) {
 export default function LandingPage({ onMachineSelect }: LandingPageProps) {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
+  const [activeTab, setActiveTab] = useState<"OVERVIEW" | "WORKING PRINCIPLE" | "EQUATIONS" | "3D VIEW">("OVERVIEW");
 
   useEffect(() => {
     // Get initial session
@@ -368,21 +369,82 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
             <div className="p-6 sm:p-12 relative border-b lg:border-b-0 lg:border-r border-outline-variant/10 flex flex-col justify-center items-center overflow-hidden">
               <div className="font-label text-xs tech-tag self-start mb-8 tracking-[0.2em]">FEATURED_DEEP_DIVE</div>
               <div className="relative w-full max-w-md aspect-square flex items-center justify-center">
-                <img className="w-4/5 h-4/5 object-contain opacity-40 mix-blend-screen animate-snap" alt="DC Motor Breakdown" src="/stitch-images/dc-motor.png" />
+                {activeTab === "3D VIEW" ? (
+                  <DCMotorGLBPreview className="absolute inset-0 w-full h-full mix-blend-screen opacity-90 animate-fade-in" />
+                ) : (
+                  <img className="w-4/5 h-4/5 object-contain opacity-40 mix-blend-screen animate-snap" alt="DC Motor Breakdown" src="/stitch-images/dc-motor.png" />
+                )}
               </div>
             </div>
             <div className="p-6 sm:p-12 flex flex-col">
               <div className="flex gap-6 mb-10 overflow-x-auto pb-4 scrollbar-hide">
-                <button className="font-label text-xs tracking-widest text-primary border-b border-primary pb-1 whitespace-nowrap">OVERVIEW</button>
-                <button className="font-label text-xs tracking-widest text-outline hover:text-white pb-1 whitespace-nowrap">WORKING PRINCIPLE</button>
-                <button className="font-label text-xs tracking-widest text-outline hover:text-white pb-1 whitespace-nowrap">EQUATIONS</button>
-                <button className="font-label text-xs tracking-widest text-outline hover:text-white pb-1 whitespace-nowrap">3D VIEW</button>
+                <button 
+                  onClick={() => setActiveTab("OVERVIEW")}
+                  className={`font-label text-xs tracking-widest whitespace-nowrap pb-1 border-b transition-colors ${activeTab === "OVERVIEW" ? "text-primary border-primary" : "text-outline hover:text-white border-transparent"}`}
+                >OVERVIEW</button>
+                <button 
+                  onClick={() => setActiveTab("WORKING PRINCIPLE")}
+                  className={`font-label text-xs tracking-widest whitespace-nowrap pb-1 border-b transition-colors ${activeTab === "WORKING PRINCIPLE" ? "text-primary border-primary" : "text-outline hover:text-white border-transparent"}`}
+                >WORKING PRINCIPLE</button>
+                <button 
+                  onClick={() => setActiveTab("EQUATIONS")}
+                  className={`font-label text-xs tracking-widest whitespace-nowrap pb-1 border-b transition-colors ${activeTab === "EQUATIONS" ? "text-primary border-primary" : "text-outline hover:text-white border-transparent"}`}
+                >EQUATIONS</button>
+                <button 
+                  onClick={() => setActiveTab("3D VIEW")}
+                  className={`font-label text-xs tracking-widest whitespace-nowrap pb-1 border-b transition-colors ${activeTab === "3D VIEW" ? "text-primary border-primary" : "text-outline hover:text-white border-transparent"}`}
+                >3D VIEW</button>
               </div>
               <div className="flex-grow">
-                <h3 className="font-headline text-4xl mb-6">The Series DC Motor</h3>
-                <p className="font-serif-body text-on-surface-variant leading-relaxed mb-6">
-                  Commonly used in applications requiring high starting torque, such as electric locomotives and cranes. In a series-wound motor, the field winding is connected in series with the armature winding.
-                </p>
+                {activeTab === "OVERVIEW" && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+                    <h3 className="font-headline text-4xl mb-6">The Series DC Motor</h3>
+                    <p className="font-serif-body text-on-surface-variant leading-relaxed mb-6">
+                      Commonly used in applications requiring high starting torque, such as electric locomotives and cranes. In a series-wound motor, the field winding is connected in series with the armature winding. This results in the motor drawing a high current and producing a very large torque when starting under heavy load.
+                    </p>
+                  </motion.div>
+                )}
+                {activeTab === "WORKING PRINCIPLE" && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+                    <h3 className="font-headline text-4xl mb-6">Electromagnetic Force</h3>
+                    <p className="font-serif-body text-on-surface-variant leading-relaxed mb-6">
+                      A DC motor operates on the principle of Lorentz force. When a current-carrying conductor is placed in a magnetic field, it experiences a mechanical force. Since the armature is mounted on a bearing, this force creates a rotational torque.
+                    </p>
+                    <p className="font-serif-body text-on-surface-variant leading-relaxed mb-6">
+                      The commutator acts as a mechanical rectifier, reversing the current direction in the armature coils as they cross the magnetic neutral axis, ensuring continuous unidirectional rotation.
+                    </p>
+                  </motion.div>
+                )}
+                {activeTab === "EQUATIONS" && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+                    <h3 className="font-headline text-4xl mb-6">Core Relationships</h3>
+                    <div className="bg-surface-container overflow-hidden p-6 rounded-sm border border-outline-variant/20 mb-6">
+                      <div className="font-label text-xs tracking-widest text-[#0057FF] mb-2 font-mono">BACK_EMF_(Eb)</div>
+                      <div className="font-serif-body text-lg text-slate-300 font-mono tracking-widest bg-black/30 px-4 py-2 rounded-sm mb-4">
+                        Eb = V - I_a * R_a
+                      </div>
+                      <div className="font-label text-xs tracking-widest text-[#0057FF] mb-2 font-mono">MECHANICAL_TORQUE_(T)</div>
+                      <div className="font-serif-body text-lg text-slate-300 font-mono tracking-widest bg-black/30 px-4 py-2 rounded-sm mb-4">
+                        T = k * Φ * I_a
+                      </div>
+                      <div className="font-label text-xs tracking-widest text-[#0057FF] mb-2 font-mono">SPEED_RELATION</div>
+                      <div className="font-serif-body text-lg text-slate-300 font-mono tracking-widest bg-black/30 px-4 py-2 rounded-sm">
+                        N ∝ Eb / Φ
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+                {activeTab === "3D VIEW" && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+                    <h3 className="font-headline text-4xl mb-6">Real-time Rendering</h3>
+                    <p className="font-serif-body text-on-surface-variant leading-relaxed mb-6">
+                      You are now interacting with the physical structural model of the DC motor. The model geometry is compressed using Draco for instant web delivery, rendered natively in WebGL.
+                    </p>
+                    <p className="font-serif-body text-on-surface-variant leading-relaxed mb-6 text-primary">
+                      Drag to rotate.
+                    </p>
+                  </motion.div>
+                )}
               </div>
               <button
                 onClick={() => onMachineSelect("dc-motor")}
