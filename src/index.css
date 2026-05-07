@@ -5,6 +5,37 @@
 @tailwind utilities;
 
 @layer base {
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  #root {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  img,
+  video,
+  svg,
+  iframe {
+    max-width: 100%;
+  }
+
+  canvas {
+    max-width: 100%;
+    display: block;
+    width: 100% !important;     
+  }
+
   :root {
     --background: 210 20% 98%;
     --foreground: 215 25% 15%;
