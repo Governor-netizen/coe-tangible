@@ -2,6 +2,9 @@ import { Suspense, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 
+// Configure Draco decoder for useGLTF (Google CDN hosts the WASM decoders)
+useGLTF.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
+
 function EngineerModel() {
   const { scene } = useGLTF("/me.glb");
   const clonedScene = useMemo(() => scene.clone(), [scene]);

@@ -36,25 +36,26 @@ export function SplashScreen({ onHidden }: SplashScreenProps) {
 
   // --- Preload the background video ---
   useEffect(() => {
-    const video = document.createElement("video");
-    video.preload = "auto";
-    video.muted = true;
-    video.playsInline = true;
-    video.src = "/motor.mp4";
-
-    const onVideoReady = () => {
+    if ((window as any).globalVideoUrl) {
       videoReadyRef.current = true;
       checkAllReady();
-    };
+      return;
+    }
 
-    video.addEventListener("canplaythrough", onVideoReady, { once: true });
-    video.addEventListener("error", onVideoReady, { once: true });
-    video.load();
-
-    return () => {
-      video.removeEventListener("canplaythrough", onVideoReady);
-      video.removeEventListener("error", onVideoReady);
-    };
+    fetch("/motor.mp4")
+      .then((res) => res.blob())
+      .then((blob) => {
+        const url = URL.createObjectURL(blob);
+        (window as any).globalVideoUrl = url;
+        videoReadyRef.current = true;
+        checkAllReady();
+      })
+      .catch(() => {
+        // Fallback on error
+        (window as any).globalVideoUrl = "/motor.mp4";
+        videoReadyRef.current = true;
+        checkAllReady();
+      });
   }, [checkAllReady]);
 
   // --- Track R3F 3D model loading ---

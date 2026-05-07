@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const messages = [
@@ -27,6 +27,13 @@ const messages = [
 
 export default function MotorScrolly() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {});
+    }
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -39,7 +46,8 @@ export default function MotorScrolly() {
     <div className="relative h-screen w-full bg-[#050505] overflow-hidden flex items-center justify-center">
       {/* Background Video */}
       <video
-        src="/motor.mp4"
+        ref={videoRef}
+        src={(window as any).globalVideoUrl || "/motor.mp4"}
         autoPlay
         loop
         muted

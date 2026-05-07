@@ -2,9 +2,17 @@ import { Suspense, useEffect, useMemo, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useGLTF, Html, useProgress } from "@react-three/drei";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import logo from "../assets/logo.jpeg";
 import MotorScrolly from "../components/MotorScrolly";
 import { ThemeToggle } from "../components/ThemeToggle";
+
+// Configure Draco decoder for useGLTF (Google CDN hosts the WASM decoders)
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
+dracoLoader.setDecoderConfig({ type: "js" }); // JS fallback for broader device support
+useGLTF.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
 
 interface LandingPageProps {
   onMachineSelect: (machineId: "dc-motor" | "dc-generator" | "transformer" | "induction-motor") => void;
@@ -20,7 +28,7 @@ function Loader() {
 }
 
 function DCMotorGLBModel() {
-  const { scene } = useGLTF("/dc-motor.glb");
+  const { scene } = useGLTF("/dc-motor-optimized.glb");
   const clonedScene = useMemo(() => scene.clone(), [scene]);
 
   return <primitive object={clonedScene} scale={3.2} position={[0, -1.2, 0]} />;
@@ -48,8 +56,10 @@ function DCMotorGLBPreview({ className = "" }: { className?: string }) {
 }
 
 export default function LandingPage({ onMachineSelect }: LandingPageProps) {
+  const navigate = useNavigate();
+  
   const openAuthNow = () => {
-    window.location.assign("/auth");
+    navigate("/auth");
   };
 
   const drawerRef = useRef<HTMLDivElement>(null);
@@ -61,11 +71,11 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
   const drawerBorderRadius = useTransform(scrollYProgress, [0, 0.6], ["32px", "0px"]);
 
   useEffect(() => {
-    if (document.head.querySelector('link[rel="preload"][href="/dc-motor.glb"]')) return;
+    if (document.head.querySelector('link[rel="preload"][href="/dc-motor-optimized.glb"]')) return;
     const link = document.createElement("link");
     link.rel = "preload";
     link.as = "fetch";
-    link.href = "/dc-motor.glb";
+    link.href = "/dc-motor-optimized.glb";
     link.crossOrigin = "anonymous";
     document.head.appendChild(link);
   }, []);
@@ -362,4 +372,4 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
   );
 }
 
-useGLTF.preload("/dc-motor.glb");
+useGLTF.preload("/dc-motor-optimized.glb");

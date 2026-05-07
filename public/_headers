@@ -1,7 +1,7 @@
 /ezgif/*
   Cache-Control: public, max-age=31536000, immutable
 
-/dc-motor.glb
+/dc-motor-optimized.glb
   Cache-Control: public, max-age=31536000, immutable
 
 /me.glb
