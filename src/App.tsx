@@ -36,18 +36,18 @@ const App = () => {
 
   return (
     <>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            {/* Render app immediately so Canvas/3D models start loading */}
+            <AppRoutes />
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+      {/* Splash overlays on top — hides once all assets are truly ready */}
       {!splashHidden && <SplashScreen onHidden={handleSplashHidden} />}
-      {splashHidden && (
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <AppRoutes />
-            </BrowserRouter>
-          </TooltipProvider>
-        </QueryClientProvider>
-      )}
     </>
   );
 };
