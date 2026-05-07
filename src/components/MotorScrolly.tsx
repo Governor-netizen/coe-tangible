@@ -37,10 +37,13 @@ export default function MotorScrolly() {
 
   return (
     <div className="relative h-screen w-full bg-[#050505] overflow-hidden flex items-center justify-center">
-      {/* Background GIF */}
-      <img
-        src="/motor.gif"
-        alt="DC motor animation"
+      {/* Background Video */}
+      <video
+        src="/motor.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
         className="absolute inset-0 z-0 w-full h-full object-contain sm:object-cover mix-blend-screen opacity-90"
         draggable={false}
       />

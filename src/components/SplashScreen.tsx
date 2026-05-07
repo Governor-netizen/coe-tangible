@@ -33,20 +33,20 @@ export function SplashScreen({ onHidden }: SplashScreenProps) {
       }
     };
 
-    // Preload the motor GIF
-    const preloadGIF = () =>
+    // Preload the motor video
+    const preloadVideo = () =>
       new Promise<void>((resolve) => {
-        const img = new Image();
-        img.src = "/motor.gif";
-        img.onload = () => resolve();
-        img.onerror = () => resolve();
+        const video = document.createElement("video");
+        video.src = "/motor.mp4";
+        video.onloadeddata = () => resolve();
+        video.onerror = () => resolve();
       });
 
     // Race against a max timeout so splash never takes too long
     const maxTimeout = new Promise<void>((resolve) => setTimeout(resolve, 4000));
 
     Promise.race([
-      Promise.all([preloadGLB(), preloadGIF()]),
+      Promise.all([preloadGLB(), preloadVideo()]),
       maxTimeout,
     ]).then(() => {
       if (cancelled) return;
