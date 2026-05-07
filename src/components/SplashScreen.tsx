@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import logo from "../assets/logo.jpeg";
 
 interface SplashScreenProps {
@@ -7,62 +7,86 @@ interface SplashScreenProps {
 
 export function SplashScreen({ onHidden }: SplashScreenProps) {
   const [isHidden, setIsHidden] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [displayProgress, setDisplayProgress] = useState(0);
+  const finishedRef = useRef(false);
+
+  // Track individual asset readiness
+  const videoReadyRef = useRef(false);
+  const glbReadyRef = useRef(false);
+
+  const finishSplash = useCallback(() => {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
+    setDisplayProgress(100);
+    setTimeout(() => {
+      setIsHidden(true);
+      setTimeout(onHidden, 500);
+    }, 300);
+  }, [onHidden]);
+
+  const checkAllReady = useCallback(() => {
+    if (videoReadyRef.current && glbReadyRef.current) {
+      finishSplash();
+    }
+  }, [finishSplash]);
 
   useEffect(() => {
-    let cancelled = false;
+    // --- Preload the background video ---
+    const video = document.createElement("video");
+    video.preload = "auto";
+    video.muted = true;
+    video.playsInline = true;
+    video.src = "/motor.mp4";
 
-    // Simulate quick progress ramp while waiting for critical assets
-    const progressInterval = setInterval(() => {
-      if (cancelled) return;
-      setProgress((prev) => {
-        if (prev >= 90) return prev;
-        return prev + Math.random() * 15;
-      });
-    }, 120);
+    const onVideoReady = () => {
+      videoReadyRef.current = true;
+      checkAllReady();
+    };
+    // canplaythrough = browser estimates it can play to end without buffering
+    video.addEventListener("canplaythrough", onVideoReady, { once: true });
+    video.addEventListener("error", onVideoReady, { once: true }); // fail gracefully
+    video.load(); // kick off loading
 
-    // Preload the hero GLB model
+    // --- Preload the GLB 3D model by fetching it into the browser cache ---
     const preloadGLB = async () => {
       try {
-        const response = await fetch("/dc-motor.glb");
-        if (response.ok) {
-          await response.blob();
+        const resp = await fetch("/dc-motor.glb");
+        if (resp.ok) {
+          // Read the entire body so it's fully cached
+          await resp.arrayBuffer();
         }
       } catch {
         // fail gracefully
       }
+      glbReadyRef.current = true;
+      checkAllReady();
     };
+    preloadGLB();
 
-    // Preload the motor video
-    const preloadVideo = () =>
-      new Promise<void>((resolve) => {
-        const video = document.createElement("video");
-        video.src = "/motor.mp4";
-        video.onloadeddata = () => resolve();
-        video.onerror = () => resolve();
-      });
-
-    // Race against a max timeout so splash never takes too long
-    const maxTimeout = new Promise<void>((resolve) => setTimeout(resolve, 4000));
-
-    Promise.race([
-      Promise.all([preloadGLB(), preloadVideo()]),
-      maxTimeout,
-    ]).then(() => {
-      if (cancelled) return;
-      clearInterval(progressInterval);
-      setProgress(100);
-      setTimeout(() => {
-        setIsHidden(true);
-        setTimeout(onHidden, 500);
-      }, 200);
-    });
+    // Failsafe: never block the user for more than 12 seconds
+    const maxTimeout = setTimeout(finishSplash, 12000);
 
     return () => {
-      cancelled = true;
-      clearInterval(progressInterval);
+      clearTimeout(maxTimeout);
+      video.removeEventListener("canplaythrough", onVideoReady);
+      video.removeEventListener("error", onVideoReady);
     };
-  }, [onHidden]);
+  }, [checkAllReady, finishSplash]);
+
+  // Smooth progress ramp — holds at 85% until assets are truly done
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDisplayProgress((prev) => {
+        if (finishedRef.current) return 100;
+        // Ramp quickly to ~40%, then slow down, cap at 85%
+        if (prev < 40) return prev + Math.random() * 8;
+        if (prev < 70) return prev + Math.random() * 4;
+        if (prev < 85) return prev + Math.random() * 1.5;
+        return prev; // hold at 85 until finishSplash fires
+      });
+    }, 120);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div
@@ -80,12 +104,12 @@ export function SplashScreen({ onHidden }: SplashScreenProps) {
       <div className="w-[200px] h-[2px] bg-[#1a1a1a] rounded-sm mt-6 overflow-hidden">
         <div
           className="h-full bg-[#0057FF] rounded-sm transition-all duration-150"
-          style={{ width: `${Math.min(progress, 100)}%` }}
+          style={{ width: `${Math.min(displayProgress, 100)}%` }}
         />
       </div>
 
       <div className="mt-3 font-label text-[10px] text-[#0057FF] tracking-widest uppercase">
-        {Math.round(Math.min(progress, 100))}%
+        {Math.round(Math.min(displayProgress, 100))}%
       </div>
     </div>
   );
