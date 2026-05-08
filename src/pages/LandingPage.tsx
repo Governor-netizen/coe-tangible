@@ -143,7 +143,7 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
   }, []);
 
   return (
-    <div className="bg-surface-dim text-on-surface selection:bg-primary-container selection:text-white min-h-screen">
+    <div className="bg-surface-dim text-on-surface selection:bg-primary-container selection:text-white min-h-screen overflow-x-hidden">
       <nav className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-8 py-4 bg-[#0A0C10] transition-all duration-300">
         <div className="flex items-center gap-3">
           <img alt="Tangible Logo" className="w-8 h-8 object-contain" src={logo} />
@@ -364,15 +364,15 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
       </section>
 
       <section className="py-24 bg-surface px-4 md:px-8">
-        <div className="container mx-auto bg-surface-container-lowest border border-outline-variant/10">
+        <div className="container mx-auto bg-surface-container-lowest border border-outline-variant/10 overflow-hidden">
           <div className="grid lg:grid-cols-2">
             <div className="p-6 sm:p-12 relative border-b lg:border-b-0 lg:border-r border-outline-variant/10 flex flex-col justify-center items-center overflow-hidden">
               <div className="font-label text-xs tech-tag self-start mb-8 tracking-[0.2em]">FEATURED_DEEP_DIVE</div>
-              <div className="relative w-full max-w-md aspect-square flex items-center justify-center">
+              <div className="relative w-full max-w-md aspect-square flex items-center justify-center overflow-hidden">
                 {activeTab === "3D VIEW" ? (
                   <DCMotorGLBPreview className="absolute inset-0 w-full h-full mix-blend-screen opacity-90 animate-fade-in" />
                 ) : (
-                  <img className="w-4/5 h-4/5 object-contain opacity-40 mix-blend-screen animate-snap" alt="DC Motor Breakdown" src="/stitch-images/dc-motor.png" />
+                  <img className="w-full max-w-full h-full object-contain opacity-40 mix-blend-screen animate-snap" alt="DC Motor Breakdown" src="/stitch-images/dc-motor.png" />
                 )}
               </div>
             </div>
