@@ -209,7 +209,7 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
       {/* Scroll drawer wrapper — hero stays fixed while drawer section pulls up over it */}
       <div ref={drawerRef} className="relative w-full">
         {/* Hero: sticky so it stays in view while the drawer slides up */}
-        <div className="sticky top-0 z-0 h-screen w-full overflow-hidden">
+        <div className="sticky top-0 z-0 h-screen w-full">
           <MotorScrolly />
         </div>
 
@@ -363,12 +363,12 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
         </div>
       </section>
 
-      <section className="py-24 bg-surface px-4 md:px-8 w-full box-border">
-        <div className="container mx-auto w-full max-w-full bg-surface-container-lowest border border-outline-variant/10 overflow-hidden box-border">
+      <section className="py-24 bg-surface px-3 sm:px-4 md:px-8 w-full box-border">
+        <div className="mx-auto w-full max-w-full bg-surface-container-lowest border border-outline-variant/10 box-border">
           <div className="grid lg:grid-cols-2 w-full box-border">
-            <div className="p-6 sm:p-12 relative border-b lg:border-b-0 lg:border-r border-outline-variant/10 flex flex-col justify-center items-center overflow-hidden w-full box-border">
+            <div className="p-6 sm:p-12 relative border-b lg:border-b-0 lg:border-r border-outline-variant/10 flex flex-col justify-center items-center w-full box-border">
               <div className="font-label text-xs tech-tag self-start mb-8 tracking-[0.2em]">FEATURED_DEEP_DIVE</div>
-              <div className="relative w-full max-w-md aspect-square flex items-center justify-center overflow-hidden box-border">
+              <div className="relative w-full max-w-md min-h-[240px] sm:min-h-[300px] md:min-h-[340px] flex items-center justify-center box-border">
                 {activeTab === "3D VIEW" ? (
                   <DCMotorGLBPreview className="absolute inset-0 w-full h-full mix-blend-screen opacity-90 animate-fade-in" />
                 ) : (
@@ -377,7 +377,7 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
               </div>
             </div>
             <div className="p-6 sm:p-12 flex flex-col">
-              <div className="flex gap-6 mb-10 overflow-x-auto pb-4 scrollbar-hide">
+              <div className="flex flex-wrap gap-4 mb-10 pb-2">
                 <button 
                   onClick={() => setActiveTab("OVERVIEW")}
                   className={`font-label text-xs tracking-widest whitespace-nowrap pb-1 border-b transition-colors ${activeTab === "OVERVIEW" ? "text-primary border-primary" : "text-outline hover:text-white border-transparent"}`}
