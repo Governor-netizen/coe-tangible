@@ -6,7 +6,7 @@ import LandingPage from "./LandingPage";
 import { MachineViewer } from "../components/MachineViewer";
 import { ControlPanel } from "../components/ControlPanel";
 import { ThemeToggle } from "../components/ThemeToggle";
-import { machineDatabase, machineList, MachineData, MachineType } from "../data/machineData";
+import { machineDatabase, machineList, MachineData, MachineType, getMachineIcon } from "../data/machineData";
 
 type AppView = "home" | "machines";
 
@@ -157,6 +157,7 @@ const Index = () => {
         <div className="flex flex-wrap gap-3 mt-4">
           {machineList.map((m) => {
             const active = machineType === m.id;
+            const IconComponent = getMachineIcon(m.icon);
             return (
               <button
                 key={m.id}
@@ -167,7 +168,7 @@ const Index = () => {
                     : "bg-surface-container border-outline-variant/40 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface"
                 }`}
               >
-                <span className="text-base">{m.icon}</span>
+                <IconComponent className={`w-4 h-4 ${active ? "text-on-primary-container" : "text-primary"}`} />
                 <span>{m.name}</span>
               </button>
             );

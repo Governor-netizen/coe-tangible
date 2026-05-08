@@ -564,9 +564,21 @@ export const machineDatabase: Record<string, MachineData> = {
   },
 };
 
+import { Zap, Battery, Plug, Settings, LucideIcon } from "lucide-react";
+
 export const machineList: { id: MachineType; name: string; icon: string; image?: string }[] = [
-  { id: 'dc-motor', name: 'DC Motor', icon: '⚡', image: 'dc-motor' },
-  { id: 'dc-generator', name: 'DC Generator', icon: '🔋', image: 'dc-generator' },
-  { id: 'transformer', name: 'Transformer', icon: '🔌', image: 'transformer' },
-  { id: 'induction-motor', name: 'Induction Motor', icon: '⚙️', image: 'induction-motor' },
+  { id: 'dc-motor', name: 'DC Motor', icon: 'Zap', image: 'dc-motor' },
+  { id: 'dc-generator', name: 'DC Generator', icon: 'Battery', image: 'dc-generator' },
+  { id: 'transformer', name: 'Transformer', icon: 'Plug', image: 'transformer' },
+  { id: 'induction-motor', name: 'Induction Motor', icon: 'Settings', image: 'induction-motor' },
 ];
+
+export function getMachineIcon(iconName: string): LucideIcon {
+  const iconMap: Record<string, LucideIcon> = {
+    'Zap': Zap,
+    'Battery': Battery,
+    'Plug': Plug,
+    'Settings': Settings,
+  };
+  return iconMap[iconName] || Zap;
+}
