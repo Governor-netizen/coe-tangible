@@ -89,8 +89,7 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
     target: drawerRef,
     offset: ["start end", "start start"],
   });
-  const drawerY = useTransform(scrollYProgress, [0, 1], ["100%", "0%"]);
-  const drawerBorderRadius = useTransform(scrollYProgress, [0, 0.6], ["32px", "0px"]);
+  const drawerBorderRadius = useTransform(scrollYProgress, [0, 1], ["32px", "0px"]);
 
   useEffect(() => {
     if (document.head.querySelector('link[rel="preload"][href="/dc-motor-optimized.glb"]')) return;
@@ -207,15 +206,16 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
       </nav>
 
       {/* Scroll drawer wrapper — hero stays fixed while drawer section pulls up over it */}
-      <div ref={drawerRef} className="relative w-full min-h-[200vh]">
+      <div className="relative w-full">
         {/* Hero: sticky so it stays in view while the drawer slides up */}
         <div className="sticky top-0 z-0 h-screen w-full">
           <MotorScrolly />
         </div>
 
-        {/* Drawer section: slides up from below over the hero */}
+        {/* Drawer section: slides up from below over the hero naturally */}
         <motion.section
-          style={{ y: drawerY, borderTopLeftRadius: drawerBorderRadius, borderTopRightRadius: drawerBorderRadius }}
+          ref={drawerRef}
+          style={{ borderTopLeftRadius: drawerBorderRadius, borderTopRightRadius: drawerBorderRadius }}
           className="relative z-10 min-h-screen flex items-center bg-[#0A0C10] overflow-hidden shadow-[0_-20px_80px_rgba(0,0,0,0.8)] w-full box-border"
         >
           <div className="absolute inset-0 blueprint-grid opacity-30"></div>
