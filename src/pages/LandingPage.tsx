@@ -207,7 +207,7 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
       </nav>
 
       {/* Scroll drawer wrapper — hero stays fixed while drawer section pulls up over it */}
-      <div ref={drawerRef} className="relative w-full">
+      <div ref={drawerRef} className="relative w-full min-h-[200vh]">
         {/* Hero: sticky so it stays in view while the drawer slides up */}
         <div className="sticky top-0 z-0 h-screen w-full">
           <MotorScrolly />
