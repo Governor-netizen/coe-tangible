@@ -60,7 +60,7 @@ const navColumns = [
 
 const socialIcons = [
   { icon: <TwitterIcon />, label: "Twitter", href: "#" },
-  { icon: <GithubIcon />, label: "GitHub", href: "https://github.com/Governor-netizen/coe-tangible" },
+  { icon: <GithubIcon />, label: "GitHub", href: "#" },
   { icon: <LinkedInIcon />, label: "LinkedIn", href: "#" },
   { icon: <YoutubeIcon />, label: "YouTube", href: "#" },
   { icon: <InstagramIcon />, label: "Instagram", href: "#" },
