@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import logo from "../assets/logo.jpeg";
 import "./Footer.css";
 
@@ -141,7 +142,16 @@ export default function Footer() {
 
           <p className="footer-tagline">
             Engineering education,<br />
-            <span className="footer-tagline__accent">reimagined in 3D.</span>
+            <motion.span
+              className="footer-tagline__cursive"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
+            >
+              reimagined in{" "}
+            </motion.span>
+            <span className="footer-tagline__3d">3D.</span>
           </p>
 
           <p className="footer-desc">
