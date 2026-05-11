@@ -9,6 +9,7 @@ import { supabase } from "../lib/supabase";
 import logo from "../assets/logo.jpeg";
 import MotorScrolly from "../components/MotorScrolly";
 import { ThemeToggle } from "../components/ThemeToggle";
+import Footer from "../components/Footer";
 
 // Configure Draco decoder for useGLTF (Google CDN hosts the WASM decoders)
 const dracoLoader = new DRACOLoader();
@@ -457,16 +458,7 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
         </div>
       </section>
 
-      <footer className="w-full py-10 px-4 md:px-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-[#0C0E12] border-t border-[#434656]/15">
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <img alt="Tangible Logo" className="w-6 h-6 object-contain grayscale opacity-50" src={logo} />
-            <div className="text-xl font-serif text-slate-200">Tangible</div>
-          </div>
-          <div className="font-label text-[10px] text-slate-500 tracking-wider uppercase">Built for engineering education in Africa</div>
-        </div>
-        <div className="font-label text-[10px] text-slate-600">© 2026 TANGIBLE</div>
-      </footer>
+      <Footer />
     </div>
   );
 }
