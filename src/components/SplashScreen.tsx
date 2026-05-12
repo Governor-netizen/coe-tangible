@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useProgress } from "@react-three/drei";
-import logo from "../assets/logo.jpeg";
+import logo from "../assets/logo.svg";
 
 interface SplashScreenProps {
   onHidden: () => void;
@@ -102,7 +102,7 @@ export function SplashScreen({ onHidden }: SplashScreenProps) {
       }`}
     >
       <div className="flex flex-col items-center gap-4 animate-pulse">
-        <img alt="Tangible Logo" className="w-16 h-16 object-contain" src={logo} />
+        <img alt="Tangible Logo" className="w-48 h-48 object-contain" src={logo} />
         <div className="text-3xl font-serif text-[#B6C4FF]">
           Tangible<sup className="text-xs text-[#0057FF]">3D</sup>
         </div>

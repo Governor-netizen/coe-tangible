@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Home, Upload } from "lucide-react";
-import logo from "../assets/logo.jpeg";
+import logo from "../assets/logo.svg";
 import LandingPage from "./LandingPage";
 import { MachineViewer } from "../components/MachineViewer";
 import { ControlPanel } from "../components/ControlPanel";
@@ -130,7 +130,7 @@ const Index = () => {
             </button>
             <div className="h-6 w-px bg-outline-variant/60" />
             <div className="flex items-center gap-2">
-              <img alt="Tangible Logo" className="w-6 h-6 object-contain" src={logo} />
+              <img alt="Tangible Logo" className="w-10 h-10 object-contain" src={logo} />
               <span className="text-3xl font-serif text-primary">Tangible</span>
             </div>
           </div>

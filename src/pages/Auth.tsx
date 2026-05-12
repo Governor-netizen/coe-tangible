@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { supabase } from "../lib/supabase";
-import logo from "../assets/logo.jpeg";
+import logo from "../assets/logo.svg";
 import "./Auth.css";
 
 export default function Auth() {
@@ -166,7 +166,7 @@ export default function Auth() {
         <div className="auth-overlay-container">
           <div className="auth-overlay">
             <div className="auth-overlay-panel auth-overlay-left">
-              <img alt="Tangible" src={logo} className="w-12 h-12 object-contain mb-4 opacity-80" />
+              <img alt="Tangible" src={logo} className="w-32 h-32 object-contain mb-4 opacity-80" />
               <h1>Welcome Back!</h1>
               <p>Sign in to continue exploring interactive 3D machines and deep technical visualizations.</p>
               <button
@@ -177,7 +177,7 @@ export default function Auth() {
               </button>
             </div>
             <div className="auth-overlay-panel auth-overlay-right">
-              <img alt="Tangible" src={logo} className="w-12 h-12 object-contain mb-4 opacity-80" />
+              <img alt="Tangible" src={logo} className="w-32 h-32 object-contain mb-4 opacity-80" />
               <h1>Hello, Engineer!</h1>
               <p>Join Tangible and start your journey into spatial understanding of electrical machines.</p>
               <button
