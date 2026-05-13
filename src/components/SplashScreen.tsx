@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useProgress } from "@react-three/drei";
 import logo from "../assets/logo.svg";
+import FrostedCanvas from "frosted-canvas";
 
 interface SplashScreenProps {
   onHidden: () => void;
@@ -66,6 +67,16 @@ export function SplashScreen({ onHidden }: SplashScreenProps) {
     }
   }, [r3fProgress, checkAllReady]);
 
+  // --- Initialize FrostedCanvas ---
+  useEffect(() => {
+    try {
+      // Midnight Velvet is preset 12
+      const frost = new FrostedCanvas("#frosted-bg-container", { preset: 12 });
+    } catch (e) {
+      console.error("FrostedCanvas error:", e);
+    }
+  }, []);
+
   // Failsafe: never block the user for more than 15 seconds
   useEffect(() => {
     const maxTimeout = setTimeout(finishSplash, 15000);
@@ -101,21 +112,23 @@ export function SplashScreen({ onHidden }: SplashScreenProps) {
         isHidden ? "opacity-0 invisible pointer-events-none" : "opacity-100 visible"
       }`}
     >
-      <div className="flex flex-col items-center gap-4 animate-pulse">
+      <div id="frosted-bg-container" className="absolute inset-0 z-0 opacity-80 mix-blend-screen overflow-hidden"></div>
+
+      <div className="relative z-10 flex flex-col items-center gap-4 animate-pulse">
         <img alt="Tangible Logo" className="w-48 h-48 object-contain" src={logo} />
         <div className="text-3xl font-serif text-[#B6C4FF]">
           Tangible<sup className="text-xs text-[#0057FF]">3D</sup>
         </div>
       </div>
 
-      <div className="w-[200px] h-[2px] bg-[#1a1a1a] rounded-sm mt-6 overflow-hidden">
+      <div className="relative z-10 w-[200px] h-[2px] bg-[#1a1a1a] rounded-sm mt-6 overflow-hidden shadow-sm">
         <div
           className="h-full bg-[#0057FF] rounded-sm transition-all duration-150"
           style={{ width: `${Math.min(displayProgress, 100)}%` }}
         />
       </div>
 
-      <div className="mt-3 font-label text-[10px] text-[#0057FF] tracking-widest uppercase">
+      <div className="relative z-10 mt-3 font-label text-[10px] text-[#0057FF] tracking-widest uppercase drop-shadow-md">
         {Math.round(Math.min(displayProgress, 100))}%
       </div>
     </div>

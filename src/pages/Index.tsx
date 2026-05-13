@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { Home, Upload } from "lucide-react";
 import logo from "../assets/logo.svg";
 import LandingPage from "./LandingPage";
@@ -118,16 +118,16 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-surface-dim text-on-surface">
-      <header className="px-4 py-3 border-b border-outline-variant/40 bg-surface-container-low sticky top-0 z-30">
+      <header className="px-4 py-2 border-b border-outline-variant/40 bg-surface-container-low sticky top-0 z-30">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <button
-              onClick={handleGoHome}
+            <Link
+              to="/"
               className="inline-flex items-center gap-2 text-on-surface-variant hover:text-on-surface text-xs font-label tracking-widest uppercase transition-colors"
             >
               <Home className="w-4 h-4" />
               Home
-            </button>
+            </Link>
             <div className="h-6 w-px bg-outline-variant/60" />
             <div className="flex items-center gap-2">
               <img alt="Tangible Logo" className="w-10 h-10 object-contain" src={logo} />

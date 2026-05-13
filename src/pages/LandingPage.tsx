@@ -90,7 +90,8 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
     target: drawerRef,
     offset: ["start end", "start start"],
   });
-  const drawerBorderRadius = useTransform(scrollYProgress, [0, 1], ["32px", "0px"]);
+  const drawerY = useTransform(scrollYProgress, [0, 1], ["100%", "0%"]);
+  const drawerBorderRadius = useTransform(scrollYProgress, [0, 0.6], ["32px", "0px"]);
 
   useEffect(() => {
     if (document.head.querySelector('link[rel="preload"][href="/dc-motor-optimized.glb"]')) return;
@@ -143,8 +144,8 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
   }, []);
 
   return (
-    <div className="bg-surface-dim text-on-surface selection:bg-primary-container selection:text-white min-h-screen w-full relative">
-      <nav className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-8 py-4 bg-[#0A0C10] transition-all duration-300 box-border">
+    <div className="bg-surface-dim text-on-surface selection:bg-primary-container selection:text-white min-h-screen">
+      <nav className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-8 py-2 bg-[#0A0C10] transition-all duration-300">
         <div className="flex items-center gap-3">
           <img alt="Tangible Logo" className="w-10 h-10 object-contain" src={logo} />
           <div className="text-2xl font-serif text-[#0057FF] dark:text-[#B6C4FF] after:content-['3D'] after:text-xs after:align-top after:ml-0.5 after:text-[#0057FF]">
@@ -207,21 +208,20 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
       </nav>
 
       {/* Scroll drawer wrapper — hero stays fixed while drawer section pulls up over it */}
-      <div className="relative w-full">
+      <div ref={drawerRef} className="relative">
         {/* Hero: sticky so it stays in view while the drawer slides up */}
-        <div className="sticky top-0 z-0 h-screen w-full">
+        <div className="sticky top-0 z-0 h-screen">
           <MotorScrolly />
         </div>
 
-        {/* Drawer section: slides up from below over the hero naturally */}
+        {/* Drawer section: slides up from below over the hero */}
         <motion.section
-          ref={drawerRef}
-          style={{ borderTopLeftRadius: drawerBorderRadius, borderTopRightRadius: drawerBorderRadius }}
-          className="relative z-10 min-h-screen flex items-center bg-[#0A0C10] overflow-hidden shadow-[0_-20px_80px_rgba(0,0,0,0.8)] w-full box-border"
+          style={{ y: drawerY, borderTopLeftRadius: drawerBorderRadius, borderTopRightRadius: drawerBorderRadius }}
+          className="relative z-10 min-h-screen flex items-center bg-[#0A0C10] overflow-hidden shadow-[0_-20px_80px_rgba(0,0,0,0.8)]"
         >
           <div className="absolute inset-0 blueprint-grid opacity-30"></div>
           <div className="absolute inset-0 blueprint-grid-fine opacity-20"></div>
-          <div className="container mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 relative z-10 pt-20 pb-12 lg:pt-20 lg:pb-0 w-full box-border">
+          <div className="container mx-auto px-4 md:px-8 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 relative z-10 pt-20 pb-12 lg:pt-20 lg:pb-0">
             <div className="lg:col-span-7 flex flex-col justify-center">
               <span className="font-label tech-tag font-medium tracking-widest mb-6">ENGINEERING · VISUALIZED</span>
               <h1 className="font-headline text-3xl sm:text-5xl md:text-7xl lg:text-8xl leading-none text-on-surface mb-6 sm:mb-8">
@@ -268,8 +268,8 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
         </motion.section>
       </div>
 
-      <section className="py-16 lg:py-24 bg-surface px-4 md:px-8 w-full box-border">
-        <div className="container mx-auto w-full box-border">
+      <section className="py-16 lg:py-24 bg-surface px-4 md:px-8">
+        <div className="container mx-auto">
           <div className="flex items-center gap-4 mb-12 lg:mb-16">
             <div className="w-1.5 h-12 bg-primary-container"></div>
             <h2 className="font-headline text-3xl md:text-4xl">Recently Published Models</h2>
@@ -333,8 +333,8 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
         </div>
       </section>
 
-      <section className="py-20 lg:py-24 px-4 md:px-8 border-y border-outline-variant/10 w-full box-border overflow-hidden">
-        <div className="container mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-center w-full box-border">
+      <section className="py-20 lg:py-24 px-4 md:px-8 border-y border-outline-variant/10">
+        <div className="container mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div>
             <h2 className="font-headline text-4xl md:text-5xl lg:text-6xl leading-[1.1] mb-8">
               From lecture to <br />
@@ -364,11 +364,11 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
         </div>
       </section>
 
-      <section className="py-24 bg-surface px-3 sm:px-4 md:px-8 w-full box-border">
+      <section className="py-24 bg-surface px-3 sm:px-4 md:px-8 w-full box-border overflow-hidden">
         <div className="mx-auto w-full max-w-full bg-surface-container-lowest border border-outline-variant/10 box-border">
           <div className="grid lg:grid-cols-2 w-full box-border">
             <div className="p-6 sm:p-12 relative border-b lg:border-b-0 lg:border-r border-outline-variant/10 flex flex-col justify-center items-center w-full box-border">
-              <div className="font-label text-xs tech-tag self-start mb-8 tracking-[0.2em]">FEATURED_DEEP_DIVE</div>
+              <div className="font-label text-xs tech-tag mb-8 tracking-[0.2em] text-center md:self-start">FEATURED_DEEP_DIVE</div>
               <div className="relative w-full max-w-md min-h-[240px] sm:min-h-[300px] md:min-h-[340px] flex items-center justify-center box-border">
                 {activeTab === "3D VIEW" ? (
                   <DCMotorGLBPreview className="absolute inset-0 w-full h-full mix-blend-screen opacity-90 animate-fade-in" />
@@ -377,8 +377,8 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
                 )}
               </div>
             </div>
-            <div className="p-6 sm:p-12 flex flex-col">
-              <div className="flex flex-wrap gap-4 mb-10 pb-2">
+            <div className="p-6 sm:p-12 flex flex-col w-full box-border">
+              <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-10 pb-2 w-full box-border">
                 <button 
                   onClick={() => setActiveTab("OVERVIEW")}
                   className={`font-label text-xs tracking-widest whitespace-nowrap pb-1 border-b transition-colors ${activeTab === "OVERVIEW" ? "text-primary border-primary" : "text-outline hover:text-white border-transparent"}`}
