@@ -353,8 +353,8 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
               <img className="w-full h-full object-cover grayscale opacity-50" alt="Technical notebook sketch" src="/stitch-images/sketch.png" />
             </div>
             <div className="absolute top-10 right-4 sm:right-20 w-3/4 aspect-square bg-[#0A0C10] border border-primary/20 p-4 z-10 transform -rotate-2 flex items-center justify-center overflow-hidden">
-              <img className="w-full h-full object-contain mix-blend-screen opacity-80" alt="DC motor wireframe" src="/stitch-images/dc-motor.png" />
-              <div className="absolute top-4 left-4 font-label text-[10px] tech-tag">MODEL_REF: DC_SERIES_V1</div>
+              <img className="w-full h-full object-contain mix-blend-screen opacity-80" alt="Transformer" src="/stitch-images/transformer2.jpeg" />
+              <div className="absolute top-4 left-4 font-label text-[10px] tech-tag">MODEL_REF: TRANSFORMER_V2</div>
             </div>
             <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-8 bg-primary-container p-4 sm:p-6 w-44 sm:w-56 z-20">
               <div className="font-label text-[10px] text-white/70 mb-2">SYLLABUS_MAP</div>
