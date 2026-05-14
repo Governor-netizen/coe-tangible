@@ -147,7 +147,7 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
     <div className="bg-surface-dim text-on-surface selection:bg-primary-container selection:text-white min-h-screen">
       <nav className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-8 py-2 bg-[#0A0C10] transition-all duration-300">
         <div className="flex items-center gap-3">
-          <img alt="Tangible Logo" className="w-10 h-10 object-contain" src={logo} />
+          <img alt="Tangible Logo" className="w-10 h-10 object-contain" style={{ transform: 'scale(1.6)', transformOrigin: 'center' }} src={logo} />
           <div className="text-2xl font-serif text-[#0057FF] dark:text-[#B6C4FF] after:content-['3D'] after:text-xs after:align-top after:ml-0.5 after:text-[#0057FF]">
             Tangible
           </div>
