@@ -1,0 +1,288 @@
+<!DOCTYPE html><html class="dark" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=IBM+Plex+Mono:wght@300;400;500;600&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Noto+Serif:ital,wght@0,100..900;1,100..900&amp;family=Space+Grotesk:wght@300..700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .blueprint-grid {
+            background-image: 
+                linear-gradient(to right, rgba(26, 32, 64, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(26, 32, 64, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .blueprint-grid-fine {
+            background-image: 
+                linear-gradient(to right, rgba(26, 32, 64, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(26, 32, 64, 0.05) 1px, transparent 1px);
+            background-size: 8px 8px;
+        }
+        .perspective-text {
+            perspective: 1000px;
+        }
+        
+        @keyframes magnetic-snap {
+            0% { transform: scale(1.1) rotate(-15deg) translateY(-20px); opacity: 0; }
+            70% { transform: scale(1.02) rotate(2deg) translateY(2px); opacity: 0.8; }
+            85% { transform: scale(0.98) rotate(-1deg) translateY(-1px); opacity: 0.9; }
+            100% { transform: scale(1) rotate(0deg) translateY(0); opacity: 1; }
+        }
+        
+        @keyframes tech-label-pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        .animate-snap {
+            animation: magnetic-snap 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        
+        .tech-tag {
+            color: #4DFFB4;
+            animation: tech-label-pulse 2s infinite ease-in-out;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-fixed": "#002113",
+                        "inverse-primary": "#004ee7",
+                        "inverse-on-surface": "#2f3035",
+                        "surface-variant": "#333539",
+                        "on-primary-fixed": "#001550",
+                        "primary-container": "#0057ff",
+                        "surface-dim": "#111318",
+                        "on-tertiary-fixed-variant": "#005234",
+                        "tertiary-fixed-dim": "#17e29a",
+                        "on-primary-fixed-variant": "#003ab2",
+                        "surface": "#111318",
+                        "tertiary-fixed": "#4dffb4",
+                        "inverse-surface": "#e2e2e8",
+                        "secondary-fixed": "#ffddb4",
+                        "surface-bright": "#37393e",
+                        "primary-fixed": "#dce1ff",
+                        "error-container": "#93000a",
+                        "on-primary-container": "#e5e8ff",
+                        "on-error-container": "#ffdad6",
+                        "tertiary-container": "#00784f",
+                        "outline": "#8d90a2",
+                        "secondary-container": "#dc9100",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "on-tertiary": "#003823",
+                        "on-secondary": "#452b00",
+                        "tertiary": "#17e29a",
+                        "surface-container-lowest": "#0c0e12",
+                        "secondary-fixed-dim": "#ffb955",
+                        "primary": "#b6c4ff",
+                        "on-surface": "#e2e2e8",
+                        "on-primary": "#00277f",
+                        "secondary": "#ffb955",
+                        "surface-container": "#1e2024",
+                        "on-tertiary-container": "#8fffc6",
+                        "on-secondary-container": "#4f3100",
+                        "surface-container-high": "#282a2e",
+                        "outline-variant": "#434656",
+                        "on-surface-variant": "#c3c5d9",
+                        "error": "#ffb4ab",
+                        "on-error": "#690005",
+                        "on-secondary-fixed-variant": "#633f00",
+                        "on-secondary-fixed": "#291800",
+                        "surface-tint": "#b6c4ff",
+                        "surface-container-low": "#1a1c20",
+                        "background": "#111318",
+                        "surface-container-highest": "#333539",
+                        "on-background": "#e2e2e8"
+                    },
+                    fontFamily: {
+                        "headline": ["Playfair Display", "serif"],
+                        "body": ["Source Serif 4", "serif"],
+                        "label": ["IBM Plex Mono", "monospace"],
+                        "serif-body": ["Source Serif 4", "serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface-dim text-on-surface selection:bg-primary-container selection:text-white">
+<!-- TopNavBar -->
+
+<!-- Hero Section -->
+<section class="relative min-h-screen flex items-center bg-[#0A0C10] overflow-hidden">
+<div class="absolute inset-0 blueprint-grid opacity-30"></div>
+<div class="absolute inset-0 blueprint-grid-fine opacity-20"></div>
+
+</section>
+<!-- Section 2: Recently Published Models -->
+
+<!-- Section 3: How it Works -->
+<section class="py-24 bg-surface-container-lowest overflow-hidden">
+<div class="container mx-auto px-8">
+<h2 class="font-headline text-5xl text-center mb-20">A Scientific Workflow</h2>
+<div class="relative grid grid-cols-1 lg:grid-cols-3 gap-16 max-w-5xl mx-auto">
+<div class="hidden lg:block absolute top-12 left-0 w-full h-px border-t border-dashed border-secondary/30 -z-0"></div>
+<div class="relative z-10 text-center flex flex-col items-center">
+<div class="w-24 h-24 bg-surface border border-outline-variant flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-4xl text-primary">inventory_2</span>
+</div>
+<div class="font-label text-sm tech-tag mb-4">STEP_01</div>
+<h3 class="font-headline text-xl mb-4">Browse Library</h3>
+<p class="font-serif-body text-sm text-on-surface-variant">Select from hundreds of machines mapped to university curricula.</p>
+</div>
+<div class="relative z-10 text-center flex flex-col items-center">
+<div class="w-24 h-24 bg-surface border border-outline-variant flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-4xl text-primary">view_in_ar</span>
+</div>
+<div class="font-label text-sm tech-tag mb-4">STEP_02</div>
+<h3 class="font-headline text-xl mb-4">Open 3D</h3>
+<p class="font-serif-body text-sm text-on-surface-variant">Manipulate models in real-time. Toggle exploded views and animations.</p>
+</div>
+<div class="relative z-10 text-center flex flex-col items-center">
+<div class="w-24 h-24 bg-surface border border-outline-variant flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-4xl text-primary">edit_note</span>
+</div>
+<div class="font-label text-sm tech-tag mb-4">STEP_03</div>
+<h3 class="font-headline text-xl mb-4">Annotate &amp; Study</h3>
+<p class="font-serif-body text-sm text-on-surface-variant">Layer technical data and equations directly over the active 3D components.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 4: Course Integration Banner -->
+
+<!-- Section 5: Stats Bar -->
+
+<!-- Section 6: Featured DC Motor Deep Dive -->
+
+<!-- 1. Interactive Machine Spotlight -->
+<section class="py-32 bg-[#0A0C10] border-t border-outline-variant/10 overflow-hidden relative">
+<div class="absolute inset-0 blueprint-grid opacity-10"></div>
+<div class="container mx-auto px-8 relative z-10">
+<div class="grid lg:grid-cols-12 gap-16 items-center">
+<div class="lg:col-span-4 order-2 lg:order-1">
+<span class="font-label tech-tag text-xs tracking-[0.3em] uppercase block mb-6">High-Fidelity Rendering</span>
+<h2 class="font-headline text-5xl lg:text-6xl mb-8 leading-tight">Mastering the <span class="italic text-primary">Transformer</span>.</h2>
+<p class="font-serif-body text-on-surface-variant text-lg leading-relaxed mb-10">Navigate the intricate geometry of core-type transformers. Our high-fidelity models expose the physics behind mutual induction, flux distribution, and eddy current losses.</p>
+<div class="flex flex-wrap gap-6">
+<button class="bg-primary-container text-white px-8 py-4 font-label text-xs tracking-widest uppercase hover:bg-primary transition-all">Launch 3D Explorer</button>
+<button class="border border-outline-variant text-on-surface px-8 py-4 font-label text-xs tracking-widest uppercase hover:bg-surface-container-high transition-all">View Schematic ↗</button>
+</div>
+</div>
+<div class="lg:col-span-8 order-1 lg:order-2 relative">
+<div class="relative group">
+<img alt="Single-Phase Transformer Technical Showcase" class="w-full h-auto shadow-2xl border border-outline-variant/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9uJj19Y6CCRq1FPd6CLZhIvKC2EP-7lYyn7LDrrDb9Ftj4NXp2w2qtLcaMy04Mkh__6XdVvusw5oPC0cX5WKPAZtyO3wz1bRnoKbEWwf9zGHUL3YdpOcRDDn-2S8xjaQGAkGg7Qf-kEOHgNlGCvKJ7zVqNpL-IQBSU36HI1GsAo9cGF7EaGxzgfxvNzCpGXMsmWCuiIlnJ7TEtyXi9DJrEqbc9gCjOae_zCCsT_wuAb_pv1zlFVxp_JQzRO3MiEVTtoEs3nOmQ6Ya">
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 2. Contextual Use Case: The Modern Laboratory -->
+<section class="py-32 bg-surface px-8">
+<div class="container mx-auto">
+<div class="grid lg:grid-cols-2 gap-20 items-center">
+<div class="relative">
+<div class="aspect-[4/5] overflow-hidden border border-outline-variant/20">
+<img alt="Engineering students collaborating in laboratory" class="w-full h-full object-cover transition-all duration-700" src="https://lh3.googleusercontent.com/aida/ADBb0uhxqbSdQTroqCgZ8I-1AiEEzUaffmz-08mJtnJWfRPibnxwy-_Vf12Zte-IBsIKrZPv8zY9sXigKTySTS2Qq3YARXa06K_dJKkB3ftu9O_-ejj957U_gZJgVf3NcuaDQS5j8_mwf_Q9s8sFzlHo_hoWPWqa82g7BN6HDLxmjVSuSObjiAC24k8GWosRoyY1MotLnAkC0qe850wNa5WuGu-QmDkiQ1BqeFpflanWt33nwFuYKIPev4lJ8Ms2">
+</div>
+
+</div>
+<div class="flex flex-col justify-center">
+<span class="font-label tech-tag text-xs tracking-[0.3em] uppercase block mb-8">Pedagogical Framework</span>
+<h2 class="font-headline text-6xl mb-10 leading-[1.1]">The Modern <br><span class="italic">Laboratory</span>.</h2>
+<div class="space-y-8 font-serif-body text-xl text-on-surface-variant leading-relaxed">
+<p class="">
+                            Tangible bridges the critical gap between digital abstraction and physical implementation. By visualizing electromagnetic fields and mechanical stresses in real-time, students develop a "muscle memory" for physics that traditional lectures cannot provide.
+                        </p>
+<p class="text-on-surface font-light border-l-4 border-primary pl-8 italic">
+                            "The ability to see the flux moving through the core while adjusting the load was the moment electrical machines finally clicked for me."
+                        </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. Advanced Research Features -->
+<section class="py-32 bg-surface-container-lowest relative overflow-hidden">
+<div class="absolute inset-0 blueprint-grid-fine opacity-10"></div>
+<div class="container mx-auto px-8 relative z-10">
+<div class="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
+<div>
+<span class="font-label tech-tag text-xs tracking-[0.3em] uppercase block mb-4">Research &amp; Development</span>
+<h2 class="font-headline text-5xl">Advanced Infrastructure</h2>
+</div>
+<button class="font-label text-xs tracking-widest text-primary hover:text-white transition-colors flex items-center gap-2 group underline underline-offset-8">
+                    VIEW TECHNICAL DOCUMENTATION <span class="group-hover:translate-x-1 transition-transform">→</span>
+</button>
+</div>
+<div class="grid md:grid-cols-3 gap-1 border-t border-outline-variant/10">
+<div class="p-10 bg-[#0C0E12]/50 border-r border-b border-outline-variant/10 hover:bg-surface-container-low transition-all group">
+<div class="w-12 h-12 bg-primary-container/10 flex items-center justify-center mb-10 group-hover:bg-primary-container transition-all">
+<span class="material-symbols-outlined text-primary group-hover:text-white">psychology</span>
+</div>
+<div class="font-label text-[10px] tech-tag tracking-widest mb-4">ENGINE_AI_V2</div>
+<h3 class="font-headline text-2xl mb-6">AI Research Assistant</h3>
+<p class="font-serif-body text-sm text-on-surface-variant leading-relaxed mb-10">
+                        Natural language querying of machine parameters and automated derivation of performance equations.
+                    </p>
+<div class="flex items-center gap-2 font-label text-[10px] text-outline">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+                        STATUS: OPERATIONAL
+                    </div>
+</div>
+<div class="p-10 bg-[#0C0E12]/50 border-r border-b border-outline-variant/10 hover:bg-surface-container-low transition-all group">
+<div class="w-12 h-12 bg-primary-container/10 flex items-center justify-center mb-10 group-hover:bg-primary-container transition-all">
+<span class="material-symbols-outlined text-primary group-hover:text-white">menu_book</span>
+</div>
+<div class="font-label text-[10px] tech-tag tracking-widest mb-4">LIB_ARCHIVE</div>
+<h3 class="font-headline text-2xl mb-6">Publications Archive</h3>
+<p class="font-serif-body text-sm text-on-surface-variant leading-relaxed mb-10">
+                        A peer-reviewed library of interactive case studies, simulation results, and curriculum whitepapers.
+                    </p>
+<div class="flex items-center gap-2 font-label text-[10px] text-outline">
+                        542 DOCUMENTS INDEXED
+                    </div>
+</div>
+<div class="p-10 bg-[#0C0E12]/50 border-b border-outline-variant/10 hover:bg-surface-container-low transition-all group">
+<div class="w-12 h-12 bg-primary-container/10 flex items-center justify-center mb-10 group-hover:bg-primary-container transition-all">
+<span class="material-symbols-outlined text-primary group-hover:text-white">hub</span>
+</div>
+<div class="font-label text-[10px] tech-tag tracking-widest mb-4">PORTAL_COLLAB</div>
+<h3 class="font-headline text-2xl mb-6">Collaborator Portal</h3>
+<p class="font-serif-body text-sm text-on-surface-variant leading-relaxed mb-10">
+                        Shared workspaces for multi-university research projects and collaborative 3D annotation sessions.
+                    </p>
+<div class="flex items-center gap-2 font-label text-[10px] text-outline">
+                        24 ACTIVE INSTITUTIONS
+                    </div>
+</div>
+</div>
+</div>
+</section>
+<!-- Cinematic Student Section -->
+<section class="relative w-full h-[80vh] flex items-center justify-center bg-[#06080A] overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img alt="Student in Lab" class="w-full h-full object-cover opacity-60 mix-blend-luminosity scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJHQCJnCShBp1FHT7ErVVURJcbiKZeoUKd2ZnC6OiRG4cszR06OJRMTaBw3svVkJ4XIe5_FuPAm1pISV_5Eo1zEhfoT0-0bkpxCMhTlFPioT0jaXmdqfmn-tbC4m19wq8NilXI8O6CNeOlSvcqp7Se8M5tAXci29LpeZ05oRphIXQ4BWpnxGPS4DUCvYFwKgDN3y1sNpY5B7x8_tNENKxEM8VRkttHnXXgwDObTnHwvur3NG_MUaw4xGj3VcsM7ljcBKaqVPN_y0i7">
+<div class="absolute inset-0 bg-gradient-to-t from-[#06080A] via-transparent to-[#06080A]"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-[#06080A] via-transparent to-[#06080A]"></div>
+<div class="absolute inset-0 bg-[#06080A]/20 backdrop-brightness-75"></div>
+</div>
+<div class="container mx-auto px-8 relative z-10 text-center max-w-3xl">
+<div class="font-label tech-tag text-xs tracking-[0.4em] uppercase mb-6 opacity-80">Empowering Next-Gen Innovators</div>
+<h2 class="font-headline text-6xl md:text-7xl lg:text-8xl text-on-surface mb-8 italic">Limitless Discovery.</h2>
+<p class="font-serif-body text-xl md:text-2xl text-on-surface-variant leading-relaxed opacity-90">
+                Witnessing the spark of comprehension when theory meets interactive spatial reality. 
+            </p>
+</div>
+</section>
+<!-- Footer -->
+</body>
+</html>

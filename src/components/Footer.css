@@ -40,7 +40,7 @@
   transform: translateX(-50%);
   font-family: 'Outfit', 'Inter', sans-serif;
   font-weight: 900;
-  font-size: clamp(8rem, 22vw, 28rem);
+  font-size: clamp(3.5rem, 18vw, 28rem);
   line-height: 0.82;
   letter-spacing: -0.03em;
   color: transparent;

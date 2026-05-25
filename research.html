@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TANGIBLE | AI Research Assistant</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Noto+Serif:ital,wght@0,100..900;1,100..900&amp;family=Space+Grotesk:wght@300..700&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;family=IBM+Plex+Mono:ital,wght@0,100..700;1,100..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary-fixed-variant": "#003ab2",
+                      "primary-container": "#0057ff",
+                      "primary-fixed": "#dce1ff",
+                      "on-error-container": "#ffdad6",
+                      "outline-variant": "#434656",
+                      "inverse-surface": "#e2e2e8",
+                      "on-tertiary": "#003823",
+                      "on-secondary-container": "#4f3100",
+                      "error": "#ffb4ab",
+                      "tertiary-fixed": "#4dffb4",
+                      "surface": "#111318",
+                      "surface-container-low": "#1a1c20",
+                      "surface-bright": "#37393e",
+                      "secondary-container": "#dc9100",
+                      "on-background": "#e2e2e8",
+                      "on-primary-container": "#e5e8ff",
+                      "background": "#111318",
+                      "primary": "#b6c4ff",
+                      "inverse-primary": "#004ee7",
+                      "on-error": "#690005",
+                      "surface-container": "#1e2024",
+                      "on-tertiary-container": "#8fffc6",
+                      "on-tertiary-fixed": "#002113",
+                      "on-secondary-fixed-variant": "#633f00",
+                      "on-primary": "#00277f",
+                      "on-secondary-fixed": "#291800",
+                      "tertiary-fixed-dim": "#17e29a",
+                      "secondary-fixed-dim": "#ffb955",
+                      "surface-tint": "#b6c4ff",
+                      "surface-dim": "#111318",
+                      "surface-container-lowest": "#0c0e12",
+                      "secondary-fixed": "#ffddb4",
+                      "secondary": "#ffb955",
+                      "surface-variant": "#333539",
+                      "on-surface-variant": "#c3c5d9",
+                      "surface-container-high": "#282a2e",
+                      "on-secondary": "#452b00",
+                      "surface-container-highest": "#333539",
+                      "tertiary-container": "#00784f",
+                      "on-tertiary-fixed-variant": "#005234",
+                      "primary-fixed-dim": "#b6c4ff",
+                      "inverse-on-surface": "#2f3035",
+                      "on-surface": "#e2e2e8",
+                      "on-primary-fixed": "#001550",
+                      "error-container": "#93000a",
+                      "tertiary": "#17e29a",
+                      "outline": "#8d90a2"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "fontFamily": {
+                      "headline": ["Playfair Display", "serif"],
+                      "display": ["Playfair Display", "serif"],
+                      "body": ["Source Serif 4", "serif"],
+                      "label": ["IBM Plex Mono", "monospace"]
+              }
+            },
+          }
+        }
+      </script>
+<style>
+        .blueprint-grid {
+            background-image: 
+                linear-gradient(to right, rgba(67, 70, 86, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(67, 70, 86, 0.1) 1px, transparent 1px),
+                linear-gradient(to right, rgba(67, 70, 86, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(67, 70, 86, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px, 40px 40px, 8px 8px, 8px 8px;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface-dim text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- Blueprint Grid Overlay -->
+<div class="fixed inset-0 blueprint-grid pointer-events-none z-0"></div>
+<div class="relative z-10 flex h-screen overflow-hidden">
+<!-- SideNavBar (Shared Component) -->
+<aside class="hidden md:flex flex-col h-full py-8 border-r border-outline-variant/15 bg-surface-container-lowest dark:bg-surface-container-lowest h-screen w-64 left-0 sticky">
+<div class="px-6 mb-10">
+<div class="font-headline text-lg text-on-surface italic uppercase tracking-widest">AI_RESEARCH_UNIT</div>
+<div class="font-label text-[10px] tracking-tighter text-tertiary-fixed mt-1 opacity-70">V.02.44_ACTIVE</div>
+</div>
+<nav class="flex-1 px-3 space-y-1">
+<a class="flex items-center gap-4 bg-primary-container text-on-primary-container rounded-none border-r-4 border-tertiary-fixed p-3 transition-all duration-200 cursor-crosshair active:scale-[1.01]" href="#">
+<span class="material-symbols-outlined">biotech</span>
+<span class="font-label text-xs uppercase tracking-widest">SIMULATION</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant p-3 hover:bg-surface-container-low hover:text-primary transition-all duration-200 cursor-crosshair" href="#">
+<span class="material-symbols-outlined">terminal</span>
+<span class="font-label text-xs uppercase tracking-widest">TERMINAL</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant p-3 hover:bg-surface-container-low hover:text-primary transition-all duration-200 cursor-crosshair" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label text-xs uppercase tracking-widest">ARCHIVE</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant p-3 hover:bg-surface-container-low hover:text-primary transition-all duration-200 cursor-crosshair" href="#">
+<span class="material-symbols-outlined">architecture</span>
+<span class="font-label text-xs uppercase tracking-widest">SCHEMATICS</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant p-3 hover:bg-surface-container-low hover:text-primary transition-all duration-200 cursor-crosshair" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label text-xs uppercase tracking-widest">DATA_SETS</span>
+</a>
+</nav>
+<div class="px-3 mt-auto space-y-1 border-t border-outline-variant/10 pt-6">
+<button class="w-full bg-surface-container-high border border-outline-variant/20 py-3 mb-4 font-label text-[10px] tracking-[0.2em] hover:bg-primary-container hover:text-white transition-colors">
+                    NEW_SESSION
+                </button>
+<a class="flex items-center gap-4 text-on-surface-variant p-3 hover:text-primary transition-all duration-200 cursor-crosshair" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label text-xs uppercase tracking-widest">SETTINGS</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant p-3 hover:text-primary transition-all duration-200 cursor-crosshair" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label text-xs uppercase tracking-widest">LOGOUT</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col relative max-w-5xl mx-auto w-full">
+<!-- TopNavBar (Shared Component Overridden for Context) -->
+<header class="w-full h-16 top-0 sticky z-50 bg-surface-container-low/80 backdrop-blur-md flex justify-between items-center px-6 border-b border-outline-variant/15">
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors cursor-crosshair">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<div class="flex flex-col">
+<h1 class="font-headline text-xl text-primary tracking-tight">AI Research Assistant</h1>
+<div class="flex items-center gap-2">
+<img alt="Tangible Logo" class="h-3 opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAi7rBsWdZ0A2l0JHQRUS1veJ8aEDi-Tnn0W79AGZVMtggSOBNGjTK-H1Y092WDQ4TocJ4xyzG0xVhnIqu9RNlGTcurvFI4dnfRcf162Hw9eGXq1EDfUJ4unj-MdeXJoEnx7YeOFEa-G1dVMni3V_fnuA2b_sobtTC6mamCFwO3b0eTjXYIIjQnSqt92YFyveODk_fKBg2xRT8VVj2ePb8KauVlfEdp0WZmCbcICfryjP21Jc4yII4vJ0fE2KeyjHLF0_iKoLbX4oDA"/>
+<span class="font-label text-[9px] uppercase tracking-widest text-tertiary-fixed bg-tertiary-container/20 px-1.5 py-0.5 border border-tertiary-fixed/20">POWERED BY GPT-4O</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors cursor-crosshair">help</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors cursor-crosshair">account_circle</button>
+</div>
+</header>
+<!-- Chat Canvas -->
+<div class="flex-1 overflow-y-auto p-6 space-y-12 pb-32">
+<!-- System Greeting / Editorial Intro -->
+<div class="max-w-2xl mx-auto text-center mb-16 space-y-4">
+<span class="font-label text-[10px] uppercase tracking-[0.3em] text-outline">Journal Entry: 10.04.24</span>
+<h2 class="font-headline text-5xl italic text-on-surface">Precision in inquiry yields excellence in discovery.</h2>
+<p class="text-on-surface-variant font-body text-lg leading-relaxed opacity-70">
+                        Initiate a technical dialogue regarding high-frequency electrical engineering, photonic circuits, or semiconductor topology.
+                    </p>
+</div>
+<!-- Chat: Assistant Message -->
+<div class="flex flex-col items-start max-w-3xl">
+<div class="bg-surface-container p-6 rounded-r-lg rounded-bl-lg border-l-2 border-primary/30 relative group">
+<div class="absolute -left-10 top-0 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="font-label text-[10px] text-primary vertical-text transform rotate-180" style="writing-mode: vertical-rl;">REF: 001-A</span>
+</div>
+<p class="font-body text-lg text-on-surface leading-relaxed">
+                            Good morning. I have synchronized the latest research papers regarding <strong>Gallium Nitride (GaN)</strong> power transistors. Based on our previous session on wide-bandgap semiconductors, would you like to explore the thermal dissipation limits or the switching efficiency at 500kHz?
+                        </p>
+</div>
+<span class="mt-3 font-label text-[10px] uppercase tracking-widest text-outline">SYSTEM // RESEARCH_ENGINE</span>
+</div>
+<!-- Chat: User Message -->
+<div class="flex flex-col items-end max-w-3xl ml-auto">
+<div class="bg-primary-container text-on-primary-container p-6 rounded-l-lg rounded-br-lg shadow-xl shadow-primary-container/10 border-r-2 border-tertiary-fixed/40">
+<p class="font-body text-lg leading-relaxed">
+                            Analyze the switching efficiency at 500kHz specifically for automotive applications. Compare the R_DS(on) values between current market leaders. Use a high-density data format.
+                        </p>
+</div>
+<span class="mt-3 font-label text-[10px] uppercase tracking-widest text-outline">USER // SENIOR_ARCHITECT</span>
+</div>
+<!-- Chat: Assistant Message with Data Callouts -->
+<div class="flex flex-col items-start max-w-4xl">
+<div class="bg-surface-container p-6 rounded-r-lg rounded-bl-lg border-l-2 border-primary/30 w-full">
+<p class="font-body text-lg text-on-surface leading-relaxed mb-6">
+                            Analyzing comparative datasets for automotive-grade GaN HEMTs. The switching losses are minimized at 500kHz due to the zero reverse recovery charge.
+                        </p>
+<!-- Technical Data Module -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+<div class="bg-surface-container-high border border-outline-variant/10 p-4 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-2 opacity-20">
+<span class="material-symbols-outlined text-4xl">show_chart</span>
+</div>
+<span class="font-label text-[10px] text-tertiary-fixed block mb-2 uppercase tracking-widest">Efficiency Matrix</span>
+<div class="font-headline text-4xl text-primary">98.4%</div>
+<p class="font-label text-[9px] text-on-surface-variant mt-2">PEAK_SYSTEM_EFFICIENCY @ 500kHz</p>
+</div>
+<div class="bg-surface-container-high border border-outline-variant/10 p-4 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-2 opacity-20">
+<span class="material-symbols-outlined text-4xl">thermostat</span>
+</div>
+<span class="font-label text-[10px] text-tertiary-fixed block mb-2 uppercase tracking-widest">Thermal Load</span>
+<div class="font-headline text-4xl text-secondary">42.5°C</div>
+<p class="font-label text-[9px] text-on-surface-variant mt-2">JUNCTION_TEMP_STABILIZED</p>
+</div>
+</div>
+<div class="mt-6 font-body text-on-surface opacity-80 italic">
+                            Synthesizing comparative R_DS(on) tables...
+                        </div>
+</div>
+<span class="mt-3 font-label text-[10px] uppercase tracking-widest text-outline">SYSTEM // RESEARCH_ENGINE</span>
+</div>
+<!-- Loading State -->
+<div class="flex items-center gap-3 py-4">
+<div class="relative w-5 h-5">
+<div class="absolute inset-0 border-2 border-primary/20 rounded-none"></div>
+<div class="absolute inset-0 border-2 border-t-tertiary-fixed rounded-none animate-spin"></div>
+</div>
+<span class="font-label text-xs uppercase tracking-[0.2em] text-tertiary-fixed italic">Synthesizing...</span>
+</div>
+</div>
+<!-- Input Dock -->
+<div class="fixed bottom-0 left-0 md:left-64 right-0 p-6 bg-gradient-to-t from-surface-dim via-surface-dim to-transparent z-40">
+<div class="max-w-4xl mx-auto">
+<div class="bg-surface-container-lowest border border-outline-variant/20 shadow-2xl p-2 rounded-lg flex items-center gap-4 focus-within:ring-2 focus-within:ring-primary/40 transition-all">
+<div class="flex items-center gap-1 pl-2">
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors cursor-crosshair">
+<span class="material-symbols-outlined">attach_file</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors cursor-crosshair">
+<span class="material-symbols-outlined">mic</span>
+</button>
+</div>
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface font-body italic text-lg placeholder:text-outline/50 px-2 py-3" placeholder="Ask anything about electrical engineering..." type="text"/>
+<button class="bg-primary-container text-white p-3 rounded-md hover:bg-on-primary-fixed-variant transition-colors flex items-center justify-center cursor-crosshair group">
+<span class="material-symbols-outlined group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+</button>
+</div>
+<div class="mt-3 flex justify-center gap-6">
+<button class="font-label text-[9px] uppercase tracking-[0.2em] text-outline hover:text-primary transition-colors">SCHEMATIC_VIEW</button>
+<button class="font-label text-[9px] uppercase tracking-[0.2em] text-outline hover:text-primary transition-colors">EXPORT_DOCX</button>
+<button class="font-label text-[9px] uppercase tracking-[0.2em] text-outline hover:text-primary transition-colors">RELIABILITY_CHECK</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Decorative Corner Annotation -->
+<div class="fixed bottom-4 right-4 z-50 pointer-events-none">
+<div class="flex flex-col items-end opacity-20">
+<span class="font-label text-[8px] tracking-[0.5em]">TANGIBLE_LABS_2024</span>
+<div class="w-24 h-[1px] bg-outline mt-1"></div>
+</div>
+</div>
+</body></html>

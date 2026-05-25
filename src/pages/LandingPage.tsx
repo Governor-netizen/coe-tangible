@@ -10,6 +10,7 @@ import logo from "../assets/logo.svg";
 import MotorScrolly from "../components/MotorScrolly";
 import { ThemeToggle } from "../components/ThemeToggle";
 import Footer from "../components/Footer";
+import StitchSection from "../components/StitchSection";
 
 // Configure Draco decoder for useGLTF (Google CDN hosts the WASM decoders)
 const dracoLoader = new DRACOLoader();
@@ -166,9 +167,9 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
           <a className="text-slate-400 font-normal font-label text-xs tracking-widest hover:text-[#0057FF] transition-colors duration-200" href="#">
             COURSES
           </a>
-          <a className="text-slate-400 font-normal font-label text-xs tracking-widest hover:text-[#0057FF] transition-colors duration-200" href="#">
+          <button onClick={() => navigate("/research")} className="text-slate-400 font-normal font-label text-xs tracking-widest hover:text-[#0057FF] transition-colors duration-200">
             RESEARCH
-          </a>
+          </button>
           <a className="text-slate-400 font-normal font-label text-xs tracking-widest hover:text-[#0057FF] transition-colors duration-200" href="#">
             ABOUT
           </a>
@@ -457,6 +458,8 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
           </div>
         </div>
       </section>
+
+      <StitchSection onMachineSelect={onMachineSelect} />
 
       <Footer />
     </div>

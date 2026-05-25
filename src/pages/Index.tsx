@@ -128,6 +128,12 @@ const Index = () => {
               <Home className="w-4 h-4" />
               Home
             </Link>
+            <Link
+              to="/research"
+              className="inline-flex items-center gap-2 text-on-surface-variant hover:text-on-surface text-xs font-label tracking-widest uppercase transition-colors"
+            >
+              Research
+            </Link>
             <div className="h-6 w-px bg-outline-variant/60" />
             <div className="flex items-center gap-2">
               <img alt="Tangible Logo" className="w-10 h-10 object-contain" style={{ transform: 'scale(1.6)', transformOrigin: 'center' }} src={logo} />

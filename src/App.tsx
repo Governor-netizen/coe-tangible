@@ -12,12 +12,15 @@ import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
 
+import Research from "./pages/Research.tsx";
+
 function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Index />} />
       <Route path="/machines" element={<Index />} />
       <Route path="/auth" element={<Auth />} />
+      <Route path="/research" element={<Research />} />
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
     </Routes>
