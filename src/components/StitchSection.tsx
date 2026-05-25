@@ -162,7 +162,7 @@ export default function StitchSection({ onMachineSelect }: StitchSectionProps) {
                 <img
                   alt="Engineering students collaborating in laboratory"
                   className="w-full h-full object-cover hover:scale-103 transition-transform duration-700 ease-out"
-                  src="https://lh3.googleusercontent.com/aida/ADBb0uhxqbSdQTroqCgZ8I-1AiEEzUaffmz-08mJtnJWfRPibnxwy-_Vf12Zte-IBsIKrZPv8zY9sXigKTySTS2Qq3YARXa06K_dJKkB3ftu9O_-ejj957U_gZJgVf3NcuaDQS5j8_mwf_Q9s8sFzlHo_hoWPWqa82g7BN6HDLxmjVSuSObjiAC24k8GWosRoyY1MotLnAkC0qe850wNa5WuGu-QmDkiQ1BqeFpflanWt33nwFuYKIPev4lJ8Ms2"
+                  src="/stitch-images/group.jpeg"
                 />
               </div>
             </motion.div>
