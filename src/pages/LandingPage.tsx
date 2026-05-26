@@ -357,9 +357,14 @@ export default function LandingPage({ onMachineSelect }: LandingPageProps) {
               <img className="w-full h-full object-contain rounded-sm" alt="Transformer" src="/stitch-images/transformer2.jpeg" />
               <div className="absolute top-4 left-4 font-label text-[10px] tech-tag">MODEL_REF: TRANSFORMER_V2</div>
             </div>
-            <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-8 bg-primary-container p-4 sm:p-6 w-44 sm:w-56 z-20">
-              <div className="font-label text-[10px] text-white/70 mb-2">SYLLABUS_MAP</div>
-              <div className="text-white font-headline text-lg">EE304: Electrical Machines I</div>
+            <div className="absolute bottom-2 sm:bottom-6 left-2 sm:left-8 p-5 sm:p-6 w-48 sm:w-64 z-20 rounded-[2rem] bg-white/[0.08] backdrop-blur-3xl border border-white/30 shadow-[0_24px_48px_-12px_rgba(0,0,0,0.5),inset_0_1px_2px_rgba(255,255,255,0.9),inset_0_-1px_2px_rgba(255,255,255,0.2)] overflow-hidden">
+              {/* Glass Glare & Specular Reflection */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-white/30 via-transparent to-white/20 pointer-events-none mix-blend-overlay"></div>
+              {/* Diagonal Light Sweep */}
+              <div className="absolute -inset-[150%] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none -rotate-45 translate-x-[-20%] translate-y-[10%]"></div>
+              
+              <div className="relative z-10 font-label text-[10px] text-zinc-950 mb-2 tracking-[0.2em] font-extrabold uppercase drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">SYLLABUS MAP</div>
+              <div className="relative z-10 text-zinc-950 font-headline text-lg sm:text-xl font-bold leading-tight tracking-tight drop-shadow-[0_1px_1px_rgba(255,255,255,0.6)]">EE304: Electrical Machines 1</div>
             </div>
           </div>
         </div>
