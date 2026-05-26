@@ -134,11 +134,12 @@ export default function StitchSection({ onMachineSelect }: StitchSectionProps) {
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
               className="lg:col-span-7 order-1 lg:order-2 relative"
             >
-              <div className="relative group overflow-hidden border border-outline-variant/20 shadow-2xl">
+              <div className="relative group overflow-hidden border border-outline-variant/20 shadow-2xl rounded-sm">
                 <img
                   alt="Single-Phase Transformer Technical Showcase"
-                  className="w-full h-auto object-cover group-hover:scale-102 transition-transform duration-700 ease-out"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9uJj19Y6CCRq1FPd6CLZhIvKC2EP-7lYyn7LDrrDb9Ftj4NXp2w2qtLcaMy04Mkh__6XdVvusw5oPC0cX5WKPAZtyO3wz1bRnoKbEWwf9zGHUL3YdpOcRDDn-2S8xjaQGAkGg7Qf-kEOHgNlGCvKJ7zVqNpL-IQBSU36HI1GsAo9cGF7EaGxzgfxvNzCpGXMsmWCuiIlnJ7TEtyXi9DJrEqbc9gCjOae_zCCsT_wuAb_pv1zlFVxp_JQzRO3MiEVTtoEs3nOmQ6Ya"
+                  className="w-full h-auto object-cover group-hover:scale-102 transition-transform duration-700 ease-out contrast-[1.05] saturate-[1.05] brightness-[1.02]"
+                  style={{ imageRendering: "high-quality" }}
+                  src="/stitch-images/transformer4 (1).png"
                 />
               </div>
             </motion.div>
@@ -158,11 +159,12 @@ export default function StitchSection({ onMachineSelect }: StitchSectionProps) {
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="relative"
             >
-              <div className="aspect-video overflow-hidden border border-outline-variant/20 shadow-xl">
+              <div className="aspect-[4/3] overflow-hidden border border-outline-variant/20 shadow-xl rounded-sm group">
                 <img
                   alt="Engineering students collaborating in laboratory"
-                  className="w-full h-full object-cover hover:scale-103 transition-transform duration-700 ease-out"
-                  src="/stitch-images/group.jpeg"
+                  className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-700 ease-out contrast-[1.08] saturate-[1.05] brightness-[1.02]"
+                  style={{ imageRendering: "high-quality" }}
+                  src="/stitch-images/group.png"
                 />
               </div>
             </motion.div>
@@ -199,13 +201,12 @@ export default function StitchSection({ onMachineSelect }: StitchSectionProps) {
       <section className="py-32 bg-surface-container-lowest relative overflow-hidden border-t border-outline-variant/10">
         <div className="absolute inset-0 blueprint-grid-fine opacity-10"></div>
         <div className="container mx-auto px-8 relative z-10">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
+          <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-16 md:mb-20 gap-8 text-center md:text-left">
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
               variants={fadeInUp}
-              className="text-left"
             >
               <span className="font-label tech-tag text-xs tracking-[0.3em] uppercase block mb-4">
                 Research &amp; Development
@@ -217,7 +218,7 @@ export default function StitchSection({ onMachineSelect }: StitchSectionProps) {
               whileInView="visible"
               viewport={{ once: true, margin: "-100px" }}
               variants={fadeInUp}
-              className="font-label text-xs tracking-widest text-primary hover:text-white transition-colors flex items-center gap-2 group underline underline-offset-8"
+              className="font-label text-xs tracking-widest text-primary hover:text-white transition-colors flex items-center justify-center gap-2 group underline underline-offset-8 w-full md:w-auto mt-4 md:mt-0"
               onClick={() => window.open("/research", "_self")}
             >
               VIEW TECHNICAL DOCUMENTATION <span className="group-hover:translate-x-1 transition-transform">→</span>
@@ -305,7 +306,7 @@ export default function StitchSection({ onMachineSelect }: StitchSectionProps) {
             transition={{ duration: 1.5, ease: "easeOut" }}
             alt="Student in Lab"
             className="w-full h-full object-cover md:object-center object-center mix-blend-luminosity"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJHQCJnCShBp1FHT7ErVVURJcbiKZeoUKd2ZnC6OiRG4cszR06OJRMTaBw3svVkJ4XIe5_FuPAm1pISV_5Eo1zEhfoT0-0bkpxCMhTlFPioT0jaXmdqfmn-tbC4m19wq8NilXI8O6CNeOlSvcqp7Se8M5tAXci29LpeZ05oRphIXQ4BWpnxGPS4DUCvYFwKgDN3y1sNpY5B7x8_tNENKxEM8VRkttHnXXgwDObTnHwvur3NG_MUaw4xGj3VcsM7ljcBKaqVPN_y0i7"
+            src="/stitch-images/girl.png"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#06080A] via-transparent to-[#06080A]"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-[#06080A] via-transparent to-[#06080A]"></div>
