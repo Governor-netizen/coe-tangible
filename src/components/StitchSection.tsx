@@ -6,7 +6,7 @@ interface StitchSectionProps {
 
 export default function StitchSection({ onMachineSelect }: StitchSectionProps) {
   // Fade-in/up motion animation presets for unified premium feel
-  const fadeInUp = {
+  const fadeInUp: any = {
     hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
@@ -15,7 +15,7 @@ export default function StitchSection({ onMachineSelect }: StitchSectionProps) {
     },
   };
 
-  const staggerContainer = {
+  const staggerContainer: any = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -138,7 +138,7 @@ export default function StitchSection({ onMachineSelect }: StitchSectionProps) {
                 <img
                   alt="Single-Phase Transformer Technical Showcase"
                   className="w-full h-auto object-cover group-hover:scale-102 transition-transform duration-700 ease-out contrast-[1.05] saturate-[1.05] brightness-[1.02]"
-                  style={{ imageRendering: "high-quality" }}
+                  style={{ imageRendering: "high-quality" as React.CSSProperties["imageRendering"] }}
                   src="/stitch-images/transformer4 (1).png"
                 />
               </div>
@@ -163,7 +163,7 @@ export default function StitchSection({ onMachineSelect }: StitchSectionProps) {
                 <img
                   alt="Engineering students collaborating in laboratory"
                   className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-700 ease-out contrast-[1.08] saturate-[1.05] brightness-[1.02]"
-                  style={{ imageRendering: "high-quality" }}
+                  style={{ imageRendering: "high-quality" as React.CSSProperties["imageRendering"] }}
                   src="/stitch-images/group.png"
                 />
               </div>
