@@ -158,7 +158,7 @@ export default function StitchSection({ onMachineSelect }: StitchSectionProps) {
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="relative"
             >
-              <div className="aspect-[4/5] overflow-hidden border border-outline-variant/20 shadow-xl">
+              <div className="aspect-video overflow-hidden border border-outline-variant/20 shadow-xl">
                 <img
                   alt="Engineering students collaborating in laboratory"
                   className="w-full h-full object-cover hover:scale-103 transition-transform duration-700 ease-out"
