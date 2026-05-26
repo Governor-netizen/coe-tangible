@@ -423,7 +423,7 @@ export default function Research() {
       {/* Decorative Corner Annotation */}
       <div className="fixed bottom-4 right-4 z-50 pointer-events-none hidden md:block">
         <div className="flex flex-col items-end opacity-20">
-          <span className="font-label text-[8px] tracking-[0.5em]">TANGIBLE_LABS_2024</span>
+          <span className="font-label text-[8px] tracking-[0.5em]">TANGIBLE_LABS_2026</span>
           <div className="w-24 h-[1px] bg-outline mt-1"></div>
         </div>
       </div>
