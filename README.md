@@ -1,73 +1,50 @@
-# Welcome to your Lovable project
+ Center of Excellence - Tangible (COE-Tangible)
 
-## Project info
+## Overview
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+**COE-Tangible** is an interactive, web-based 3D educational platform designed to help students, engineers, and researchers explore the inner workings of complex electrical machines. Featuring rich 3D visualization using `react-three-fiber`, this platform provides an immersive way to interact with electrical machine models, such as DC Generators, DC Motors, Induction Motors, and Transformers.
 
-## How can I edit this code?
+Users can view internal parts, study detailed parameters, explore machine formulas, and even upload and interact with their own custom 3D models (GLB/GLTF). 
 
-There are several ways of editing your application.
+## Features
 
-**Use Lovable**
+- **Interactive 3D Machine Viewer:** Explore intricate 3D models of electrical machines in real-time.
+- **Laboratory Simulation:** Adjust lab parameters and view real-time formulas and outputs via a reactive simulation panel.
+- **Custom Model Upload:** Upload your own GLTF/GLB models to explore within the same environment.
+- **Authentication System:** Integrated backend authentication powered by Supabase.
+- **Research Section:** Explore underlying principles, operations, and theoretical foundations of electrical machines.
+- **Responsive Dark/Light Mode:** Full integration with Tailwind dark mode for cross-device support and better UX.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+This project is built using modern web development technologies:
 
-**Use your preferred IDE**
+- **Framework:** React 18 / TypeScript
+- **Bundler:** Vite
+- **3D Rendering & Animation:** Three.js, `@react-three/fiber`, `@react-three/drei`
+- **Styling UI:** Tailwind CSS, Radix UI (shadcn/ui), Framer Motion
+- **State Management:** Zustand, React Query
+- **Routing:** React Router v6
+- **Backend/Auth:** Supabase
+- **Testing:** Playwright, Vitest
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Project Structure
 
-Follow these steps:
+- `src/components`: UI components, 3D Machine Viewer, Control Panels, and custom 3D machine models.
+- `src/pages`: Top-level page views (`Auth`, `Index`, `LandingPage`, `Research`, `NotFound`).
+- `src/data`: Data definitions and static structures for the electrical machines.
+- `src/lib`: Utilities, theme initializers, and Supabase client configuration.
+- `src/hooks`: Custom React hooks for responsive design and UI feedback.
+- `supabase`: Contains backend edge functions and configurations.
+- `public`: Static assets, model videos, and fonts.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+ Contributing
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Contributions, issues, and feature requests are welcome. Feel free to check the issues page if you want to contribute.
 
-# Step 3: Install the necessary dependencies.
-npm i
+ License
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+This project is private and proprietary.
 
-**Edit a file directly in GitHub**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
