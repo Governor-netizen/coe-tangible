@@ -39,7 +39,7 @@ This project is built using modern web development technologies:
 - `supabase`: Contains backend edge functions and configurations.
 - `public`: Static assets, model videos, and fonts.
 
-##Contributing
+## Contributing
 
 Contributions, issues, and feature requests are welcome. Feel free to check the issues page if you want to contribute.
 
