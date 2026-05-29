@@ -5,10 +5,22 @@
 @tailwind utilities;
 
 @layer base {
+  /* ── Custom Animated Cursors ─────────────────── */
+  /* electrica.ani = default cursor everywhere */
+  /* Link Select.ani = pointer cursor for interactive elements */
+
+  *,
+  *::before,
+  *::after {
+    cursor: url('/electrica.ani'), auto;
+    box-sizing: border-box;
+  }
+
   html,
   body {
     width: 100%;
     max-width: 100%;
+    cursor: url('/electrica.ani'), auto;
   }
 
   #root {
@@ -19,8 +31,44 @@
     min-height: 100vh;
   }
 
-  *, *::before, *::after {
-    box-sizing: border-box;
+  /* Apply Link Select cursor to all interactive/clickable elements */
+  a,
+  button,
+  [role="button"],
+  [role="link"],
+  [role="tab"],
+  [role="menuitem"],
+  [role="option"],
+  [role="checkbox"],
+  [role="radio"],
+  [role="switch"],
+  label,
+  select,
+  summary,
+  [tabindex]:not([tabindex="-1"]),
+  input[type="submit"],
+  input[type="reset"],
+  input[type="button"],
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="range"],
+  input[type="file"],
+  .cursor-pointer {
+    cursor: url('/Link Select.ani'), pointer !important;
+  }
+
+  /* Keep text cursor for text inputs / textareas */
+  input:not([type="submit"]):not([type="reset"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+  textarea,
+  [contenteditable="true"] {
+    cursor: text;
+  }
+
+  /* Disabled elements keep not-allowed */
+  [disabled],
+  .disabled,
+  .cursor-not-allowed {
+    cursor: not-allowed !important;
   }
 
   img,

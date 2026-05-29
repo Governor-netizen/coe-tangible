@@ -242,23 +242,23 @@ export default function Research() {
             <div className="font-label text-[10px] tracking-tighter text-tertiary-fixed mt-1 opacity-70">V.02.44_ACTIVE</div>
           </div>
           <nav className="flex-1 px-3 space-y-1">
-            <a onClick={() => navigate("/machines")} className="flex items-center gap-4 bg-primary-container text-on-primary-container rounded-none border-r-4 border-tertiary-fixed p-3 transition-all duration-200 cursor-crosshair active:scale-[1.01]">
+            <a onClick={() => navigate("/machines")} className="flex items-center gap-4 bg-primary-container text-on-primary-container rounded-none border-r-4 border-tertiary-fixed p-3 transition-all duration-200 active:scale-[1.01]">
               <span className="material-symbols-outlined">biotech</span>
               <span className="font-label text-xs uppercase tracking-widest">SIMULATION</span>
             </a>
-            <a className="flex items-center gap-4 text-on-surface-variant p-3 hover:bg-surface-container-low hover:text-primary transition-all duration-200 cursor-crosshair" href="#">
+            <a className="flex items-center gap-4 text-on-surface-variant p-3 hover:bg-surface-container-low hover:text-primary transition-all duration-200" href="#">
               <span className="material-symbols-outlined">terminal</span>
               <span className="font-label text-xs uppercase tracking-widest">TERMINAL</span>
             </a>
-            <a className="flex items-center gap-4 text-on-surface-variant p-3 hover:bg-surface-container-low hover:text-primary transition-all duration-200 cursor-crosshair" href="#">
+            <a className="flex items-center gap-4 text-on-surface-variant p-3 hover:bg-surface-container-low hover:text-primary transition-all duration-200" href="#">
               <span className="material-symbols-outlined">history</span>
               <span className="font-label text-xs uppercase tracking-widest">ARCHIVE</span>
             </a>
-            <a className="flex items-center gap-4 text-on-surface-variant p-3 hover:bg-surface-container-low hover:text-primary transition-all duration-200 cursor-crosshair" href="#">
+            <a className="flex items-center gap-4 text-on-surface-variant p-3 hover:bg-surface-container-low hover:text-primary transition-all duration-200" href="#">
               <span className="material-symbols-outlined">architecture</span>
               <span className="font-label text-xs uppercase tracking-widest">SCHEMATICS</span>
             </a>
-            <a className="flex items-center gap-4 text-on-surface-variant p-3 hover:bg-surface-container-low hover:text-primary transition-all duration-200 cursor-crosshair" href="#">
+            <a className="flex items-center gap-4 text-on-surface-variant p-3 hover:bg-surface-container-low hover:text-primary transition-all duration-200" href="#">
               <span className="material-symbols-outlined">analytics</span>
               <span className="font-label text-xs uppercase tracking-widest">DATA_SETS</span>
             </a>
@@ -267,11 +267,11 @@ export default function Research() {
             <button className="w-full bg-surface-container-high border border-outline-variant/20 py-3 mb-4 font-label text-[10px] tracking-[0.2em] hover:bg-primary-container hover:text-white transition-colors">
               NEW_SESSION
             </button>
-            <a className="flex items-center gap-4 text-on-surface-variant p-3 hover:text-primary transition-all duration-200 cursor-crosshair" href="#">
+            <a className="flex items-center gap-4 text-on-surface-variant p-3 hover:text-primary transition-all duration-200" href="#">
               <span className="material-symbols-outlined">settings</span>
               <span className="font-label text-xs uppercase tracking-widest">SETTINGS</span>
             </a>
-            <a className="flex items-center gap-4 text-on-surface-variant p-3 hover:text-primary transition-all duration-200 cursor-crosshair" href="#">
+            <a className="flex items-center gap-4 text-on-surface-variant p-3 hover:text-primary transition-all duration-200" href="#">
               <span className="material-symbols-outlined">logout</span>
               <span className="font-label text-xs uppercase tracking-widest">LOGOUT</span>
             </a>
@@ -283,7 +283,7 @@ export default function Research() {
           {/* TopNavBar */}
           <header className="w-full h-16 top-0 sticky z-50 bg-surface-container-low/80 backdrop-blur-md flex justify-between items-center px-6 border-b border-outline-variant/15">
             <div className="flex items-center gap-4">
-              <button onClick={() => navigate("/")} className="p-2 hover:bg-surface-container-high rounded-full transition-colors cursor-crosshair flex items-center justify-center">
+              <button onClick={() => navigate("/")} className="p-2 hover:bg-surface-container-high rounded-full transition-colors flex items-center justify-center">
                 <span className="material-symbols-outlined text-primary">arrow_back</span>
               </button>
               <div className="flex flex-col">
@@ -295,8 +295,8 @@ export default function Research() {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors cursor-crosshair">help</button>
-              <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors cursor-crosshair">account_circle</button>
+              <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">help</button>
+              <button className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">account_circle</button>
             </div>
           </header>
 
@@ -388,10 +388,10 @@ export default function Research() {
                   onChange={handleImageUpload}
                 />
                 <div className="flex items-center gap-1 pl-2">
-                  <button onClick={() => fileInputRef.current?.click()} className="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors cursor-crosshair">
+                  <button onClick={() => fileInputRef.current?.click()} className="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
                     <span className="material-symbols-outlined">attach_file</span>
                   </button>
-                  <button onClick={toggleRecording} className={`w-10 h-10 flex items-center justify-center transition-colors cursor-crosshair ${isRecording ? 'text-red-400 bg-red-400/10 rounded animate-pulse' : 'text-on-surface-variant hover:text-primary'}`}>
+                  <button onClick={toggleRecording} className={`w-10 h-10 flex items-center justify-center transition-colors ${isRecording ? 'text-red-400 bg-red-400/10 rounded animate-pulse' : 'text-on-surface-variant hover:text-primary'}`}>
                     <span className="material-symbols-outlined">{isRecording ? 'stop' : 'mic'}</span>
                   </button>
                 </div>
@@ -406,7 +406,7 @@ export default function Research() {
                 <button 
                   onClick={handleSendWrapper}
                   disabled={isLoading || (!input.trim() && !selectedImage)}
-                  className="bg-primary-container text-white p-3 rounded-md hover:bg-on-primary-fixed-variant disabled:opacity-50 transition-colors flex items-center justify-center cursor-crosshair group">
+                  className="bg-primary-container text-white p-3 rounded-md hover:bg-on-primary-fixed-variant disabled:opacity-50 transition-colors flex items-center justify-center group">
                   <span className="material-symbols-outlined group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
                 </button>
               </div>

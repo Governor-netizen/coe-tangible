@@ -115,7 +115,7 @@
   border: none;
   background: linear-gradient(135deg, #0057FF 0%, #003ecb 100%);
   color: #fff;
-  cursor: pointer;
+  cursor: url('/Link Select.ani'), pointer;
   font-size: 13px;
   font-weight: 600;
   padding: 13px 45px;
@@ -259,7 +259,7 @@ button.auth-ghost {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.5);
   color: #fff;
-  cursor: pointer;
+  cursor: url('/Link Select.ani'), pointer;
   font-size: 12px;
   font-weight: 600;
   padding: 12px 40px;
@@ -286,7 +286,7 @@ button.auth-ghost:hover {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 50%;
   color: #9ca3af;
-  cursor: pointer;
+  cursor: url('/Link Select.ani'), pointer;
   display: inline-flex;
   justify-content: center;
   align-items: center;

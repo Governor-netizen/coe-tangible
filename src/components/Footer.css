@@ -256,7 +256,7 @@
   height: 2.5rem;
   border-radius: 0.55rem;
   border: none;
-  cursor: pointer;
+  cursor: url('/Link Select.ani'), pointer;
   background: linear-gradient(135deg, #17e29a 0%, #0fa676 100%);
   color: #0d1a14;
   flex-shrink: 0;

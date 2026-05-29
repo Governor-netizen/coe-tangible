@@ -130,6 +130,11 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      cursor: {
+        auto: "auto",
+        default: "default",
+        pointer: "pointer",
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },

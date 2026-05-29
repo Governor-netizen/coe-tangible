@@ -27,11 +27,16 @@ function AppRoutes() {
   );
 }
 
+import { useAnimatedCursors } from "./hooks/useAnimatedCursors";
+
 const App = () => {
   // Skip splash screen entirely for auth route
   const isAuthRoute = window.location.pathname === "/auth";
   const [splashHidden, setSplashHidden] = useState(isAuthRoute);
   const handleSplashHidden = useCallback(() => setSplashHidden(true), []);
+
+  // Initialize animated cursors
+  useAnimatedCursors();
 
   useEffect(() => {
     initializeTheme();

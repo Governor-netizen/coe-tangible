@@ -57,11 +57,11 @@ export function MachinePartMesh({
         onPointerOver={(e) => {
           e.stopPropagation();
           setHovered(true);
-          document.body.style.cursor = 'pointer';
+          document.body.classList.add('cursor-pointer');
         }}
         onPointerOut={() => {
           setHovered(false);
-          document.body.style.cursor = 'default';
+          document.body.classList.remove('cursor-pointer');
         }}
       >
         {children}
