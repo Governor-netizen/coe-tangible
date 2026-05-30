@@ -6,8 +6,8 @@
 
 @layer base {
   /* ── Custom Animated Cursors ─────────────────── */
-  /* electrica.ani = default cursor everywhere */
-  /* Link Select.ani = pointer cursor for interactive elements */
+  /* electrica.ani  = default cursor everywhere                     */
+  /* link-select .cur frames = pointer on interactive elements (JS) */
 
   *,
   *::before,
@@ -31,7 +31,8 @@
     min-height: 100vh;
   }
 
-  /* Apply Link Select cursor to all interactive/clickable elements */
+  /* Pointer fallback for interactive elements.
+     The animated link-select cursor is injected over this by JS at runtime. */
   a,
   button,
   [role="button"],
@@ -54,52 +55,10 @@
   input[type="range"],
   input[type="file"],
   .cursor-pointer {
-    cursor: url('/Link Select.ani'), pointer !important;
-  }
-
-  /* Keep text cursor for text inputs / textareas */
-  input:not([type="submit"]):not([type="reset"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
-  textarea,
-  [contenteditable="true"] {
-    cursor: text;
-  }
-
-  /* Disabled elements keep not-allowed */
-  [disabled],
-  .disabled,
-  .cursor-not-allowed {
-    cursor: not-allowed !important;
-  }
-
-  img,
-  video,
-  svg,
-  iframe {
-    max-width: 100%;
-  }
-
-  canvas {
-    max-width: 100%;
-    display: block;
-    width: 100% !important;     
+    cursor: pointer;
   }
 
   :root {
-    --background: 210 20% 98%;
-    --foreground: 215 25% 15%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 215 25% 15%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 15%;
-
-    --primary: 193 70% 36%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 193 30% 92%;
-    --secondary-foreground: 193 70% 26%;
-
     --muted: 210 15% 94%;
     --muted-foreground: 215 12% 50%;
 
