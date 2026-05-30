@@ -322,10 +322,10 @@ export default function StitchSection({ onMachineSelect }: StitchSectionProps) {
             <div className="font-label tech-tag text-xs tracking-[0.4em] uppercase mb-6 opacity-80">
               Empowering Next-Gen Innovators
             </div>
-            <h2 className="font-headline text-5xl md:text-7xl lg:text-8xl text-on-surface mb-8 italic leading-none">
+            <h2 className="font-headline text-5xl md:text-7xl lg:text-8xl text-[#ffffff] drop-shadow-lg mb-8 italic leading-none">
               Limitless Discovery.
             </h2>
-            <p className="font-serif-body text-xl md:text-2xl text-on-surface-variant leading-relaxed opacity-90">
+            <p className="font-serif-body text-xl md:text-2xl text-[#ffffff]/90 leading-relaxed opacity-90 drop-shadow-md">
               Witnessing the spark of comprehension when theory meets interactive spatial reality.
             </p>
           </motion.div>
