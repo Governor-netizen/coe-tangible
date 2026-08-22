@@ -69,6 +69,85 @@ export function shuffleArray<T>(arr: T[]): T[] {
   return a;
 }
 
+/**
+ * The operating point the 3D viewer renders. Everything here is derived from
+ * the same labOutputs the Lab tab displays, so the model on screen is always
+ * showing the numbers in the panel rather than an unrelated animation.
+ */
+export interface MachineSimulation {
+  /** Mechanical rotor speed, RPM. Zero for static machines. */
+  rotorRpm: number;
+  /** Stator field speed, RPM. Differs from rotorRpm only under slip. */
+  fieldRpm: number;
+  /** Normalised flux level, 0–1, used to drive field-overlay intensity. */
+  flux: number;
+  /** The current most worth showing on the overlay, A. */
+  current: number;
+}
+
+const MAX_VIEWER_RPM = 6000;
+
+/** Evaluate every labOutput once and return them keyed by id. */
+export function computeOutputs(
+  machine: MachineData,
+  params: Record<string, number>,
+): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const o of machine.labOutputs) {
+    const v = o.compute(params);
+    out[o.id] = Number.isFinite(v) ? v : 0;
+  }
+  return out;
+}
+
+export function getSimulation(
+  machineType: MachineType,
+  params: Record<string, number>,
+): MachineSimulation {
+  const machine = machineDatabase[machineType];
+  if (!machine) return { rotorRpm: 0, fieldRpm: 0, flux: 0, current: 0 };
+
+  const o = computeOutputs(machine, params);
+  const clampRpm = (v: number) => Math.max(0, Math.min(MAX_VIEWER_RPM, v || 0));
+
+  switch (machineType) {
+    case 'dc-motor': {
+      const rpm = clampRpm(o.speed);
+      return {
+        rotorRpm: rpm,
+        fieldRpm: rpm,
+        flux: Math.min(1, (params.fieldCurrent ?? 2) / 5),
+        current: o.armatureCurrent ?? 0,
+      };
+    }
+    case 'dc-generator': {
+      const rpm = clampRpm(params.speed);
+      return {
+        rotorRpm: rpm,
+        fieldRpm: rpm,
+        flux: Math.min(1, (params.fieldCurrent ?? 2) / 5),
+        current: o.loadCurrent ?? 0,
+      };
+    }
+    case 'induction-motor':
+      return {
+        rotorRpm: clampRpm(o.rotorSpeed),
+        fieldRpm: clampRpm(o.syncSpeed),
+        flux: Math.min(1, (params.frequency ?? 50) / 60),
+        current: 0,
+      };
+    case 'transformer':
+      return {
+        rotorRpm: 0,
+        fieldRpm: 0,
+        flux: Math.min(1, (params.primaryVoltage ?? 220) / 440),
+        current: params.loadCurrent ?? 0,
+      };
+    default:
+      return { rotorRpm: 0, fieldRpm: 0, flux: 0, current: 0 };
+  }
+}
+
 export const machineDatabase: Record<string, MachineData> = {
   'dc-motor': {
     id: 'dc-motor',
@@ -83,7 +162,7 @@ export const machineDatabase: Record<string, MachineData> = {
         function: 'Produces a stationary magnetic field that interacts with the armature current to produce torque.',
         concepts: ['Magnetic Field', 'Electromagnet', 'Field Excitation'],
         assemblyOrder: 1,
-        explodeOffset: [0, 0, -1.5],
+        explodeOffset: [0, 3.4, 0],
       },
       {
         id: 'rotor',
@@ -103,7 +182,7 @@ export const machineDatabase: Record<string, MachineData> = {
         function: 'Acts as a mechanical rectifier, switching current direction every half-turn to maintain continuous rotation.',
         concepts: ['Current Reversal', 'Mechanical Rectification', 'Commutation'],
         assemblyOrder: 4,
-        explodeOffset: [2, 0, 0],
+        explodeOffset: [-2.8, 0, 0],
       },
       {
         id: 'brushes',
@@ -113,7 +192,7 @@ export const machineDatabase: Record<string, MachineData> = {
         function: 'Provide sliding electrical contact between the stationary circuit and the rotating commutator.',
         concepts: ['Sliding Contact', 'Current Transfer', 'Brush Friction'],
         assemblyOrder: 5,
-        explodeOffset: [2.5, 1, 0],
+        explodeOffset: [-3.6, 2.4, 0],
       },
       {
         id: 'shaft',
@@ -123,7 +202,7 @@ export const machineDatabase: Record<string, MachineData> = {
         function: 'Transmits rotational mechanical energy to the connected load or machinery.',
         concepts: ['Mechanical Power', 'Torque Transmission', 'RPM'],
         assemblyOrder: 2,
-        explodeOffset: [0, 0, 2],
+        explodeOffset: [3.6, 0, 0],
       },
       {
         id: 'windings',
@@ -133,7 +212,7 @@ export const machineDatabase: Record<string, MachineData> = {
         function: 'Carry armature current that interacts with the magnetic field to generate torque via the Lorentz force (F = BIL).',
         concepts: ['Electromagnetic Induction', 'F = BIL', 'Coil Turns'],
         assemblyOrder: 3,
-        explodeOffset: [0, 2, 0],
+        explodeOffset: [0, 0, 3.2],
       },
     ],
     formulas: [
@@ -214,7 +293,7 @@ export const machineDatabase: Record<string, MachineData> = {
         function: 'Provides the magnetic field in which the armature rotates, enabling electromagnetic induction.',
         concepts: ['Magnetic Field', 'Permanent Magnets vs Electromagnets'],
         assemblyOrder: 1,
-        explodeOffset: [0, 0, -1.5],
+        explodeOffset: [0, 3.4, 0],
       },
       {
         id: 'rotor',
@@ -234,7 +313,7 @@ export const machineDatabase: Record<string, MachineData> = {
         function: 'Acts as a mechanical rectifier to produce DC output from the AC generated in rotating coils.',
         concepts: ['Rectification', 'EMF Generation', 'AC to DC'],
         assemblyOrder: 4,
-        explodeOffset: [2, 0, 0],
+        explodeOffset: [-2.8, 0, 0],
       },
       {
         id: 'brushes',
@@ -244,7 +323,7 @@ export const machineDatabase: Record<string, MachineData> = {
         function: 'Provide electrical connection between the rotating armature and the stationary external load circuit.',
         concepts: ['Current Collection', 'Contact Resistance'],
         assemblyOrder: 5,
-        explodeOffset: [2.5, 1, 0],
+        explodeOffset: [-3.6, 2.4, 0],
       },
       {
         id: 'shaft',
@@ -254,7 +333,7 @@ export const machineDatabase: Record<string, MachineData> = {
         function: 'Receives rotational mechanical energy from the prime mover and transfers it to the armature.',
         concepts: ['Prime Mover', 'Mechanical Input', 'RPM'],
         assemblyOrder: 2,
-        explodeOffset: [0, 0, 2],
+        explodeOffset: [3.6, 0, 0],
       },
     ],
     formulas: [
@@ -328,7 +407,7 @@ export const machineDatabase: Record<string, MachineData> = {
         function: 'Receives input AC power and creates an alternating magnetic flux in the core via Ampere\'s law.',
         concepts: ['Ampere\'s Law', 'Magnetizing Current', 'Primary Impedance'],
         assemblyOrder: 2,
-        explodeOffset: [-2, 0, 0],
+        explodeOffset: [-2.6, 0, 2.4],
       },
       {
         id: 'secondaryWinding',
@@ -338,7 +417,7 @@ export const machineDatabase: Record<string, MachineData> = {
         function: 'Delivers transformed voltage to the load. Output voltage depends on the turns ratio (V₂/V₁ = N₂/N₁).',
         concepts: ['Faraday\'s Law', 'Mutual Induction', 'Turns Ratio'],
         assemblyOrder: 3,
-        explodeOffset: [2, 0, 0],
+        explodeOffset: [2.6, 0, 2.4],
       },
       {
         id: 'insulation',
@@ -348,7 +427,7 @@ export const machineDatabase: Record<string, MachineData> = {
         function: 'Provides electrical isolation between primary, secondary, and core. Rated for specific voltage levels.',
         concepts: ['Dielectric Strength', 'Voltage Isolation', 'BIL Rating'],
         assemblyOrder: 2,
-        explodeOffset: [0, 2, 0],
+        explodeOffset: [0, 3.2, 0],
       },
     ],
     formulas: [
@@ -414,7 +493,7 @@ export const machineDatabase: Record<string, MachineData> = {
         function: 'Protects internal components, provides structural support and mounting points for installation.',
         concepts: ['Cast Iron Frame', 'Cooling Fins', 'IP Rating'],
         assemblyOrder: 1,
-        explodeOffset: [0, 0, -2],
+        explodeOffset: [0, 3.6, 0],
       },
       {
         id: 'statorCore',
@@ -424,7 +503,7 @@ export const machineDatabase: Record<string, MachineData> = {
         function: 'Provides a low-reluctance path for magnetic flux and houses the stator windings.',
         concepts: ['Laminated Core', 'Rotating Magnetic Field', 'Synchronous Speed'],
         assemblyOrder: 2,
-        explodeOffset: [0, 0, -1],
+        explodeOffset: [0, 0, 3.4],
       },
       {
         id: 'phaseR',
@@ -434,7 +513,7 @@ export const machineDatabase: Record<string, MachineData> = {
         function: 'Contributes one-third of the rotating magnetic field at 0° phase angle.',
         concepts: ['Phase Angle', 'Balanced Three-Phase', 'MMF Distribution'],
         assemblyOrder: 3,
-        explodeOffset: [-1.5, 1.5, 0],
+        explodeOffset: [0, 2.8, -2.6],
       },
       {
         id: 'phaseY',
@@ -444,7 +523,7 @@ export const machineDatabase: Record<string, MachineData> = {
         function: 'Contributes one-third of the rotating magnetic field, 120° displaced from Phase R.',
         concepts: ['Phase Displacement', '120° Separation'],
         assemblyOrder: 3,
-        explodeOffset: [1.5, 1.5, 0],
+        explodeOffset: [0, -2.9, -2.6],
       },
       {
         id: 'phaseB',
@@ -454,7 +533,7 @@ export const machineDatabase: Record<string, MachineData> = {
         function: 'Completes the three-phase system, producing a smooth rotating magnetic field.',
         concepts: ['Complete Three-Phase', 'Smooth Rotation'],
         assemblyOrder: 3,
-        explodeOffset: [0, 2, 0],
+        explodeOffset: [0, 0, -4.2],
       },
       {
         id: 'rotor',
@@ -474,7 +553,7 @@ export const machineDatabase: Record<string, MachineData> = {
         function: 'Delivers mechanical power output to the connected load.',
         concepts: ['Mechanical Output', 'Power Transmission'],
         assemblyOrder: 5,
-        explodeOffset: [0, 0, 2],
+        explodeOffset: [4.4, 0, 0],
       },
       {
         id: 'endShield',
@@ -484,7 +563,7 @@ export const machineDatabase: Record<string, MachineData> = {
         function: 'Supports shaft bearings and seals the motor enclosure.',
         concepts: ['Bearing Support', 'Motor Enclosure'],
         assemblyOrder: 6,
-        explodeOffset: [0, 3, 0],
+        explodeOffset: [0, -3.4, 0],
       },
       {
         id: 'coolingFan',
@@ -494,7 +573,7 @@ export const machineDatabase: Record<string, MachineData> = {
         function: 'Provides forced convection cooling to maintain safe operating temperature.',
         concepts: ['Thermal Management', 'Forced Convection'],
         assemblyOrder: 7,
-        explodeOffset: [0, 4, 0],
+        explodeOffset: [-4.4, 0, 0],
       },
       {
         id: 'terminalBox',
@@ -504,7 +583,7 @@ export const machineDatabase: Record<string, MachineData> = {
         function: 'Provides accessible terminals for star or delta connection of the three-phase supply.',
         concepts: ['Star-Delta Connection', 'Terminal Configuration'],
         assemblyOrder: 8,
-        explodeOffset: [3, 0, 0],
+        explodeOffset: [0, 2.6, 3.2],
       },
     ],
     formulas: [

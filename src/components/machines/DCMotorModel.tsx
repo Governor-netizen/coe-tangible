@@ -1,18 +1,44 @@
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
+import { Instance, Instances } from '@react-three/drei';
 import * as THREE from 'three';
 import { MachinePartMesh } from '../MachinePartMesh';
 import { machineDatabase } from '@/data/machineData';
+import { AXIS, MAT, rpmToRadPerSec } from './materials';
+import {
+  Bearing,
+  BoltCircle,
+  CageBars,
+  CoolingFins,
+  EndTurns,
+  LaminationLines,
+  MountingFeet,
+  SalientPole,
+  TerminalBox,
+} from './primitives';
+import { ringGeometry, slottedCoreGeometry } from './geometry';
+import { MachineModelProps } from './types';
 
-interface DCMotorModelProps {
-  selectedPart: string | null;
-  onPartClick: (id: string) => void;
-  isAnimating: boolean;
-  animationSpeed: number;
-  isExploded: boolean;
-  showLabels?: boolean;
-  explodeSpread?: number;
-}
+/* --- Machine geometry constants (metres, shaft along +X) --------------- */
+const CORE_LEN = 2.05;
+const YOKE_R_IN = 1.56;
+const YOKE_R_OUT = 1.78;
+const POLE_SHOE_R_IN = 1.28;
+const POLE_SHOE_R_OUT = 1.46;
+const ARM_R = 1.2;
+const ARM_BORE = 0.19;
+const ARM_SLOTS = 20;
+const ARM_SLOT_DEPTH = 0.3;
+const COMM_X = -1.72;
+const COMM_R = 0.44;
+const COMM_LEN = 0.62;
+const COMM_SEGMENTS = 24;
+const SHAFT_R = 0.17;
+const SHAFT_LEN = 5.6;
+
+/** Four salient poles, with the brushes sitting on the 45° geometric neutral. */
+const POLE_ANGLES = [0, Math.PI / 2, Math.PI, (3 * Math.PI) / 2];
+const BRUSH_ANGLES = [Math.PI / 4, (3 * Math.PI) / 4, (5 * Math.PI) / 4, (7 * Math.PI) / 4];
 
 export function DCMotorModel({
   selectedPart,
@@ -22,258 +48,240 @@ export function DCMotorModel({
   isExploded,
   showLabels = false,
   explodeSpread = 1,
-}: DCMotorModelProps) {
+  hintedPart = null,
+  focusMode = false,
+  rotorRpm = null,
+}: MachineModelProps) {
   const rotorRef = useRef<THREE.Group>(null);
   const commutatorRef = useRef<THREE.Group>(null);
   const shaftRef = useRef<THREE.Group>(null);
   const windingsRef = useRef<THREE.Group>(null);
   const parts = machineDatabase['dc-motor'].parts;
+  const getPart = (id: string) => parts.find((p) => p.id === id)!;
 
+  const armatureCore = useMemo(
+    () =>
+      slottedCoreGeometry({
+        rOuter: ARM_R,
+        rInner: ARM_BORE,
+        slots: ARM_SLOTS,
+        slotDepth: ARM_SLOT_DEPTH,
+        slotWidth: 0.15,
+        facing: 'out',
+        length: CORE_LEN,
+      }),
+    [],
+  );
+
+  const yoke = useMemo(() => ringGeometry(YOKE_R_IN, YOKE_R_OUT, CORE_LEN + 0.85), []);
+  const endShield = useMemo(() => ringGeometry(0.4, YOKE_R_OUT, 0.16), []);
+
+  const commSegments = useMemo(
+    () =>
+      Array.from({ length: COMM_SEGMENTS }, (_, i) => {
+        const a = (i / COMM_SEGMENTS) * Math.PI * 2;
+        return {
+          key: i,
+          position: [COMM_X, Math.cos(a) * COMM_R, Math.sin(a) * COMM_R] as [number, number, number],
+          rotation: [a, 0, 0] as [number, number, number],
+        };
+      }),
+    [],
+  );
+
+  const armatureBars = useMemo(
+    () =>
+      Array.from({ length: ARM_SLOTS }, (_, i) => {
+        const a = (i / ARM_SLOTS) * Math.PI * 2;
+        const r = ARM_R - ARM_SLOT_DEPTH / 2;
+        return {
+          key: i,
+          position: [0, Math.cos(a) * r, Math.sin(a) * r] as [number, number, number],
+        };
+      }),
+    [],
+  );
+
+  // Spin about the machine axis (+X). Driven by the simulated RPM when the
+  // lab is linked, otherwise by the manual speed slider.
   useFrame((_, delta) => {
     if (!isAnimating) return;
-    const speed = delta * animationSpeed * 3;
-    if (rotorRef.current) rotorRef.current.rotation.z += speed;
-    if (commutatorRef.current) commutatorRef.current.rotation.z += speed;
-    if (shaftRef.current) shaftRef.current.rotation.z += speed;
-    if (windingsRef.current) windingsRef.current.rotation.z += speed;
+    const omega = rotorRpm !== null ? rpmToRadPerSec(rotorRpm) : animationSpeed * 3;
+    const step = delta * omega;
+    if (rotorRef.current) rotorRef.current.rotation.x += step;
+    if (commutatorRef.current) commutatorRef.current.rotation.x += step;
+    if (shaftRef.current) shaftRef.current.rotation.x += step;
+    if (windingsRef.current) windingsRef.current.rotation.x += step;
   });
 
-  const getPart = (id: string) => parts.find((p) => p.id === id)!;
+  const dim = (id: string) => focusMode && selectedPart !== null && selectedPart !== id;
+  const common = (id: string) => ({
+    partId: id,
+    name: getPart(id).name,
+    color: getPart(id).color,
+    isSelected: selectedPart === id,
+    isExploded,
+    explodeOffset: getPart(id).explodeOffset,
+    assemblyOrder: getPart(id).assemblyOrder,
+    onClick: onPartClick,
+    showLabel: showLabels,
+    explodeSpread,
+    isHinted: hintedPart === id,
+    isDimmed: dim(id),
+  });
 
   return (
     <group>
-      {/* Stator - Yoke/Frame */}
-      <MachinePartMesh
-        partId="stator"
-        name={getPart('stator').name}
-        color={getPart('stator').color}
-        isSelected={selectedPart === 'stator'}
-        isExploded={isExploded}
-        explodeOffset={getPart('stator').explodeOffset}
-        assemblyOrder={getPart('stator').assemblyOrder}
-        onClick={onPartClick}
-        showLabel={showLabels}
-        explodeSpread={explodeSpread}
-        labelOffset={[0, 2, 0]}
-      >
-        {/* Outer housing - high poly */}
-        <mesh castShadow receiveShadow>
-          <cylinderGeometry args={[1.9, 1.9, 2.6, 64, 1, true]} />
-          <meshStandardMaterial color="#3d4450" metalness={0.7} roughness={0.6} />
+      {/* ---- Stator: yoke, salient poles, end shields, frame ------------ */}
+      <MachinePartMesh {...common('stator')} labelOffset={[-0.4, YOKE_R_OUT + 0.65, 0]}>
+        <mesh geometry={yoke} rotation={AXIS.fromZ} castShadow receiveShadow>
+          <meshStandardMaterial {...MAT.paintedShell} />
         </mesh>
-        {/* End caps */}
-        <mesh position={[0, 1.3, 0]} castShadow receiveShadow>
-          <ringGeometry args={[0.6, 1.9, 64]} />
-          <meshStandardMaterial color="#3d4450" metalness={0.7} roughness={0.6} />
-        </mesh>
-        <mesh position={[0, -1.3, 0]} rotation={[Math.PI, 0, 0]} castShadow receiveShadow>
-          <ringGeometry args={[0.6, 1.9, 64]} />
-          <meshStandardMaterial color="#3d4450" metalness={0.7} roughness={0.6} />
-        </mesh>
-        {/* Pole shoes */}
-        {[0, Math.PI].map((angle, i) => (
-          <mesh key={i} position={[Math.cos(angle) * 1.35, 0, Math.sin(angle) * 1.35]} rotation={[0, -angle + Math.PI / 2, 0]} castShadow receiveShadow>
-            <boxGeometry args={[0.6, 2, 0.25]} />
-            <meshStandardMaterial color="#4a5568" metalness={0.8} roughness={0.4} />
-          </mesh>
+
+        <CoolingFins count={24} radius={YOKE_R_OUT} length={CORE_LEN + 0.3} height={0.13} />
+
+        {POLE_ANGLES.map((a) => (
+          <SalientPole
+            key={a}
+            angle={a}
+            rShoeInner={POLE_SHOE_R_IN}
+            rShoeOuter={POLE_SHOE_R_OUT}
+            rYoke={YOKE_R_IN}
+            length={CORE_LEN}
+            halfAngle={0.55}
+          />
         ))}
-        {/* Field windings on pole shoes */}
-        {[0, Math.PI].map((angle, i) => (
-          <group key={`fw-${i}`} position={[Math.cos(angle) * 1.35, 0, Math.sin(angle) * 1.35]} rotation={[0, -angle + Math.PI / 2, 0]}>
-            {[-0.6, -0.3, 0, 0.3, 0.6].map((y, j) => (
-              <mesh key={j} position={[0, y, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
-                <torusGeometry args={[0.2, 0.04, 16, 24]} />
-                <meshStandardMaterial color="#c8400a" metalness={0.6} roughness={0.3} />
-              </mesh>
-            ))}
+
+        {/* Clear of the winding end-turns, which overhang the core. */}
+        {[-(CORE_LEN / 2 + 0.52), CORE_LEN / 2 + 0.52].map((x) => (
+          <group key={x}>
+            <mesh geometry={endShield} position={[x, 0, 0]} rotation={AXIS.fromZ} castShadow receiveShadow>
+              <meshStandardMaterial {...MAT.castIron} />
+            </mesh>
+            <BoltCircle count={6} radius={YOKE_R_OUT - 0.16} x={x + Math.sign(x) * 0.1} />
           </group>
         ))}
-        {/* Mounting bolts on end caps */}
-        {[0, 1, 2, 3].map((i) => {
-          const a = (i * Math.PI) / 2;
-          return (
-            <mesh key={`bolt-${i}`} position={[Math.cos(a) * 1.5, 1.35, Math.sin(a) * 1.5]} castShadow>
-              <cylinderGeometry args={[0.06, 0.06, 0.15, 12]} />
-              <meshStandardMaterial color="#888888" roughness={0.3} metalness={0.7} />
-            </mesh>
-          );
-        })}
+
+        <MountingFeet length={CORE_LEN + 0.6} radius={YOKE_R_OUT} />
+        <TerminalBox radius={YOKE_R_OUT} x={0.15} />
       </MachinePartMesh>
 
-      {/* Rotor with lamination lines */}
-      <MachinePartMesh
-        partId="rotor"
-        name={getPart('rotor').name}
-        color={getPart('rotor').color}
-        isSelected={selectedPart === 'rotor'}
-        isExploded={isExploded}
-        explodeOffset={getPart('rotor').explodeOffset}
-        assemblyOrder={getPart('rotor').assemblyOrder}
-        onClick={onPartClick}
-        showLabel={showLabels}
-        explodeSpread={explodeSpread}
-        labelOffset={[1.2, 0, 0]}
-      >
+      {/* ---- Rotor: laminated armature core ----------------------------- */}
+      <MachinePartMesh {...common('rotor')} labelOffset={[0.2, ARM_R + 0.1, 1.5]}>
         <group ref={rotorRef}>
-          <mesh castShadow receiveShadow>
-            <cylinderGeometry args={[0.9, 0.9, 2, 64]} />
-            <meshStandardMaterial color="#4a5568" metalness={0.8} roughness={0.4} />
+          <mesh geometry={armatureCore} rotation={AXIS.fromZ} castShadow receiveShadow>
+            <meshStandardMaterial {...MAT.laminatedSteel} />
           </mesh>
-          {/* Lamination lines */}
-          {[-0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8].map((y, i) => (
-            <mesh key={i} position={[0, y, 0]}>
-              <torusGeometry args={[0.91, 0.008, 8, 64]} />
-              <meshStandardMaterial color="#1A1A1A" roughness={0.5} />
-            </mesh>
-          ))}
-          {/* Armature slots */}
-          {Array.from({ length: 8 }).map((_, i) => (
-            <mesh key={`slot-${i}`} rotation={[0, (i * Math.PI) / 4, 0]}>
-              <mesh position={[0.7, 0, 0]} castShadow>
-                <boxGeometry args={[0.05, 1.8, 0.1]} />
-                <meshStandardMaterial color="#c8400a" metalness={0.6} roughness={0.3} />
-              </mesh>
-            </mesh>
-          ))}
+          <LaminationLines radius={ARM_R + 0.004} length={CORE_LEN} count={16} />
         </group>
       </MachinePartMesh>
 
-      {/* Commutator - segmented copper (12 segments) */}
-      <MachinePartMesh
-        partId="commutator"
-        name={getPart('commutator').name}
-        color={getPart('commutator').color}
-        isSelected={selectedPart === 'commutator'}
-        isExploded={isExploded}
-        explodeOffset={getPart('commutator').explodeOffset}
-        assemblyOrder={getPart('commutator').assemblyOrder}
-        onClick={onPartClick}
-        showLabel={showLabels}
-        explodeSpread={explodeSpread}
-        labelOffset={[0.8, -1.6, 0]}
-      >
-        <group ref={commutatorRef}>
-          {/* Base cylinder */}
-          <mesh position={[0, -1.6, 0]} castShadow receiveShadow>
-            <cylinderGeometry args={[0.32, 0.32, 0.5, 64]} />
-            <meshStandardMaterial color="#8B6914" metalness={0.8} roughness={0.3} />
-          </mesh>
-          {/* Copper segments */}
-          {Array.from({ length: 12 }).map((_, i) => {
-            const angle = (i / 12) * Math.PI * 2;
-            const midAngle = angle + Math.PI / 12;
-            return (
-              <mesh key={i} position={[Math.cos(midAngle) * 0.38, -1.6, Math.sin(midAngle) * 0.38]} rotation={[0, -midAngle, 0]} castShadow receiveShadow>
-                <boxGeometry args={[0.19, 0.52, 0.04]} />
-                <meshStandardMaterial color={i % 2 === 0 ? '#b87333' : '#a06428'} metalness={0.9} roughness={0.2} />
-              </mesh>
-            );
-          })}
-          {/* Mica insulation lines */}
-          {Array.from({ length: 12 }).map((_, i) => {
-            const angle = (i / 12) * Math.PI * 2;
-            return (
-              <mesh key={`mica-${i}`} position={[Math.cos(angle) * 0.39, -1.6, Math.sin(angle) * 0.39]} rotation={[0, -angle, 0]} castShadow>
-                <boxGeometry args={[0.01, 0.54, 0.05]} />
-                <meshStandardMaterial color="#e8d5a3" metalness={0.0} roughness={0.8} />
-              </mesh>
-            );
-          })}
-        </group>
-      </MachinePartMesh>
-
-      {/* Brushes with holders */}
-      <MachinePartMesh
-        partId="brushes"
-        name={getPart('brushes').name}
-        color={getPart('brushes').color}
-        isSelected={selectedPart === 'brushes'}
-        isExploded={isExploded}
-        explodeOffset={getPart('brushes').explodeOffset}
-        assemblyOrder={getPart('brushes').assemblyOrder}
-        onClick={onPartClick}
-        showLabel={showLabels}
-        explodeSpread={explodeSpread}
-        labelOffset={[1.2, -1.6, 0]}
-      >
-        {/* Right brush + holder + spring */}
-        <mesh position={[0.7, -1.6, 0]} castShadow receiveShadow>
-          <boxGeometry args={[0.15, 0.4, 0.3]} />
-          <meshStandardMaterial color="#2a2a3e" metalness={0.1} roughness={0.9} />
-        </mesh>
-        <mesh position={[0.9, -1.6, 0]} castShadow>
-          <boxGeometry args={[0.1, 0.5, 0.35]} />
-          <meshStandardMaterial color="#666666" roughness={0.5} metalness={0.3} />
-        </mesh>
-        <mesh position={[0.95, -1.35, 0]}>
-          <cylinderGeometry args={[0.03, 0.03, 0.2, 12]} />
-          <meshStandardMaterial color="#AAAAAA" roughness={0.3} metalness={0.6} />
-        </mesh>
-        {/* Left brush + holder + spring */}
-        <mesh position={[-0.7, -1.6, 0]} castShadow receiveShadow>
-          <boxGeometry args={[0.15, 0.4, 0.3]} />
-          <meshStandardMaterial color="#2a2a3e" metalness={0.1} roughness={0.9} />
-        </mesh>
-        <mesh position={[-0.9, -1.6, 0]} castShadow>
-          <boxGeometry args={[0.1, 0.5, 0.35]} />
-          <meshStandardMaterial color="#666666" roughness={0.5} metalness={0.3} />
-        </mesh>
-        <mesh position={[-0.95, -1.35, 0]}>
-          <cylinderGeometry args={[0.03, 0.03, 0.2, 12]} />
-          <meshStandardMaterial color="#AAAAAA" roughness={0.3} metalness={0.6} />
-        </mesh>
-      </MachinePartMesh>
-
-      {/* Shaft with bearings */}
-      <MachinePartMesh
-        partId="shaft"
-        name={getPart('shaft').name}
-        color={getPart('shaft').color}
-        isSelected={selectedPart === 'shaft'}
-        isExploded={isExploded}
-        explodeOffset={getPart('shaft').explodeOffset}
-        assemblyOrder={getPart('shaft').assemblyOrder}
-        onClick={onPartClick}
-        showLabel={showLabels}
-        explodeSpread={explodeSpread}
-        labelOffset={[0, 2.8, 0]}
-      >
-        <group ref={shaftRef}>
-          <mesh castShadow receiveShadow>
-            <cylinderGeometry args={[0.12, 0.12, 5, 32]} />
-            <meshStandardMaterial color="#d4d8e0" metalness={1.0} roughness={0.05} />
-          </mesh>
-          {/* Bearing housings */}
-          {[1.3, -1.3].map((y) => (
-            <mesh key={y} position={[0, y, 0]} castShadow receiveShadow>
-              <cylinderGeometry args={[0.22, 0.22, 0.25, 32]} />
-              <meshStandardMaterial color="#888888" metalness={0.85} roughness={0.15} />
-            </mesh>
-          ))}
-        </group>
-      </MachinePartMesh>
-
-      {/* Windings */}
-      <MachinePartMesh
-        partId="windings"
-        name={getPart('windings').name}
-        color={getPart('windings').color}
-        isSelected={selectedPart === 'windings'}
-        isExploded={isExploded}
-        explodeOffset={getPart('windings').explodeOffset}
-        assemblyOrder={getPart('windings').assemblyOrder}
-        onClick={onPartClick}
-        showLabel={showLabels}
-        explodeSpread={explodeSpread}
-        labelOffset={[1, 0.4, 0]}
-      >
+      {/* ---- Armature windings: slot conductors + end-turn crowns -------- */}
+      <MachinePartMesh {...common('windings')} labelOffset={[CORE_LEN / 2 + 0.35, -ARM_R - 0.3, 1.4]}>
         <group ref={windingsRef}>
-          {[-0.7, -0.35, 0, 0.35, 0.7].map((y, i) => (
-            <mesh key={i} position={[0, y, 0]} rotation={[Math.PI / 2, 0, (i * Math.PI) / 5]} castShadow receiveShadow>
-              <torusGeometry args={[0.65, 0.08, 16, 32]} />
-              <meshStandardMaterial color="#c8400a" metalness={0.6} roughness={0.3} />
+          <CageBars
+            count={ARM_SLOTS}
+            radius={ARM_R - ARM_SLOT_DEPTH / 2}
+            length={CORE_LEN + 0.12}
+            barRadius={0.055}
+          />
+          <EndTurns x={CORE_LEN / 2 + 0.1} radius={ARM_R - 0.14} count={ARM_SLOTS} color="#a8481c" span={0.72} depth={0.22} />
+          <EndTurns x={-(CORE_LEN / 2 + 0.1)} radius={ARM_R - 0.14} count={ARM_SLOTS} color="#a8481c" span={0.72} depth={0.22} />
+          {/* Risers carrying each coil down to its commutator segment. */}
+          <Instances limit={ARM_SLOTS} range={ARM_SLOTS} castShadow>
+            <boxGeometry args={[0.9, 0.03, 0.045]} />
+            <meshStandardMaterial {...MAT.copperWorn} />
+            {armatureBars.map((b, i) => {
+              const a = (i / ARM_SLOTS) * Math.PI * 2;
+              const r = (ARM_R - ARM_SLOT_DEPTH / 2 + COMM_R) / 2;
+              return (
+                <Instance
+                  key={b.key}
+                  position={[-(CORE_LEN / 2 + 0.62), Math.cos(a) * r, Math.sin(a) * r]}
+                  rotation={[a, 0, 0]}
+                />
+              );
+            })}
+          </Instances>
+        </group>
+      </MachinePartMesh>
+
+      {/* ---- Commutator: copper segments separated by mica --------------- */}
+      <MachinePartMesh {...common('commutator')} labelOffset={[COMM_X - 0.5, -COMM_R - 0.6, 1.1]}>
+        <group ref={commutatorRef}>
+          {/* Insulating sleeve the segments are clamped onto. */}
+          <mesh position={[COMM_X, 0, 0]} rotation={AXIS.fromY} castShadow receiveShadow>
+            <cylinderGeometry args={[COMM_R - 0.09, COMM_R - 0.09, COMM_LEN + 0.06, 32]} />
+            <meshStandardMaterial {...MAT.insulation} />
+          </mesh>
+
+          <Instances limit={COMM_SEGMENTS} range={COMM_SEGMENTS} castShadow receiveShadow>
+            <boxGeometry args={[COMM_LEN, 0.1, (2 * Math.PI * COMM_R) / COMM_SEGMENTS - 0.012]} />
+            <meshStandardMaterial {...MAT.copper} />
+            {commSegments.map((s) => (
+              <Instance key={s.key} position={s.position} rotation={s.rotation} />
+            ))}
+          </Instances>
+
+          {/* V-rings clamping the stack at each end. */}
+          {[COMM_X - COMM_LEN / 2 - 0.05, COMM_X + COMM_LEN / 2 + 0.05].map((x) => (
+            <mesh key={x} position={[x, 0, 0]} rotation={AXIS.fromY} castShadow>
+              <cylinderGeometry args={[COMM_R - 0.03, COMM_R - 0.03, 0.09, 32]} />
+              <meshStandardMaterial {...MAT.boltSteel} />
             </mesh>
           ))}
+        </group>
+      </MachinePartMesh>
+
+      {/* ---- Brushes: carbon block, holder, spring, pigtail -------------- */}
+      <MachinePartMesh {...common('brushes')} labelOffset={[COMM_X - 0.6, COMM_R + 1.25, -0.9]}>
+        {BRUSH_ANGLES.map((a) => (
+          <group key={a} rotation={[a, 0, 0]}>
+            <mesh position={[COMM_X, COMM_R + 0.19, 0]} castShadow receiveShadow>
+              <boxGeometry args={[0.34, 0.36, 0.26]} />
+              <meshStandardMaterial {...MAT.carbon} />
+            </mesh>
+            <mesh position={[COMM_X, COMM_R + 0.46, 0]} castShadow receiveShadow>
+              <boxGeometry args={[0.42, 0.24, 0.34]} />
+              <meshStandardMaterial {...MAT.brass} />
+            </mesh>
+            {/* Constant-pressure spring. */}
+            <mesh position={[COMM_X, COMM_R + 0.66, 0]} castShadow>
+              <cylinderGeometry args={[0.05, 0.05, 0.2, 10]} />
+              <meshStandardMaterial {...MAT.boltSteel} />
+            </mesh>
+            {/* Flexible pigtail lead back to the terminal. */}
+            <mesh position={[COMM_X + 0.28, COMM_R + 0.52, 0]} rotation={[0, 0, -0.6]} castShadow>
+              <cylinderGeometry args={[0.03, 0.03, 0.42, 8]} />
+              <meshStandardMaterial {...MAT.copperWorn} />
+            </mesh>
+          </group>
+        ))}
+        {/* Brush rocker ring the holders are mounted on. */}
+        <mesh position={[COMM_X, 0, 0]} rotation={AXIS.fromZ} castShadow>
+          <torusGeometry args={[COMM_R + 0.62, 0.05, 8, 48]} />
+          <meshStandardMaterial {...MAT.castIronDark} />
+        </mesh>
+      </MachinePartMesh>
+
+      {/* ---- Shaft: stepped journal, keyway, bearings -------------------- */}
+      <MachinePartMesh {...common('shaft')} labelOffset={[SHAFT_LEN / 2 - 0.2, 0.75, 0]}>
+        <group ref={shaftRef}>
+          <mesh rotation={AXIS.fromY} castShadow receiveShadow>
+            <cylinderGeometry args={[SHAFT_R, SHAFT_R, SHAFT_LEN, 32]} />
+            <meshStandardMaterial {...MAT.shaftSteel} />
+          </mesh>
+          {/* Reduced drive-end journal + key. */}
+          <mesh position={[SHAFT_LEN / 2 - 0.45, 0, 0]} rotation={AXIS.fromY} castShadow receiveShadow>
+            <cylinderGeometry args={[SHAFT_R * 0.82, SHAFT_R * 0.82, 0.9, 32]} />
+            <meshStandardMaterial {...MAT.shaftSteel} />
+          </mesh>
+          <mesh position={[SHAFT_LEN / 2 - 0.55, SHAFT_R * 0.82, 0]} castShadow>
+            <boxGeometry args={[0.5, 0.05, 0.09]} />
+            <meshStandardMaterial {...MAT.boltSteel} />
+          </mesh>
+          <Bearing x={CORE_LEN / 2 + 0.4} rInner={SHAFT_R} rOuter={SHAFT_R + 0.19} />
+          <Bearing x={-(CORE_LEN / 2 + 0.4)} rInner={SHAFT_R} rOuter={SHAFT_R + 0.19} />
         </group>
       </MachinePartMesh>
     </group>

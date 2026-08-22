@@ -178,7 +178,7 @@ export function CustomModel({
 
         gltf.scene.traverse((child) => {
           if (child instanceof THREE.Mesh && child.geometry) {
-            let rawName = child.name || child.parent?.name || `Part`;
+            const rawName = child.name || child.parent?.name || `Part`;
             const formattedName = formatName(rawName);
 
             // Handle duplicates

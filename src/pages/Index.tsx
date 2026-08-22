@@ -6,9 +6,22 @@ import LandingPage from "./LandingPage";
 import { MachineViewer } from "../components/MachineViewer";
 import { ControlPanel } from "../components/ControlPanel";
 import { ThemeToggle } from "../components/ThemeToggle";
-import { machineDatabase, machineList, MachineData, MachineType, getMachineIcon } from "../data/machineData";
+import {
+  machineDatabase,
+  machineList,
+  MachineData,
+  MachineType,
+  getMachineIcon,
+  getSimulation,
+} from "../data/machineData";
 
 type AppView = "home" | "machines";
+
+function defaultParams(machine: MachineData): Record<string, number> {
+  const out: Record<string, number> = {};
+  machine.labParameters.forEach((p) => (out[p.id] = p.defaultValue));
+  return out;
+}
 
 const customMachineData: MachineData = {
   id: "custom",
@@ -38,6 +51,13 @@ const Index = () => {
   const [quizTargetPart, setQuizTargetPart] = useState<string | null>(null);
   const [explodeSpread, setExplodeSpread] = useState(1);
   const [customModelUrl, setCustomModelUrl] = useState<string | null>(null);
+  const [hintedPart, setHintedPart] = useState<string | null>(null);
+  const [focusMode, setFocusMode] = useState(false);
+  const [showField, setShowField] = useState(true);
+  const [linkLab, setLinkLab] = useState(true);
+  const [labParams, setLabParams] = useState<Record<string, number>>(() =>
+    defaultParams(machineDatabase["dc-motor"]),
+  );
 
   useEffect(() => {
     setCurrentView(location.pathname === "/machines" ? "machines" : "home");
@@ -48,12 +68,32 @@ const Index = () => {
     return machineDatabase[machineType];
   }, [machineType]);
 
+  // Lab sliders are per-machine, so reset them whenever the machine changes.
+  useEffect(() => {
+    setLabParams(defaultParams(activeMachine));
+  }, [activeMachine]);
+
+  const simulation = useMemo(
+    () => getSimulation(machineType, labParams),
+    [machineType, labParams],
+  );
+
+  /**
+   * When the lab link is on, the model spins at a speed proportional to the
+   * computed RPM instead of an arbitrary slider value — the 3D view becomes
+   * the output of the simulation rather than decoration next to it.
+   */
+  const viewerRotorRpm = linkLab && machineType !== "custom" ? simulation.rotorRpm : null;
+  const viewerFieldRpm = linkLab && machineType !== "custom" ? simulation.fieldRpm : null;
+
   const resetMachineTransientState = useCallback(() => {
     setSelectedPart(null);
     setQuizMode(false);
     setQuizTargetPart(null);
+    setHintedPart(null);
     setIsExploded(false);
     setIsAnimating(false);
+    setFocusMode(false);
   }, []);
 
   const handleMachineChange = useCallback(
@@ -204,6 +244,13 @@ const Index = () => {
             customModelUrl={customModelUrl}
             canvasRef={canvasRef}
             explodeSpread={explodeSpread}
+            hintedPart={hintedPart}
+            focusMode={focusMode}
+            showField={showField}
+            rotorRpm={viewerRotorRpm}
+            fieldRpm={viewerFieldRpm}
+            flux={simulation.flux}
+            current={simulation.current}
           />
         </div>
 
@@ -225,6 +272,17 @@ const Index = () => {
             setQuizTargetPart={setQuizTargetPart}
             explodeSpread={explodeSpread}
             setExplodeSpread={setExplodeSpread}
+            labParams={labParams}
+            setLabParams={setLabParams}
+            hintedPart={hintedPart}
+            setHintedPart={setHintedPart}
+            focusMode={focusMode}
+            setFocusMode={setFocusMode}
+            showField={showField}
+            setShowField={setShowField}
+            linkLab={linkLab}
+            setLinkLab={setLinkLab}
+            simulation={simulation}
           />
         </div>
       </main>

@@ -5,8 +5,30 @@ import { Slider } from '@/components/ui/slider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { MachineData, generateQuizQuestions, shuffleArray, QuizQuestion } from '@/data/machineData';
-import { Play, Square, Layers, BookOpen, Gauge, Zap, Brain, CheckCircle2, XCircle, Tag, GraduationCap } from 'lucide-react';
+import {
+  MachineData,
+  MachineSimulation,
+  generateQuizQuestions,
+  shuffleArray,
+  QuizQuestion,
+} from '@/data/machineData';
+import {
+  Play,
+  Square,
+  Layers,
+  BookOpen,
+  Gauge,
+  Zap,
+  Brain,
+  CheckCircle2,
+  XCircle,
+  Tag,
+  GraduationCap,
+  Link2,
+  Eye,
+  Waves,
+  Lightbulb,
+} from 'lucide-react';
 import { DCMachineTutor } from './DCMachineTutor';
 
 interface ControlPanelProps {
@@ -26,6 +48,18 @@ interface ControlPanelProps {
   setQuizTargetPart: (v: string | null) => void;
   explodeSpread?: number;
   setExplodeSpread?: (v: number) => void;
+  /** Lab sliders live in the page so the 3D viewer can read them too. */
+  labParams: Record<string, number>;
+  setLabParams: (v: Record<string, number>) => void;
+  hintedPart: string | null;
+  setHintedPart: (v: string | null) => void;
+  focusMode: boolean;
+  setFocusMode: (v: boolean) => void;
+  showField: boolean;
+  setShowField: (v: boolean) => void;
+  linkLab: boolean;
+  setLinkLab: (v: boolean) => void;
+  simulation: MachineSimulation;
 }
 
 export function ControlPanel({
@@ -45,13 +79,18 @@ export function ControlPanel({
   setQuizTargetPart,
   explodeSpread = 1,
   setExplodeSpread,
+  labParams,
+  setLabParams,
+  hintedPart,
+  setHintedPart,
+  focusMode,
+  setFocusMode,
+  showField,
+  setShowField,
+  linkLab,
+  setLinkLab,
+  simulation,
 }: ControlPanelProps) {
-  const [labParams, setLabParams] = useState<Record<string, number>>(() => {
-    const defaults: Record<string, number> = {};
-    machine.labParameters.forEach((p) => (defaults[p.id] = p.defaultValue));
-    return defaults;
-  });
-
   // Quiz state
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
   const [quizIndex, setQuizIndex] = useState(0);
@@ -72,15 +111,8 @@ export function ControlPanel({
     : null;
 
   const updateParam = (id: string, value: number) => {
-    setLabParams((prev) => ({ ...prev, [id]: value }));
+    setLabParams({ ...labParams, [id]: value });
   };
-
-  // Reset lab params when machine changes
-  useMemo(() => {
-    const defaults: Record<string, number> = {};
-    machine.labParameters.forEach((p) => (defaults[p.id] = p.defaultValue));
-    setLabParams(defaults);
-  }, [machine.id]);
 
   // Start quiz
   const startQuiz = useCallback(() => {
@@ -91,18 +123,20 @@ export function ControlPanel({
     setQuizTotal(0);
     setQuizFeedback(null);
     setQuizWrongPart(null);
+    setHintedPart(null);
     setQuizMode(true);
     if (questions.length > 0) {
       setQuizTargetPart(questions[0].targetPartId);
     }
-  }, [machine, setQuizMode, setQuizTargetPart]);
+  }, [machine, setQuizMode, setQuizTargetPart, setHintedPart]);
 
   const stopQuiz = useCallback(() => {
     setQuizMode(false);
     setQuizTargetPart(null);
     setQuizFeedback(null);
     setQuizWrongPart(null);
-  }, [setQuizMode, setQuizTargetPart]);
+    setHintedPart(null);
+  }, [setQuizMode, setQuizTargetPart, setHintedPart]);
 
   // Track the selectedPart value we've already processed to avoid auto-answering
   const lastProcessedPart = useRef<string | null>(null);
@@ -125,9 +159,11 @@ export function ControlPanel({
     } else {
       setQuizFeedback('wrong');
       setQuizWrongPart(selectedPart);
+      // Show where the answer actually was — a wrong click should teach.
+      setHintedPart(quizTargetPart);
     }
     setQuizTotal((t) => t + 1);
-  }, [selectedPart, quizMode, quizTargetPart]);
+  }, [selectedPart, quizMode, quizTargetPart, quizFeedback, setHintedPart]);
 
   const nextQuestion = useCallback(() => {
     const nextIdx = quizIndex + 1;
@@ -142,7 +178,8 @@ export function ControlPanel({
     }
     setQuizFeedback(null);
     setQuizWrongPart(null);
-  }, [quizIndex, quizQuestions, machine, setQuizTargetPart]);
+    setHintedPart(null);
+  }, [quizIndex, quizQuestions, machine, setQuizTargetPart, setHintedPart]);
 
   const currentQuestion = quizQuestions[quizIndex];
   const tabTriggerClass =
@@ -259,18 +296,73 @@ export function ControlPanel({
                   )}
                 </button>
               </div>
-              <div>
-                <label className="text-sm font-medium text-on-surface-variant">
-                  Speed: {animationSpeed.toFixed(1)}×
-                </label>
-                <Slider
-                  value={[animationSpeed]}
-                  onValueChange={([v]) => setAnimationSpeed(v)}
-                  min={0.1}
-                  max={5}
-                  step={0.1}
-                  className="mt-2"
-                />
+              {/*
+                * With the lab link on, rotation comes from the computed RPM,
+                * so the manual speed slider would be lying about what drives
+                * the model.
+                */}
+              <div className="flex items-center justify-between gap-2 pt-1">
+                <span className="inline-flex items-center gap-1.5 text-xs text-on-surface-variant font-label tracking-wider uppercase">
+                  <Link2 className="w-3.5 h-3.5" />
+                  Drive from Lab
+                </span>
+                <Switch checked={linkLab} onCheckedChange={setLinkLab} className="scale-75" />
+              </div>
+
+              {linkLab ? (
+                <div className="rounded border border-outline-variant/20 bg-surface-container p-3">
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-xs text-on-surface-variant">Rotor speed</span>
+                    <span className="text-lg font-mono font-bold text-primary">
+                      {Math.round(simulation.rotorRpm)}{' '}
+                      <span className="text-xs text-on-surface-variant">RPM</span>
+                    </span>
+                  </div>
+                  {simulation.fieldRpm > simulation.rotorRpm + 1 && (
+                    <div className="flex items-baseline justify-between mt-1">
+                      <span className="text-xs text-on-surface-variant">Stator field</span>
+                      <span className="text-sm font-mono text-on-surface">
+                        {Math.round(simulation.fieldRpm)} RPM
+                      </span>
+                    </div>
+                  )}
+                  <p className="text-[11px] text-on-surface-variant mt-2">
+                    Change the Lab parameters and the model responds — the animation is the
+                    simulation result, scaled for viewing.
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <label className="text-sm font-medium text-on-surface-variant">
+                    Speed: {animationSpeed.toFixed(1)}×
+                  </label>
+                  <Slider
+                    value={[animationSpeed]}
+                    onValueChange={([v]) => setAnimationSpeed(v)}
+                    min={0.1}
+                    max={5}
+                    step={0.1}
+                    className="mt-2"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Viewer aids */}
+            <div className="rounded p-3 space-y-3 bg-surface-container-low border border-outline-variant/20">
+              <div className="flex items-center justify-between gap-2">
+                <span className="inline-flex items-center gap-1.5 text-xs text-on-surface-variant font-label tracking-wider uppercase">
+                  <Waves className="w-3.5 h-3.5" />
+                  Field lines
+                </span>
+                <Switch checked={showField} onCheckedChange={setShowField} className="scale-75" />
+              </div>
+              <div className="flex items-center justify-between gap-2">
+                <span className="inline-flex items-center gap-1.5 text-xs text-on-surface-variant font-label tracking-wider uppercase">
+                  <Eye className="w-3.5 h-3.5" />
+                  Focus selected part
+                </span>
+                <Switch checked={focusMode} onCheckedChange={setFocusMode} className="scale-75" />
               </div>
             </div>
 
@@ -492,6 +584,18 @@ export function ControlPanel({
                           </div>
                           <p className="text-xs text-on-surface-variant">Try to find the correct part next time.</p>
                         </div>
+                      )}
+
+                      {!quizFeedback && (
+                        <Button
+                          onClick={() => setHintedPart(quizTargetPart)}
+                          variant="outline"
+                          className="w-full border-outline-variant/40 bg-surface-container text-on-surface-variant hover:bg-surface-container-high"
+                          disabled={hintedPart === quizTargetPart}
+                        >
+                          <Lightbulb className="w-4 h-4" />
+                          {hintedPart === quizTargetPart ? 'Highlighted in the model' : 'Show me'}
+                        </Button>
                       )}
 
                       {quizFeedback && (
